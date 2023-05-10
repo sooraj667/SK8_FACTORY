@@ -1,0 +1,45 @@
+{% extends 'storeadmin/index.html' %}
+{% block content %}
+<form class="p-5" method="POST" action=""> {% csrf_token %}
+          
+    <div class="form-group mt-2">
+      {% comment %} {% for item in content  %} {% endcomment %}
+      <label for="username">Name</label>
+      <input value="" name="name" type="text" class="form-control" id="username" placeholder="Enter productname">
+    </div>
+    <div class="form-group mt-2">
+      <label for="email">Price</label>
+      <input value="" name="price" type="text" class="form-control" id="email" aria-describedby="emailHelp" placeholder="Enter price">
+      {% comment %} <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small> {% endcomment %}
+    </div>
+    <div class="form-group mt-2">
+      <label for="inputPassword">Quantity</label>
+      <input  value=""  name="quantity" type="text" class="form-control" id="inputPassword" placeholder="Enter Quantity">
+    </div>
+    <div class="form-group mt-2">
+      <label for="inputConfirmPassword">Category </label>
+      <input  value=""   name="category" type="text" class="form-control" id="inputConfirmPassword" placeholder="Enter the category">
+    </div>
+    <div class="form-group mt-2">
+        <label for="inputConfirmPassword">Description </label>
+        <input value=""  name="description" type="text" class="form-control" id="inputConfirmPassword" placeholder="Description">
+      </div>
+    <button type="submit" class="btn btn-primary mt-4">Add Product</button>
+    <h5>{{successmsg}} {{error}}</h5>
+    {% comment %} {% endfor %} {% endcomment %}
+  
+  </form>
+
+
+
+
+
+
+
+{% endblock content %}
+
+
+
+
+
+

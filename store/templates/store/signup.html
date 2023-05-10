@@ -1,0 +1,109 @@
+{% extends 'store/index.html' %}
+{% load static %}
+{% block content %}
+
+
+{% comment %} Random Space {% endcomment %}
+<div class="row mt-5">
+
+</div>
+<div class="row mt-5">
+
+</div>
+
+
+<div class="container mt-5">
+
+
+<div class="container">
+	<div class="row justify-content-center mt-5">
+		<div class="col-md-6">
+			<div class="card">
+				<div class="card-header flex-c-m p-lr-10 trans-04 signupdesign">
+					<h4>Sign Up</h4>
+				</div>
+				<div class="card-body">
+					<form method="POST"> {% csrf_token %}
+						<div class="form-group">
+							<label for="email">Username</label>
+							<input type="text" value="{{username}}" class="form-control" id="email" placeholder="Enter Username" name="username" Required>
+							{% if error and "username" in error %}
+							<span style="color: red">{{error.username}}</span>
+							{% endif %}
+						</div>
+						<div class="form-group">
+							<label for="email">Name</label>
+							<input type="text" value="{{name}}" class="form-control" id="email" placeholder="Enter Name" name="name" Required>
+							{% if error and "name" in error %}
+							<span style="color: red">{{error.name}}</span>
+							{% endif %}
+						</div>
+						<div class="form-group">
+							<label for="email">Email address</label>
+							<input type="email" value="{{email}}" class="form-control" id="email" placeholder="Enter email" name="email" Required>
+							{% if error and "email" in error %}
+							<span style="color: red">{{error.email}}</span>
+							{% endif %}
+						</div>
+						<div class="form-group">
+							<label for="email">Phone Number</label>
+							<input type="text" value="{{phonenumber}}" class="form-control" id="email" placeholder="Enter contact number" name="phonenumber" Required>
+							{% if error and "phonenumber" in error %}
+							<span style="color: red">{{error.phonenumber}}</span>
+							{% endif %}
+						</div>
+						<div class="form-group">
+							<label for="password">Password</label>
+							<input type="password" value="{{password}}" class="form-control" id="password" placeholder="Enter Password" name="password" Required>
+							{% if error and "password" in error %}
+							<span style="color: red">{{error.password}}</span>
+							{% endif %}
+						</div>
+						<div class="form-group">
+							<label for="password">Re-Enter Password</label>
+							<input type="password" value="{{repassword}}" class="form-control" id="password" placeholder="Re- enter Password" name="repassword" Required>
+							{% if error and "repassword" in error %}
+							<span style="color: red">{{error.repassword}}</span>
+							{% endif %}
+						</div>
+						<div class="justify-content-center ">
+							<button type="submit" class="flex-c-m stext-101 cl5 size-103 bg2 bor1 hov-btn1 p-lr-15 trans-04 ">Submit</button>
+
+						</div>
+						<div>
+							{% if messages %}
+								{% for message in messages %}
+									<div class="alert alert-success" role="alert">
+										{{ message }}
+									</div>
+								{% endfor %}
+							{% endif %}
+						</div>
+						
+						<div >
+							<h5 class=" text-success mt-3">
+								{{context}} 
+							</h5>
+						  
+						</div>
+						
+
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+</div>
+
+
+
+ 
+
+{% endblock content %}
+
+
+
+
+
+

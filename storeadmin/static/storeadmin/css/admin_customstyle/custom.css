@@ -1,0 +1,20 @@
+
+.delete-button {
+    background-color: #ff0000;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+  
+  .delete-button:hover {
+    background-color: #cc0000;
+  }
+  .adminsigninbody{
+    background-color: #921212;
+    border: solid;
+    border-style: dotted;
+    border-color: #cc0000;
+  }

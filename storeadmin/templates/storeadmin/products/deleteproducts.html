@@ -1,0 +1,54 @@
+{% extends 'storeadmin/index.html' %}
+
+{% block content %}
+
+<div class="container justify-content-center mt-5 ml-5">
+    <div class="row ">
+        <div class="col-md-6">
+          
+            <div class="row">
+                <form class="p-5" method="POST" action=""> {% csrf_token %}
+          
+                    <div class="form-group mt-2">
+                      {% comment %} {% for item in content  %} {% endcomment %}
+                      <label for="username">Name</label>
+                      <input value="{{content.name}}" name="name" type="text" class="form-control" id="username" placeholder="Enter username">
+                    </div>
+                    <div class="form-group mt-2">
+                      <label for="email">Price</label>
+                      <input value="{{content.price}}" name="price" type="text" class="form-control" id="email" aria-describedby="emailHelp" placeholder="Enter email">
+                      <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+                    </div>
+                    <div class="form-group mt-2">
+                      <label for="inputPassword">Quantity</label>
+                      <input  value="{{content.quantity}}"  name="quantity" type="text" class="form-control" id="inputPassword" placeholder="Password">
+                    </div>
+                    <div class="form-group mt-2">
+                      <label for="inputConfirmPassword">Category </label>
+                      <input  value="{{content.category.name}}"   name="category" type="text" class="form-control" id="inputConfirmPassword" placeholder="Confirm Password">
+                    </div>
+                    <div class="form-group mt-2">
+                        <label for="inputConfirmPassword">Description </label>
+                        <input value="{{content.description}}"  name="description" type="text" class="form-control" id="inputConfirmPassword" placeholder="Confirm Password">
+                      </div>
+                      <div>
+                        <span class="text-danger">Are you sure,you want to delete this product?</span> 
+                      </div>
+                    <button type="submit" class="btn  mt-4 delete-button btn-danger">Delete</button>
+                    
+                    <h5>{{successmsg}} {{error}}</h5>
+                    {% comment %} {% endfor %} {% endcomment %}
+                  
+                  </form>
+           
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+{% endblock content %}

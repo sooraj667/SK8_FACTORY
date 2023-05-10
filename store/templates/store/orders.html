@@ -1,0 +1,10 @@
+{% extends 'store/login.html' %}
+{% block content %}
+{% for item in products  %}
+<h5>
+    {{item.name}} <a href={% url 'orderconfirmed' item.id %}>Confirm Order</a> 
+</h5>
+{% endfor %}
+
+
+{% endblock content %}

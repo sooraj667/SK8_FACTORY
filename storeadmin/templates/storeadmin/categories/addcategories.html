@@ -1,0 +1,23 @@
+{% extends 'storeadmin/index.html' %}
+{% block content %}
+<form class="p-5" method="POST" action=""> {% csrf_token %}
+          
+    <div class="form-group mt-2">
+      {% comment %} {% for item in content  %} {% endcomment %}
+      <label for="username">Category Name</label>
+      <input value="{{obj.name}}" name="name" type="text" class="form-control" id="username" placeholder="Enter username">
+    </div>
+    <button type="submit" class="btn btn-primary mt-4">Add</button>
+    <h5> {{error}} {{duplicate}}</h5>
+    {% comment %} {% endfor %} {% endcomment %}
+  
+  </form> 
+
+
+
+
+
+
+
+
+{% endblock content %}

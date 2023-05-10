@@ -1,0 +1,37 @@
+{% extends 'store/login.html' %}
+
+{% block content %}
+<div>
+    {{msg}}
+</div>
+<div class="container">
+    <div class="row justify-content-center mt-5">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header flex-c-m p-lr-10 trans-04 ">
+                    <h4>Verify Otp</h4>
+                </div>
+                <div class="card-body">
+                    <form method="POST">{% csrf_token %}
+                        <div class="form-group">
+                            <label for="email">Verify Otp</label>
+                            <input type="number" class="form-control" id="email" placeholder="Enter your phone number" name="otp">
+                        </div>
+                        <div class="justify-content-center ">
+                            <button type="submit" class="flex-c-m stext-101 cl5 size-103 bg2 bor1 hov-btn1 p-lr-15 trans-04 ">Verify</button>
+
+                        </div>
+                        <div class="text-danger">
+                             {{error}}
+                        </div>
+                        
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock content %}
