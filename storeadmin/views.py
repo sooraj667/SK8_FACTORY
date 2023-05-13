@@ -91,7 +91,8 @@ def editproducts(request,someid):
         price=request.POST.get("price")
         quantity=request.POST.get("quantity")
         category_name=request.POST.get("category")
-        image1=request.FILES.get("image")
+        image1=request.POST.get("image")
+        print(image1,"******")
         description=request.POST.get("description")
         if len(name)<4:
             error="Productname should contain minimum four characters"
@@ -205,15 +206,30 @@ def editcategories(request,someid):
 #         return redirect(categories)
 #     return render(request,"storeadmin/categories/deletecategories.html",{"content":content})
 def deletecategories(request, someid):
+    print(someid,"SOMEID ***********")
+    
+
     content = Category.objects.get(id=someid)
-    if request.method == "POST":
-        content.delete()
-        return JsonResponse({"message": "Category deleted successfully."})
-    return redirect(categories)
+    print(content.name,"CONTENT###########################")
+    content.delete()
+
+
+
+    all=Category.objects.all()
+    for item in all:
+        print(item.name,"$$$$$$$$$$$$$$$")
+
+
+
+
+
+    return JsonResponse({"message": "Category deleted successfully."})
+    
 
 def addcategories(request):
     if request.method == "POST":
         name = request.POST.get("name")
+        quantity=request.POST.get("quantity")
         if len(name) == 0:
             error = "Category name field can't be empty"
         elif not name.isalpha():
@@ -224,7 +240,7 @@ def addcategories(request):
             error = "Category name can have at most 20 letters"
         else:
             try:
-                added = Category(name=name)
+                added = Category(name=name,noofitems=quantity)
                 added.save()
                 return redirect(categories)
             except IntegrityError:

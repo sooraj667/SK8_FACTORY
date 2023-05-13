@@ -7,6 +7,7 @@ from twilio.rest import Client
 from django.contrib import messages
 import razorpay
 from django.conf import settings
+from django.http import JsonResponse
 # Create your views here.
 
 def index(request):
@@ -191,6 +192,9 @@ def loggedinproduct(request):
     else:
         return redirect(login)
 
+# def addtocart(request,someid):
+
+#     return JsonResponse
 
 
 def buynow(request,someid):

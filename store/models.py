@@ -28,9 +28,9 @@ class Products(models.Model):
     image3=models.ImageField(upload_to='store/products/', blank=True)
     image4=models.ImageField(upload_to='store/products/', blank=True)
 
-class ProductImages(models.Model):
-    product=models.ForeignKey(Products,on_delete=models.CASCADE)
-    image = models.ImageField(upload_to='store/products/',blank=True,)
+# class ProductImages(models.Model):
+#     product=models.ForeignKey(Products,on_delete=models.CASCADE)
+#     image = models.ImageField(upload_to='store/products/',blank=True,)
     
 
 

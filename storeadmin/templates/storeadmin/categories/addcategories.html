@@ -6,6 +6,8 @@
       {% comment %} {% for item in content  %} {% endcomment %}
       <label for="username">Category Name</label>
       <input value="{{obj.name}}" name="name" type="text" class="form-control" id="username" placeholder="Enter username">
+      <label for="username">Quantity</label>
+      <input value="{{obj.noofitems}}" name="quantity" type="number" class="form-control" id="username" placeholder="Enter username">
     </div>
     <button type="submit" class="btn btn-primary mt-4">Add</button>
     <h5> {{error}} {{duplicate}}</h5>
