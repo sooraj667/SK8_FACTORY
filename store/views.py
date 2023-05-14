@@ -10,6 +10,7 @@ from django.conf import settings
 from django.http import JsonResponse
 from django.http import HttpResponse
 from decimal import Decimal
+from datetime import date
 # Create your views here.
 
 def index(request):
@@ -82,6 +83,8 @@ def signup(request):
         return render(request,"store/signup.html",datas)
             
     return render(request,"store/signup.html")
+
+
 def otplogin(request):
     if "username" in request.session:
         return redirect(loggedin)
@@ -213,6 +216,92 @@ def loggedincart(request):
         return render(request,"store/userdashboard/loggedincart.html",{"cartobjs":cartobjs,"totalsum":totalsum})
     else:
         return redirect(login)
+    
+def checkout(request):
+    if request.method=="POST":
+        error={}
+        country=request.POST.get("country")
+        state=request.POST.get("state")
+        district=request.POST.get("district")
+        locality=request.POST.get("locality")
+        house=request.POST.get("house")
+        pincode=request.POST.get("pincode")
+
+
+        if country.isalpha()=="False":
+            error["country"]="Country name can't have numbers"
+        elif len(country)<3:
+            error["country"]="Country name should contain minimum three characters"
+        elif state.isalpha()=="False":
+            error["state"]="State name can't have numbers"
+        elif len(state)<3:
+            error["state"]="State name should contain minimum three characters"
+        elif district.isalpha()=="False":
+            error["district"]="District name can't have numbers"
+        elif len(district)<3:
+            error["district"]="District name should contain minimum three characters"
+        elif len(locality)<3:
+            error["locality"]="Locality name should contain minimum three characters"
+        elif len(house)<3:
+            error["house"]="House name should contain minimum three characters"
+        elif pincode.isalpha()=="True":
+            error["pincode"]="Pincode  can't have alphabets"
+        elif len(pincode)!=6:
+            error["pincode"]="Invalid Pincode"
+
+        else:
+            user=request.session["username"]
+            userobj=Customers.objects.get(username=user)
+
+            addressvalues=Address(customer=userobj,country=country,state=state,district=district,locality=locality,house=house,pincode=pincode)
+            addressvalues.save()
+            success='Address Saved successfully!'
+            
+
+            
+            
+
+                
+
+            return redirect(checkout)
+        
+        datas={"error":error,"country":country,"state":state,"district":district,"locality":locality,"pincode":pincode}
+        return render(request,"store/userdashboard/checkout.html",datas)
+    
+    cust=Customers.objects.get(username=request.session["username"])
+    addressobjs=Address.objects.filter(customer=cust)
+
+    cartobjs=Cart.objects.all()
+    totalsum=0
+    for item in cartobjs:
+        totalsum+=item.total
+    return render(request,"store/userdashboard/checkout.html",{"addressobjs":addressobjs,"cartobjs":cartobjs,"totalsum":totalsum})
+
+def cashondelivery(request):
+    cartobjs=Cart.objects.all()
+    address=Address.objects.get(id=1)
+    for item in cartobjs:
+        userobj=item.user
+        pdtobj=item.product
+        quantityobj=item.quantity
+        addressobj=address
+        orderstatusobj="Ordered"
+        orderdateobj=date.today() 
+    orderdata=Orders(user=userobj,product=pdtobj,quantity=quantityobj,address=addressobj,orderstatus=orderstatusobj,orderdate=orderdateobj)
+    orderdata.save()
+    totalsum=0
+    for item in cartobjs:
+        totalsum+=item.total
+
+
+
+    
+    
+    
+
+    
+
+    return render(request,"store/userdashboard/orderplaced.html",{"totalsum":totalsum,"cartobjs":cartobjs})
 
 def addtocart(request,someid):
    

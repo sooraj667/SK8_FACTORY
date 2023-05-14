@@ -13,15 +13,23 @@ class ProductsAdmin(admin.ModelAdmin):
 # class ProductImagesAdmin(admin.ModelAdmin):
 #     list_display=("product","image")
 class OrdersAdmin(admin.ModelAdmin):
-    list_display=("userid","productid","orderdate")
+    list_display=("user","product","orderdate")
 class CartAdmin(admin.ModelAdmin):
     list_display=("product","user","quantity")
+class AddressAdmin(admin.ModelAdmin):
+    list_display=("customer","country","state","district","locality","house","pincode")
+
+
+
+
+
 admin.site.register(Customers,CustomersAdmin)
 admin.site.register(Category,CategoryAdmin)
 admin.site.register(Products,ProductsAdmin)
 # admin.site.register(ProductImages,ProductImagesAdmin)
 admin.site.register(Orders,OrdersAdmin)
 admin.site.register(Cart,CartAdmin)
+admin.site.register(Address,AddressAdmin)
 
 
 

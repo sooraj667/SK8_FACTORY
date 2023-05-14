@@ -9,6 +9,15 @@ class Customers(models.Model):
     repassword=models.CharField(max_length=200)
     isblocked=models.BooleanField(default=False)
 
+class Address(models.Model):
+    customer=models.ForeignKey(Customers,on_delete=models.CASCADE)
+    country=models.CharField(max_length=200)
+    state=models.CharField(max_length=200)
+    district=models.CharField(max_length=200)
+    locality=models.CharField(max_length=200)
+    house=models.CharField(max_length=200)
+    pincode=models.PositiveIntegerField()
+
 class Category(models.Model):
     name=models.CharField(max_length=200,unique=True)
     noofitems=models.IntegerField()
@@ -30,24 +39,25 @@ class Products(models.Model):
     image3=models.ImageField(upload_to='store/products/', blank=True)
     image4=models.ImageField(upload_to='store/products/', blank=True)
 
-# class ProductImages(models.Model):
-#     product=models.ForeignKey(Products,on_delete=models.CASCADE)
-#     image = models.ImageField(upload_to='store/products/',blank=True,)
-    
-
-
-class Orders(models.Model):
-    userid=models.ForeignKey(Customers,on_delete=models.CASCADE)
-    productid=models.ForeignKey(Products,on_delete=models.CASCADE)
-    orderdate=models.DateField(auto_now_add=True)
-
-
-
-
 
 class Cart(models.Model):
     user = models.ForeignKey(Customers, on_delete=models.CASCADE)
     product = models.ForeignKey(Products, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField()
     total = models.DecimalField(max_digits=10, decimal_places=2)
+
+
+class Orders(models.Model):
+    user=models.ForeignKey(Customers,on_delete=models.CASCADE)
+    product=models.ForeignKey(Products,on_delete=models.CASCADE)
+    address=models.ForeignKey(Address,on_delete=models.CASCADE)
+    orderdate=models.DateField(auto_now_add=True)
+    orderstatus=models.CharField(max_length=200,default="pending")
+    quantity=models.PositiveIntegerField()
+
+
+
+
+
+
     
