@@ -325,7 +325,7 @@
 					</div>
 
 					<div class="header-cart-buttons flex-w w-full">
-						<a href={% url 'cart' %} class="flex-c-m stext-101 cl0 size-107 bg3 bor2 hov-btn3 p-lr-15 trans-04 m-r-8 m-b-10">
+						<a href={% url 'loggedincart' %} class="flex-c-m stext-101 cl0 size-107 bg3 bor2 hov-btn3 p-lr-15 trans-04 m-r-8 m-b-10">
 							View Cart
 						</a>
 
@@ -342,10 +342,6 @@
 
 	<!-- Slider -->
 	{% block content %}
-	
-	
-	
-	
 	
 	<section class="section-slide">
 		<div class="wrap-slick1">
@@ -1282,7 +1278,7 @@
 			</div>
 		</div>
 	</section>
-	{% endblock content %}
+{% endblock content %}
 
 	<!-- Footer -->
 	<footer class="bg3 p-t-75 p-b-32">

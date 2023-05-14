@@ -600,7 +600,34 @@
 								<a href={% url 'buynow' item.id %}>
 									Buy it
 								</a>
-								<button type="button" class="addit" data-category-id="{{ item.id }}">Add to Cart</button> 	>
+								
+								<a href={% url 'preview' item.id %}>Preview</a>
+								<a href={% url 'addtocart' item.id %}> Add to Cart</a>
+								{% comment %} <button type="button" class="addit" data-toggle="modal" data-target="#myModal" data-category-id="{{ item.id }}">Add to Cart</button> {% endcomment %}
+
+									<!-- Modal -->
+									{% comment %} <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+									<div class="modal-dialog" role="document">
+										<div class="modal-content">
+										<div class="modal-header">
+											<h5 class="modal-title" id="modalLabel">Confirm?</h5>
+											<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+											<span aria-hidden="true">&times;</span>
+											</button>
+										</div>
+										<div class="modal-body">
+											<a id="modalLink" href="#">Yes</a>
+										</div>
+										<div class="modal-footer">
+											<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+										</div>
+										</div>
+									</div>
+									</div> {% endcomment %}
+								  
+
+
+								
 								
 									
 								
@@ -1689,17 +1716,44 @@ Copyright &copy;<script>document.write(new Date().getFullYear());</script> All r
 <!--===============================================================================================-->
 	<script src="{% static 'store/js/main.js' %}"></script>
 
-	{% comment %} <script>
-		$(".addit").click(function() {
+	<script>
+		{% comment %} $("#addToCartForm").submit(function(event) {
+			event.preventDefault(); // Prevent default form submission
+			
+			if (confirm("Are you sure you want to add this to cart?")) {
+			  var categoryId = $("#categoryIdInput").val();
+			  
+			  $.ajax({
+				url: "/addtocart/" + categoryId + "/",
+				type: "POST",
+				beforeSend: function(xhr) {
+				  xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
+				},
+				success: function(response) {
+				  alert(response.message);
+				  location.reload();
+				},
+				error: function(xhr, status, error) {
+				  alert("Error: " + error);
+				}
+			  });
+			}
+		  }); {% endcomment %}
+
+
+
+
+
+		{% comment %} $(".addit").click(function() {
 			var categoryId = $(this).data("category-id");
 			if (confirm("Are you sure you want to add this to cart?")) {
 				
 				$.ajax({
-					url: "/storeadmin/addtocart/" + categoryId + "/",
-					type: "GET",
+					url: "addtocart/" + categoryId + "/",
+					type: "POST",
 					beforeSend: function(xhr) {
-					  xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
-					},
+						xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
+					  },
 					success: function(response) {
 						alert(response.message);
 						location.reload();
@@ -1709,11 +1763,18 @@ Copyright &copy;<script>document.write(new Date().getFullYear());</script> All r
 					}
 				});
 			}
-		});  
+		});   {% endcomment %}
 
+		<script>
+			
+				$('.addit').click(function() {
+				var categoryId = $(this).data('category-id');
+				$('#modalLink').attr('href', '/addtocart/' + categoryId + '/');
+			  });
+			
+		  </script>
 
-
-	</script> {% endcomment %}
+	</script> 
 
 </body>
 </html>

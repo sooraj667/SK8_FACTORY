@@ -12,7 +12,9 @@ class Customers(models.Model):
 class Category(models.Model):
     name=models.CharField(max_length=200,unique=True)
     noofitems=models.IntegerField()
-    
+
+
+
 
 
      
@@ -38,3 +40,14 @@ class Orders(models.Model):
     userid=models.ForeignKey(Customers,on_delete=models.CASCADE)
     productid=models.ForeignKey(Products,on_delete=models.CASCADE)
     orderdate=models.DateField(auto_now_add=True)
+
+
+
+
+
+class Cart(models.Model):
+    user = models.ForeignKey(Customers, on_delete=models.CASCADE)
+    product = models.ForeignKey(Products, on_delete=models.CASCADE)
+    quantity = models.PositiveIntegerField()
+    total = models.DecimalField(max_digits=10, decimal_places=2)
+    

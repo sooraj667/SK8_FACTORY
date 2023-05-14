@@ -8,6 +8,8 @@ from django.contrib import messages
 import razorpay
 from django.conf import settings
 from django.http import JsonResponse
+from django.http import HttpResponse
+from decimal import Decimal
 # Create your views here.
 
 def index(request):
@@ -192,9 +194,48 @@ def loggedinproduct(request):
     else:
         return redirect(login)
 
-# def addtocart(request,someid):
+def preview(request,someid):
+    if "username" in request.session:
+        print(request.session["username"],"######################")
+        pdtobj=Products.objects.get(id=someid)
+        return render(request,"store/userdashboard/preview.html",{"pdtobj":pdtobj})
+    else:
+        return redirect(login)
+    
+    
+def loggedincart(request):
+    if "username" in request.session:
+        print(request.session["username"],"######################")
+        cartobjs=Cart.objects.all()
+        totalsum=0
+        for item in cartobjs:
+            totalsum+=item.total
+        return render(request,"store/userdashboard/loggedincart.html",{"cartobjs":cartobjs,"totalsum":totalsum})
+    else:
+        return redirect(login)
 
-#     return JsonResponse
+def addtocart(request,someid):
+   
+
+        if request.method=="POST":
+
+            pdtobj=Products.objects.get(id=someid)
+
+            print(pdtobj.name,"################")
+
+            currentuser=request.session["username"]
+
+            print(currentuser,"########################")
+            userobj=Customers.objects.get(username=currentuser)
+            quantity=request.POST.get("quantity")
+            total=Decimal(quantity)*pdtobj.price
+            # if quantity is None:
+            #     quantity=1
+
+            cartadd=Cart(product=pdtobj,user=userobj,quantity=int(quantity),total=total)
+            cartadd.save()
+            return redirect(loggedinproduct) 
+
 
 
 def buynow(request,someid):
