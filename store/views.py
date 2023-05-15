@@ -11,6 +11,7 @@ from django.http import JsonResponse
 from django.http import HttpResponse
 from decimal import Decimal
 from datetime import date
+import paypal
 # Create your views here.
 
 def index(request):
@@ -331,16 +332,17 @@ def buynow(request,someid):
     if "username" in request.session:
         if request.method=="POST":
             # authorize razorpay client with API Keys.
-            razorpay_client = razorpay.Client(
+            client = razorpay.Client(
             auth=(settings.RAZORPAY_API_KEY, settings.RAZORPAY_API_SECRET_KEY))
             amount=200
             order_currency='INR'
             data = {
             'amount': int(amount),
             'currency': 'INR',
-            'payment_capture': 1
+            'receipt':"order_rcpt_12"
             }
-            # order = client.order.create(data=data)
+            payment_response = client.order.create(data=data)
+            print(payment_response)
 
 
             usname=request.session["username"] #This session is created during login

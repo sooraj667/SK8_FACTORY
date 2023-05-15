@@ -1,7 +1,16 @@
 {% extends 'store/userdashboard/loggedin.html' %}
 {% load static %}
+{% block head %}	
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/elevatezoom/2.2.3/jquery.elevatezoom.min.js"></script>
+
+{% endblock head %}
+
+
+
 
 {% block content %}
+
 <div class="row mt-5"></div>
 <div class="row mt-5"></div>
 <div class="row mt-5"></div>
@@ -25,7 +34,7 @@
                                 <div class="slick3 gallery-lb">
                                     <div class="item-slick3" data-thumb="images/product-detail-01.jpg">
                                         <div class="wrap-pic-w pos-relative">
-                                            <img src="{{pdtobj.image1.url}}" alt="IMG-PRODUCT">
+                                            <img src="{{pdtobj.image1.url}}" alt="IMG-PRODUCT" data-zoom-image="{{pdtobj.image1.url}}" id="zoom">
 
                                             <a class="flex-c-m size-108 how-pos1 bor0 fs-16 cl10 bg0 hov-btn3 trans-04" href="images/product-detail-01.jpg">
                                                 <i class="fa fa-expand"></i>
@@ -35,7 +44,7 @@
 
                                     <div class="item-slick3" data-thumb="images/product-detail-02.jpg">
                                         <div class="wrap-pic-w pos-relative">
-                                            <img src="{{pdtobj.image1.url}}" alt="IMG-PRODUCT">
+                                            <img src="{{pdtobj.image1.url}}" alt="IMG-PRODUCT" data-zoom-image="{{pdtobj.image1.url}}" id="zoom">
 
                                             <a class="flex-c-m size-108 how-pos1 bor0 fs-16 cl10 bg0 hov-btn3 trans-04" href="images/product-detail-02.jpg">
                                                 <i class="fa fa-expand"></i>
@@ -179,6 +188,14 @@
 
 
 </div>
+
+
+
+
+
+<script>
+    $("#zoom").elevateZoom()
+</script>
 
 
 
