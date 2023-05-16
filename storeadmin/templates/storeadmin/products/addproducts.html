@@ -1,6 +1,6 @@
 {% extends 'storeadmin/index.html' %}
 {% block content %}
-<form class="p-5" method="POST" action=""> {% csrf_token %}
+<form class="p-5" method="POST" action="" enctype="multipart/form-data"> {% csrf_token %}
           
     <div class="form-group mt-2">
       {% comment %} {% for item in content  %} {% endcomment %}
@@ -23,7 +23,47 @@
     <div class="form-group mt-2">
         <label for="inputConfirmPassword">Description </label>
         <input value=""  name="description" type="text" class="form-control" id="inputConfirmPassword" placeholder="Description">
+    </div>
+
+    {% comment %} ARUN'S CODE {% endcomment %}
+    <div class="mb-3">
+      <label for="image1">Image 1</label>
+      <div class="card-img-top">
+       
       </div>
+      <input type="file" class="form-control" id="image1" name="image1" accept="image/*">
+    </div>
+    <div class="mb-3">
+      <label for="image2">Image 2</label>
+      
+      <input type="file" class="form-control" id="image2" name="image2" accept="image/*">
+    </div>
+    <div class="mb-3">
+      <label for="image3">Image 3</label>
+      <div class="card-img-top">
+        
+      </div>
+      <input type="file" class="form-control mt-3" id="image3" name="image3" accept="image/*">
+    </div>
+    <div class="mb-3">
+      <label for="image4">Image 4</label>
+      <div class="card-img-top">
+        
+      </div>
+      <input type="file" class="form-control mt-3" id="image4" name="image4" accept="image/*">
+    </div>
+
+
+
+
+
+
+
+
+
+    
+
+
     <button type="submit" class="btn btn-primary mt-4">Add Product</button>
     <h5>{{successmsg}} {{error}}</h5>
     {% comment %} {% endfor %} {% endcomment %}
@@ -43,3 +83,36 @@
 
 
 
+{% comment %} My CODE {% endcomment %}
+<div class="form-group mt-2">
+
+  <label for="image1">Image1</label>
+  <input name="image1" type="file" class="form-control-file" id="image1">
+  
+  {% comment %} <img  src="{{ content.image1.url }}" alt="{{ content.title }}"> {% endcomment %}
+  
+</div>
+
+
+
+<div class="form-group mt-2">
+  <label for="image2">Image2</label>
+  <input name="image2" type="file" class="form-control-file" id="image2">
+  
+  {% comment %} <img  src="{{ content.image2.url }}" alt="{{ content.title }}"> {% endcomment %}
+  
+</div>
+<div class="form-group mt-2">
+  <label for="image3">Image3</label>
+  <input name="image3" type="file" class="form-control-file" id="image3">
+  
+  {% comment %} <img name="image3" src="{{ content.image3.url }}" alt="{{ content.title }}"> {% endcomment %}
+  
+</div>
+<div class="form-group mt-2">
+  <label for="image4">Image4</label>
+  <input name="image4" type="file" class="form-control-file" id="image4">
+  
+  {% comment %} <img  src="{{ content.image4.url }}" alt="{{ content.title }}"> {% endcomment %}
+  
+</div>
