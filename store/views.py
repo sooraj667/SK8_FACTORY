@@ -18,7 +18,9 @@ from ecommerce.settings import RAZORPAY_API_SECRET_KEY,RAZORPAY_API_KEY
 def index(request):
     if "username" in request.session:
         return redirect(loggedin)
-    return render(request,"store/index.html")
+    products=Products.objects.all()
+    category=Products.objects.all()
+    return render(request,"store/index.html",{"products":products,"category":category})
 
 def about(request):
     if "username" in request.session:
@@ -66,7 +68,7 @@ def signup(request):
             error["email"]="Invalid Email"
         elif phonenumber.isalpha()==True:
             error["phonenumber"]="Phonenumber can't have letters"
-        elif len(phonenumber)!=10:
+        elif len(phonenumber)!=10 or int(phonenumber) < 0:
             error["phonenumber"]="Invalid Phonennumber"
         elif len(password)<6:
             error["password"]="Password must atleast contain 6 characters"

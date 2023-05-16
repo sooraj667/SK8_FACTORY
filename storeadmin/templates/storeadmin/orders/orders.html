@@ -25,7 +25,7 @@
               <td>{{ item.quantity }}</td>
               <td>{{ item.orderdate }}</td>
               <td>{{ item.orderstatus }}</td>
-              <td><a href={% url 'admin_editorderstatus' item.id %}>Edit</a></td>
+              <td><a href={% url 'admin_editorderstatus' item.id %}><button class="btn edit-btn btn-warning">Edit</button></a></td>
               
               {% comment %} <td>
                 <a href="{% url 'admin_editproducts' item.id %}">

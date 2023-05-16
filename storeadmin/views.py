@@ -36,9 +36,14 @@ def index(request):
                 orderdict[item.product.name]=item.quantity
             else:
                 orderdict[item.product.name]+=item.quantity
-
+        top_count = max(orderdict.values())
+        for key,value in orderdict.items():
+            if value==top_count:
+                top_product=key
+                break
+           
         print(orderdict,"$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")    
-        return render(request,"storeadmin/index.html",{"orderdict":orderdict})
+        return render(request,"storeadmin/index.html",{"orderdict":orderdict,"top_product":top_product,"top_count":top_count})
     else:
         return redirect(adminsignin)
 @never_cache  
