@@ -134,10 +134,11 @@ def products(request):
 #         return render(request, 'edit.html', context)
 
 
-
-def editproducts(request,someid):
+#ARUN'S CODE
+def editproducts(request, someid):
     content=Products.objects.get(id=someid)
-    if request.method=="POST":
+
+    if request.method == 'POST':
         name=request.POST.get("name")
         price=request.POST.get("price")
         quantity=request.POST.get("quantity")
@@ -160,45 +161,123 @@ def editproducts(request,someid):
         elif len(description)<4:
             error="Description should contain minimum four characters"
         else:
-            categoryobject=Category.objects.get(name=category_name)
 
+
+
+
+            content.name = request.POST.get('name')
+            content.description = request.POST.get('description')
+            content.price = request.POST.get('price')
+
+            # Check if new images are provided
             if 'image1' in request.FILES:
-            # Delete the existing image1 file
+                # Delete the existing image1 file
                 if content.image1:
                     os.remove(content.image1.path)
-                    updatedimage1 = request.FILES.get('image1')
-
+                content.image1 = request.FILES.get('image1')
 
             if 'image2' in request.FILES:
-            # Delete the existing image1 file
+                # Delete the existing image2 file
                 if content.image2:
-                    os.remove(content.image4.path)
-                    updatedimage2 = request.FILES.get('image2')
+                    os.remove(content.image2.path)
+                content.image2 = request.FILES.get('image2')
 
             if 'image3' in request.FILES:
-            # Delete the existing image1 file
+                # Delete the existing image3 file
                 if content.image3:
                     os.remove(content.image3.path)
-                    updatedimage3 = request.FILES.get('image3')
+                content.image3 = request.FILES.get('image3')
+
             if 'image4' in request.FILES:
-            # Delete the existing image1 file
+                # Delete the existing image3 file
                 if content.image4:
                     os.remove(content.image4.path)
-                    updatedimage4 = request.FILES.get('image4')
+                content.image4 = request.FILES.get('image4')
 
+            # category_name = request.POST.get('category')
 
+            # Retrieve the category if it exists, otherwise assign a default category
+            categoryobject=Category.objects.get(name=category_name)
 
-            updated=Products(id=someid,name=name,price=price,quantity=quantity,category=categoryobject,description=description,image1=updatedimage1,image2=updatedimage2,image3=updatedimage3,image4=updatedimage4)
-            updated.save()
-            successmsg="Successfully Updated"
+            content.category = categoryobject
+
+            content.save()
             return redirect(products)
         if error:
             return render(request,"storeadmin/products/editproducts.html",{"content":content,"error":error})
 
+    return render(request,"storeadmin/products/editproducts.html",{"content":content})
+
+
+
+
+
+# MYCODE
+
+# def editproducts(request,someid):
+#     content=Products.objects.get(id=someid)
+#     if request.method=="POST":
+#         name=request.POST.get("name")
+#         price=request.POST.get("price")
+#         quantity=request.POST.get("quantity")
+#         category_name=request.POST.get("category")
+#         # image1=request.FILES.get("image")
+#         # print(image1,"******")
+#         description=request.POST.get("description")
+#         if len(name)<4:
+#             error="Productname should contain minimum four characters"
+#         elif len(name)>20:
+#             error="Username can only have upto 20 characters"
+#         elif name.isalpha()==False:
+#             error="Productname can't have numbers" 
+#         elif price.isalpha()==True:
+#             error="Price can't have letters"
+#         elif quantity.isalpha()==True:
+#             error="Quantity can't have letters"
+#         # elif category.isalpha==False:
+#         #     error="Category field can't have numbers"
+#         elif len(description)<4:
+#             error="Description should contain minimum four characters"
+#         else:
+#             categoryobject=Category.objects.get(name=category_name)
+
+#             if 'image1' in request.FILES:
+#             # Delete the existing image1 file
+#                 if content.image1:
+#                     os.remove(content.image1.path)
+#                     updatedimage1 = request.FILES.get('image1')
+
+
+#             if 'image2' in request.FILES:
+#             # Delete the existing image1 file
+#                 if content.image2:
+#                     os.remove(content.image4.path)
+#                     updatedimage2 = request.FILES.get('image2')
+
+#             if 'image3' in request.FILES:
+#             # Delete the existing image1 file
+#                 if content.image3:
+#                     os.remove(content.image3.path)
+#                     updatedimage3 = request.FILES.get('image3')
+#             if 'image4' in request.FILES:
+#             # Delete the existing image1 file
+#                 if content.image4:
+#                     os.remove(content.image4.path)
+#                 updatedimage4 = request.FILES.get('image4')
+
+
+
+#             updated=Products(id=someid,name=name,price=price,quantity=quantity,category=categoryobject,description=description,image1=updatedimage1,image2=updatedimage2,image3=updatedimage3,image4=updatedimage4)
+#             updated.save()
+#             successmsg="Successfully Updated"
+#             return redirect(products)
+#         if error:
+#             return render(request,"storeadmin/products/editproducts.html",{"content":content,"error":error})
+
           
 
 
-    return render(request,"storeadmin/products/editproducts.html",{"content":content})
+#     return render(request,"storeadmin/products/editproducts.html",{"content":content})
 
 def deleteproducts(request,someid):
     content=Products.objects.get(id=someid)

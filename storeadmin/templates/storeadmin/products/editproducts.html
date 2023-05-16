@@ -24,7 +24,25 @@
 
 
 
-    
+    {% comment %} <label for="image">Image</label>
+                    <div class="card-img-top">
+                      <img src="{{ prod.image1.url }}" class="card-img" alt="Image 1" style="max-width: 200px; max-height: 200px;">
+                    </div>
+                    
+                    <input type="file" class="form-control" id="image1" name="image1" accept="image/*" >
+                  </div>
+                  <div>
+                    <label for="image">Image</label>
+                    <img src="{{ prod.image2.url }}" class="card-img" alt="Image 1" style="max-width: 200px; max-height: 200px;">
+                    <input type="file" class="form-control" id="image2" name="image2" accept="image/*" >
+                  </div>
+                  <div>
+                    <div>
+                      <label for="image3">Image</label>
+                      <div class="card-img-top">
+                        <img src="{{ prod.image3.url }}" class="card-img" alt="Image 1" style="max-width: 200px; max-height: 200px;">
+                      </div>
+                      <input type="file" class="form-control mt-3" id="image3" name="image3" accept="image/*"> {% endcomment %}
 
 
 
@@ -40,34 +58,35 @@
 
 
     <div class="form-group mt-2">
-      <label for="inputImage">Image1</label>
-      <input name="images" type="file" class="form-control-file" id="inputImage">
+
+      <label for="image1">Image1</label>
+      <input name="image1" type="file" class="form-control-file" id="image1">
       
-      <img name="image1" src="{{ content.image1.url }}" alt="{{ content.title }}">
+      <img  src="{{ content.image1.url }}" alt="{{ content.title }}">
       
     </div>
 
 
 
     <div class="form-group mt-2">
-      <label for="inputImage">Image2</label>
-      <input name="images" type="file" class="form-control-file" id="inputImage">
+      <label for="image2">Image2</label>
+      <input name="image2" type="file" class="form-control-file" id="image2">
       
-      <img name="image2" src="{{ content.image2.url }}" alt="{{ content.title }}">
+      <img  src="{{ content.image2.url }}" alt="{{ content.title }}">
       
     </div>
     <div class="form-group mt-2">
-      <label for="inputImage">Image3</label>
-      <input name="images" type="file" class="form-control-file" id="inputImage">
+      <label for="image3">Image3</label>
+      <input name="image3" type="file" class="form-control-file" id="image3">
       
       <img name="image3" src="{{ content.image3.url }}" alt="{{ content.title }}">
       
     </div>
     <div class="form-group mt-2">
-      <label for="inputImage">Image4</label>
-      <input name="images" type="file" class="form-control-file" id="inputImage">
+      <label for="image4">Image4</label>
+      <input name="image4" type="file" class="form-control-file" id="image4">
       
-      <img name="image4" src="{{ content.image4.url }}" alt="{{ content.title }}">
+      <img  src="{{ content.image4.url }}" alt="{{ content.title }}">
       
     </div>
 
