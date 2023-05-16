@@ -278,13 +278,34 @@ def editproducts(request, someid):
 
 
 #     return render(request,"storeadmin/products/editproducts.html",{"content":content})
+def deleteproducts(request, someid):
+    print(someid,"SOMEID ***********")
+    
 
-def deleteproducts(request,someid):
-    content=Products.objects.get(id=someid)
-    if request.method=="POST":
-        content.delete()
-        return redirect(products)
-    return render(request,"storeadmin/products/deleteproducts.html",{"content":content})
+    content = Products.objects.get(id=someid)
+    print(content.name,"CONTENT###########################")
+    content.delete()
+
+
+
+    # all=Category.objects.all()
+    # for item in all:
+    #     print(item.name,"$$$$$$$$$$$$$$$")
+
+
+
+
+
+    return JsonResponse({"message": "Product deleted successfully."})
+
+
+
+# def deleteproducts(request,someid):
+#     content=Products.objects.get(id=someid)
+#     if request.method=="POST":
+#         content.delete()
+#         return redirect(products)
+#     return render(request,"storeadmin/products/deleteproducts.html",{"content":content})
 
 def addproducts(request):
     if request.method=="POST":

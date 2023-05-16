@@ -376,4 +376,4 @@ def cancelorder(request,someid):
     print("******************")
 
 
-    return JsonResponse("Cancelled!")
+    return JsonResponse({"message": "Order cancelled successfully."})
