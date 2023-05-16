@@ -338,8 +338,8 @@
             
           </li>
           <li class="nav-item">
-            <a class="nav-link" data-toggle="collapse" href="#tables" aria-expanded="false" aria-controls="tables">
-              <i class="icon-grid-2 menu-icon"></i>
+            <a class="nav-link"  href={% url 'admin_orders' %} aria-expanded="false" aria-controls="charts">
+              <i class="icon-bar-graph menu-icon"></i>
               <span class="menu-title">Orders</span>
               <i class="menu-arrow"></i>
             </a>
@@ -379,10 +379,10 @@
               new Chart(ctx, {
                 type: 'bar',
                 data: {
-                  labels: [{% for category in categorys  %} '{{category.name}}',  {% endfor %}],
+                  labels: [{% for item in orderdict  %} '{{item}}',  {% endfor %}],
                   datasets: [{
                     label: '# of Votes',
-                    data: [{% for category in categorys  %} {{category.noofitems}},  {% endfor %}],
+                    data: [{% for key,value in orderdict.items  %} {{value}},  {% endfor %}],
                     borderWidth: 1
                   }]
                 },

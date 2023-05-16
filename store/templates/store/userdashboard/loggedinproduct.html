@@ -601,9 +601,9 @@
 								<span class="stext-105 cl3">
 									{{item.price}}
 								</span>
-								<a href={% url 'buynow' item.id %}>
+								{% comment %} <a href={% url 'buynow' item.id %}>
 									Buy it
-								</a>
+								</a> {% endcomment %}
 								
 								<a href={% url 'preview' item.id %}>Preview</a>
 								<a href={% url 'addtocart' item.id %}> Add to Cart</a>

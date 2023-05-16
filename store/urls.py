@@ -12,7 +12,9 @@ urlpatterns = [
     path("blog",views.contact,name="contact"),
     path("otplogin/",views.otplogin,name="otplogin"),
     path("verifyotp/",views.verifyotp,name="verifyotp"),
-    path("buynow/<int:someid>",views.buynow,name="buynow"),
+    # path("buynow/<int:someid>",views.buynow,name="buynow"),
+    path("cancelorder/<int:someid>",views.cancelorder,name="cancelorder"),
+
 
 
 
@@ -24,6 +26,7 @@ urlpatterns = [
     path("loggedincart/",views.loggedincart,name="loggedincart"),
     path("checkout/",views.checkout,name="checkout"),
     path("cashondelivery/",views.cashondelivery,name="cashondelivery"),
+    path("previousorders/",views.previousorders,name="previousorders"),
     
     
 

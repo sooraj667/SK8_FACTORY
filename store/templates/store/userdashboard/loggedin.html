@@ -34,6 +34,7 @@
 <!--===============================================================================================-->
 	<link rel="stylesheet" type="text/css" href="{% static 'store/css/util.css' %}">
 	<link rel="stylesheet" type="text/css" href="{% static 'store/css/main.css' %}">
+	
 <!--===============================================================================================-->
 	{% block head %}	{% endblock head %}	
 </head>
@@ -78,7 +79,7 @@
 					
 					<!-- Logo desktop -->		
 					<a href="#" class="logo">
-						<img src="{% static 'store/images/icons/logo-01.png' %}" alt="IMG-LOGO">
+						<img src="{% static 'store/images/icons/sk8 factory - logo.svg' %}" alt="IMG-LOGO">
 					</a>
 
 					<!-- Menu desktop -->
@@ -135,6 +136,10 @@
                             </button>
 
                         </a>
+				
+
+
+						
                      
 					</div>
 				</nav>
@@ -333,6 +338,13 @@
 						<a href="shoping-cart.html" class="flex-c-m stext-101 cl0 size-107 bg3 bor2 hov-btn3 p-lr-15 trans-04 m-b-10">
 							Check Out
 						</a>
+					</div>
+					<div>
+						<a href={% url 'previousorders' %} class="flex-c-m stext-101 cl0 size-107 bg3 bor2 hov-btn3 p-lr-15 trans-04 m-r-8 m-b-10">
+							Previous Orders
+						</a>
+						
+
 					</div>
 				</div>
 			</div>
@@ -1689,6 +1701,11 @@ Copyright &copy;<script>document.write(new Date().getFullYear());</script> All r
 	</script>
 <!--===============================================================================================-->
 	<script src="{% static 'store/js/main.js' %}"></script>
+
+	{% block script %}
+
+	{% endblock script %}
+
 
 </body>
 </html>

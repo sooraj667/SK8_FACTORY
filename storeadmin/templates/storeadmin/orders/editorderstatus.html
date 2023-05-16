@@ -1,0 +1,25 @@
+{% extends 'storeadmin/index.html' %}
+{% block content %}
+
+<form class="p-5" method="POST" action=""> {% csrf_token %}
+          
+    <div class="form-group mt-2">
+      {% comment %} {% for item in content  %} {% endcomment %}
+      {% comment %} <label for="username">Payment Type</label>
+      <input value="{{item.ordertype}}" name="ordertype" type="text" class="form-control" id="username" placeholder="Enter username"> {% endcomment %}
+      <label for="username">Status</label>
+      {% comment %} <input value="{{item.orderstatus}}" name="orderstatus" type="number" class="form-control" id="username" placeholder="Enter username"> {% endcomment %}
+      <select name="orderstatus" class="form-control" id="orderstatus">
+        <option value="Ordered" {% if item.orderstatus == "Ordered" %}selected{% endif %}>Ordered</option>
+        <option value="Cancelled" {% if item.orderstatus == "Cancelled" %}selected{% endif %}>Cancelled</option>
+        <option value="Shipped" {% if item.orderstatus == "Shipped" %}selected{% endif %}>Shipped</option>
+    </select>
+    </div>
+    <button type="submit" class="btn btn-primary mt-4">Update</button>
+    <h5> {{error}}</h5>
+    {% comment %} {% endfor %} {% endcomment %}
+  
+  </form> 
+
+
+{% endblock content %}

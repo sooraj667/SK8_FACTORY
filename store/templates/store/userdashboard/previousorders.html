@@ -1,0 +1,100 @@
+{% extends 'store/userdashboard/loggedin.html' %}
+{% block content %}
+
+<div class="row mt-5"></div>
+<div class="row mt-5"></div>
+<div class="row mt-5"></div>
+<div class="row mt-5"></div>
+
+<div class="container">
+    <div class="row">
+        <span class="block1-name ltext-102 trans-04 p-b-8">
+            Your Orders
+        </span>
+        <div class="row mt-5"></div>
+        <div class="row mt-5"></div>
+    </div>
+    <div class="row">
+        <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>Product</th>
+                <th>Price</th>
+                <th>Quantity</th>
+                <th>Date</th>
+                <th>Status Of Order</th>
+                <th>Image</th>
+                <th>Cancel</th>
+                
+              </tr>
+            </thead>
+            <tbody>
+              {% for item in orderobjs %}
+              <tr>
+                <td>{{ item.product.name }}</td>
+                <td>{{ item.product.price }}</td>
+                <td>{{ item.quantity }}</td>
+                <td>{{ item.orderdate }}</td>
+                <td>{{ item.orderstatus }}</td>
+                <td><img class="img-fluid img-thumbnail" src="{{ item.product.image1.url }}" alt="" width="50" height="50"></td>
+                <td><button  type="button" class="btn delete-btn btn-danger" data-category-id="{{ item.id }}">Cancel</button></td>
+                {% comment %} <td>
+                  <a href="{% url 'admin_editproducts' item.id %}">
+                    <button class="btn edit-btn btn-warning">Edit</button>
+                  </a>
+                </td>
+                <td>
+                  <a href="{% url 'admin_deleteproducts' item.id %}">
+                    <button class="btn delete-btn btn-danger">Delete</button>
+                  </a>
+                </td> {% endcomment %}
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        
+
+    </div>
+    
+</div>
+   
+
+
+
+
+
+
+
+<div class="row mt-5"></div>
+<div class="row mt-5"></div>
+<div class="row mt-5"></div>
+<div class="row mt-5"></div>
+
+
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js" integrity="sha512-pumBsjNRGGqkPzKHndZMaAG+bir374sORyzM3uulLV14lN5LyykqNk8eEeUlUkB3U0M4FApyaHraT65ihJhDpQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script>
+
+  $(".delete-btn").click(function() {
+    var someid  = $(this).data("category-id");
+    if (confirm("Are you sure you want to cancel this order?")) {
+        
+        $.ajax({
+            url: "../cancelorder/" + someid  + "/",
+            type: "GET",
+            beforeSend: function(xhr) {
+              xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
+            },
+            success: function(response) {
+                alert(response.message);
+                location.reload();
+            },
+            error: function(xhr, status, error) {
+                alert("Error: " + error);
+            }
+        });
+    }
+});  
+</script>
+{% endblock content %}

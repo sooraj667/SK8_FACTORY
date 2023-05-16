@@ -2,16 +2,17 @@ from django.shortcuts import render,redirect
 from .models import *
 import re
 import random
-from django.conf import settings
+
 from twilio.rest import Client
 from django.contrib import messages
 import razorpay
-from django.conf import settings
+
 from django.http import JsonResponse
 from django.http import HttpResponse
 from decimal import Decimal
 from datetime import date
 import paypal
+from ecommerce.settings import RAZORPAY_API_SECRET_KEY,RAZORPAY_API_KEY
 # Create your views here.
 
 def index(request):
@@ -219,6 +220,16 @@ def loggedincart(request):
         return redirect(login)
     
 def checkout(request):
+    client = razorpay.Client(
+    auth=(RAZORPAY_API_KEY, RAZORPAY_API_SECRET_KEY))
+    amount=2000
+    currency='INR'
+    data = dict(amount=amount,currency=currency,payment_capture=1)
+            
+    payment_order = client.order.create(data=data)
+    payment_order_id=payment_order['id']
+    print(payment_order)
+
     if request.method=="POST":
         error={}
         country=request.POST.get("country")
@@ -276,33 +287,30 @@ def checkout(request):
     totalsum=0
     for item in cartobjs:
         totalsum+=item.total
-    return render(request,"store/userdashboard/checkout.html",{"addressobjs":addressobjs,"cartobjs":cartobjs,"totalsum":totalsum})
+    return render(request,"store/userdashboard/checkout.html",{"addressobjs":addressobjs,"cartobjs":cartobjs,"totalsum":totalsum,     "amount":200,"order_id":payment_order_id,"api_key":RAZORPAY_API_KEY })
 
 def cashondelivery(request):
-    cartobjs=Cart.objects.all()
-    address=Address.objects.get(id=1)
-    for item in cartobjs:
-        userobj=item.user
-        pdtobj=item.product
-        quantityobj=item.quantity
-        addressobj=address
-        orderstatusobj="Ordered"
-        orderdateobj=date.today() 
-    orderdata=Orders(user=userobj,product=pdtobj,quantity=quantityobj,address=addressobj,orderstatus=orderstatusobj,orderdate=orderdateobj)
-    orderdata.save()
-    totalsum=0
-    for item in cartobjs:
-        totalsum+=item.total
+    if request.method=="POST":
 
+        cartobjs=Cart.objects.all()
+        housename=request.POST.get("address")
+        print("$$$$$$$$$$$$",housename)
+        for item in cartobjs:
+            userobj=item.user
+            pdtobj=item.product
+            quantityobj=item.quantity
+            addressobj=Address.objects.get(house=housename)
+            orderstatusobj="Ordered"
+            ordertypeobj="Cash On Delivery"
+            orderdateobj=date.today() 
+        orderdata=Orders(user=userobj,product=pdtobj,quantity=quantityobj,address=addressobj,orderstatus=orderstatusobj,orderdate=orderdateobj,ordertype=ordertypeobj)
+        orderdata.save()
+        cartobjs.delete()
+        totalsum=0
+        for item in cartobjs:
+            totalsum+=item.total
 
-
-    
-    
-    
-
-    
-
-    return render(request,"store/userdashboard/orderplaced.html",{"totalsum":totalsum,"cartobjs":cartobjs})
+        return render(request,"store/userdashboard/orderplaced.html",{"totalsum":totalsum,"cartobjs":cartobjs})
 
 def addtocart(request,someid):
    
@@ -326,33 +334,46 @@ def addtocart(request,someid):
             cartadd.save()
             return redirect(loggedinproduct) 
 
+def previousorders(request):
+    orderobjs=Orders.objects.all()
+    return render(request,"store/userdashboard/previousorders.html",{"orderobjs":orderobjs})
+
+# def buynow(request,someid):
+#     if "username" in request.session:
+#         if request.method=="POST":
+#             # authorize razorpay client with API Keys.
+#             client = razorpay.Client(
+#             auth=(settings.RAZORPAY_API_KEY, settings.RAZORPAY_API_SECRET_KEY))
+#             amount=200
+#             currency='INR'
+#             data = dict(amount=amount,currency=currency,payment_capture=1)
+            
+#             payment_response = client.order.create(data=data)
+#             print(payment_response)
 
 
-def buynow(request,someid):
-    if "username" in request.session:
-        if request.method=="POST":
-            # authorize razorpay client with API Keys.
-            client = razorpay.Client(
-            auth=(settings.RAZORPAY_API_KEY, settings.RAZORPAY_API_SECRET_KEY))
-            amount=200
-            order_currency='INR'
-            data = {
-            'amount': int(amount),
-            'currency': 'INR',
-            'receipt':"order_rcpt_12"
-            }
-            payment_response = client.order.create(data=data)
-            print(payment_response)
+#             usname=request.session["username"] #This session is created during login
+#             user=Customers.objects.get(username=usname)
+#             product=Products.objects.get(id=someid)
+#             ord=Orders(productid=product,userid=user)
+#             ord.save()
+#             return render(request,"store/orderconfirmed.html",{"pdt":product,"user":user})
 
 
-            usname=request.session["username"] #This session is created during login
-            user=Customers.objects.get(username=usname)
-            product=Products.objects.get(id=someid)
-            ord=Orders(productid=product,userid=user)
-            ord.save()
-            return render(request,"store/orderconfirmed.html",{"pdt":product,"user":user})
+#         product=Products.objects.get(id=someid)
+#         return render(request,"store/buynow.html",{"product":product})
 
 
-        product=Products.objects.get(id=someid)
-        return render(request,"store/buynow.html",{"product":product})
+def cancelorder(request,someid):
 
+    print(someid,"SOMEID ***********")
+    orderobj=Orders.objects.get(id=someid)
+    orderobj.orderstatus="Cancelled"
+    orderobj.save()
+
+    print("******************")
+    print(orderobj.orderstatus)
+    print("******************")
+
+
+    return JsonResponse("Cancelled!")

@@ -53,6 +53,7 @@ class Orders(models.Model):
     address=models.ForeignKey(Address,on_delete=models.CASCADE)
     orderdate=models.DateField(auto_now_add=True)
     orderstatus=models.CharField(max_length=200,default="pending")
+    ordertype=models.CharField(max_length=200)
     quantity=models.PositiveIntegerField()
 
 

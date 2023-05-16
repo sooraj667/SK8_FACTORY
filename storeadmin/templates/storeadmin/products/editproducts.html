@@ -1,7 +1,7 @@
 {% extends 'storeadmin/index.html' %}
 
 {% block content %}
-<form class="p-5" method="POST" action=""> {% csrf_token %}
+<form class="p-5" method="POST" action="" enctype="multipart/form-data"> {% csrf_token %}
           
     <div class="form-group mt-2">
       {% comment %} {% for item in content  %} {% endcomment %}
@@ -21,13 +21,59 @@
       <label for="inputConfirmPassword">Category </label>
       <input  value="{{content.category.name}}"   name="category" type="text" class="form-control" id="inputConfirmPassword" placeholder="Confirm Password">
     </div>
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     <div class="form-group mt-2">
-      <label for="inputImage">Image</label>
+      <label for="inputImage">Image1</label>
       <input name="images" type="file" class="form-control-file" id="inputImage">
       
-      <img name="image" src="{{ content.image1.url }}" alt="{{ content.title }}">
+      <img name="image1" src="{{ content.image1.url }}" alt="{{ content.title }}">
       
     </div>
+
+
+
+    <div class="form-group mt-2">
+      <label for="inputImage">Image2</label>
+      <input name="images" type="file" class="form-control-file" id="inputImage">
+      
+      <img name="image2" src="{{ content.image2.url }}" alt="{{ content.title }}">
+      
+    </div>
+    <div class="form-group mt-2">
+      <label for="inputImage">Image3</label>
+      <input name="images" type="file" class="form-control-file" id="inputImage">
+      
+      <img name="image3" src="{{ content.image3.url }}" alt="{{ content.title }}">
+      
+    </div>
+    <div class="form-group mt-2">
+      <label for="inputImage">Image4</label>
+      <input name="images" type="file" class="form-control-file" id="inputImage">
+      
+      <img name="image4" src="{{ content.image4.url }}" alt="{{ content.title }}">
+      
+    </div>
+
+
+
+
     <div class="form-group mt-2">
         <label for="inputConfirmPassword">Description </label>
         <input value="{{content.description}}"  name="description" type="text" class="form-control" id="inputConfirmPassword" placeholder="Confirm Password">

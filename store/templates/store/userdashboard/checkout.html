@@ -84,12 +84,26 @@
 				</div>
 			</div>
 			<label for="dropdown">Select an option:</label>
-			<select id="dropdown">
+
+			{% comment %} <select name="orderstatus" class="form-control" id="orderstatus">
+				<option value="Ordered" {% if item.orderstatus == "Ordered" %}selected{% endif %}>Ordered</option>
+				<option value="Cancelled" {% if item.orderstatus == "Cancelled" %}selected{% endif %}>Cancelled</option>
+				<option value="Shipped" {% if item.orderstatus == "Shipped" %}selected{% endif %}>Shipped</option>
+			</select> {% endcomment %}
+
+			{% comment %} <select id="dropdown" name="address">
+				{% for item in addressobjs  %}
+				<option value="{{item.house}}">{{item.country}} <br>{{item.state}}<br>{{item.house}} </option>
+				{% endfor %}
+	
+			</select>  {% endcomment %}
+
+			{% comment %} <select id="dropdown">
 			{% for item in addressobjs  %}
 			<option value="option1">{{item.country}} <br>{{item.state}}<br>{{item.house}} </option>
 			{% endfor %}
 
-			</select>
+			</select> {% endcomment %}
 
         </div>
 
@@ -148,12 +162,28 @@
 				</div>
 
 			</div>
-			<a href={% url 'cashondelivery' %}>
+
+			<form method="POST" action="{% url 'cashondelivery' %}">
+				{% csrf_token %}
+				<select id="dropdown" name="address">
+					{% for item in addressobjs  %}
+					<option value="{{item.house}}">{{item.country}} <br>{{item.state}}<br>{{item.house}} </option>
+					{% endfor %}
+		
+				</select> 
+
+				<button type="submit" class="btn btn-primary">Cash On Delivery</button>
+				
+
+
+
+			</form>
+			{% comment %} <a href=>
 				<button type="button" class="btn btn-primary">Cash On Delivery</button>
 
-			</a>
+			</a> {% endcomment %}
 
-			<button class="btn-success"id="rzp-button1">Pay with Razorpay</button>
+			<button type="submit" class="btn-success" id="rzp-button1">Pay with Razorpay</button>
 			
 			
 			
@@ -176,50 +206,7 @@
 
 
 
-<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-<script>
-var options = {
-    "key": "rzp_test_dpiSP2IlPN5nSf", // Enter the Key ID generated from the Dashboard
-    "amount": "{{razoramount}}", // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
-    "currency": "INR",
-    "name": "SK8 FACTORY ",
-    "description": "Test Transaction",
-    //"image": "https://example.com/your_logo",
-    "order_id": "{{order_id}}", //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
-    "handler": function (response){
-		alert("success");
-        //alert(response.razorpay_payment_id);
-        //alert(response.razorpay_order_id);
-        //alert(response.razorpay_signature)
-    },
-    //"prefill": {
-        //"name": "Gaurav Kumar",
-        //"email": "gaurav.kumar@example.com",
-        //"contact": "9000090000"
-    //},
-    //"notes": {
-       // "address": "Razorpay Corporate Office"
-    //},
-    "theme": {
-        "color": "#3399cc"
-    }
-};
-var rzp1 = new Razorpay(options);
-rzp1.on('payment.failed', function (response){
-		alert(response.error.description);
-        //alert(response.error.code);
-        //alert(response.error.description);
-        //alert(response.error.source);
-        //alert(response.error.step);
-        //alert(response.error.reason);
-        //alert(response.error.metadata.order_id);
-        //alert(response.error.metadata.payment_id);
-});
-document.getElementById('rzp-button1').onclick = function(e){
-    rzp1.open();
-    e.preventDefault();
-}
-</script>
+
 
 
 
@@ -228,5 +215,55 @@ document.getElementById('rzp-button1').onclick = function(e){
 
 
 {% endblock content %}
+
+
+
+
+{% block script %}
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+var options = {
+	"key": "{{api_key}}", // Enter the Key ID generated from the Dashboard
+	"amount": "{{amount}}", // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+	//"currency": "INR",
+	"name": "SK8 FACTORY ",
+	"description": "Test Transaction",
+	//"image": "https://example.com/your_logo",
+	"order_id": "{{order_id}}", //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
+	"handler": function (response){
+		alert(response.razorpay_payment_id);
+		alert(response.razorpay_order_id);
+		alert(response.razorpay_signature)
+	},
+	"prefill": {
+	"name": "Gaurav Kumar",
+	"email": "gaurav.kumar@example.com",
+	"contact": "9000090000"
+	},
+	"notes": {
+	  "address": "Razorpay Corporate Office"
+	},
+	"theme": {
+		"color": "#3399cc"
+	}
+};
+var rzp1 = new Razorpay(options);
+rzp1.on('payment.failed', function (response){
+		//alert(response.error.code);
+		alert(response.error.description);
+		//alert(response.error.source);
+		//alert(response.error.step);
+		//alert(response.error.reason);
+		//alert(response.error.metadata.order_id);
+		//alert(response.error.metadata.payment_id);
+});
+document.getElementById('rzp-button1').onclick = function(e){
+	rzp1.open();
+	e.preventDefault();
+}
+</script>
+	
+{% endblock script %}
 
 

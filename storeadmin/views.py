@@ -7,6 +7,7 @@ from django.views.decorators.cache import never_cache
 from django.core.files.storage import FileSystemStorage
 from django.http import JsonResponse
 from django.db import IntegrityError
+import os
 # Create your views here.
 @never_cache
 def adminsignin(request):
@@ -28,8 +29,16 @@ def adminsignin(request):
 @never_cache
 def index(request):
     if "adminname" in request.session:
-        categorys=Category.objects.all()
-        return render(request,"storeadmin/index.html",{"categorys":categorys})
+        orderobjs=Orders.objects.all()
+        orderdict={}
+        for item in orderobjs:
+            if item.product.name not in orderdict:
+                orderdict[item.product.name]=item.quantity
+            else:
+                orderdict[item.product.name]+=item.quantity
+
+        print(orderdict,"$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")    
+        return render(request,"storeadmin/index.html",{"orderdict":orderdict})
     else:
         return redirect(adminsignin)
 @never_cache  
@@ -84,6 +93,48 @@ def products(request):
 
 
 
+# def edit(request, product_id):
+#     prod = get_object_or_404(Product, product_id=product_id)
+
+#     if request.method == 'POST':
+#         prod.name = request.POST.get('name')
+#         prod.description = request.POST.get('description')
+#         prod.price = request.POST.get('price')
+
+#         # Check if new images are provided
+#         if 'image1' in request.FILES:
+#             # Delete the existing image1 file
+#             if prod.image1:
+#                 os.remove(prod.image1.path)
+#             prod.image1 = request.FILES.get('image1')
+
+#         if 'image2' in request.FILES:
+#             # Delete the existing image2 file
+#             if prod.image2:
+#                 os.remove(prod.image2.path)
+#             prod.image2 = request.FILES.get('image2')
+
+#         if 'image3' in request.FILES:
+#             # Delete the existing image3 file
+#             if prod.image3:
+#                 os.remove(prod.image3.path)
+#             prod.image3 = request.FILES.get('image3')
+
+#         category_name = request.POST.get('catogery')
+
+#         # Retrieve the category if it exists, otherwise assign a default category
+#         cat_obj, _ = category.objects.get_or_create(name=category_name)
+
+#         prod.catogery = cat_obj
+
+#         prod.save()
+#         return redirect('productview')
+#     else:
+#         context = {'prod': prod}
+#         return render(request, 'edit.html', context)
+
+
+
 def editproducts(request,someid):
     content=Products.objects.get(id=someid)
     if request.method=="POST":
@@ -91,8 +142,8 @@ def editproducts(request,someid):
         price=request.POST.get("price")
         quantity=request.POST.get("quantity")
         category_name=request.POST.get("category")
-        image1=request.POST.get("image")
-        print(image1,"******")
+        # image1=request.FILES.get("image")
+        # print(image1,"******")
         description=request.POST.get("description")
         if len(name)<4:
             error="Productname should contain minimum four characters"
@@ -110,7 +161,34 @@ def editproducts(request,someid):
             error="Description should contain minimum four characters"
         else:
             categoryobject=Category.objects.get(name=category_name)
-            updated=Products(id=someid,name=name,price=price,quantity=quantity,category=categoryobject,description=description,image1=image1)
+
+            if 'image1' in request.FILES:
+            # Delete the existing image1 file
+                if content.image1:
+                    os.remove(content.image1.path)
+                    updatedimage1 = request.FILES.get('image1')
+
+
+            if 'image2' in request.FILES:
+            # Delete the existing image1 file
+                if content.image2:
+                    os.remove(content.image4.path)
+                    updatedimage2 = request.FILES.get('image2')
+
+            if 'image3' in request.FILES:
+            # Delete the existing image1 file
+                if content.image3:
+                    os.remove(content.image3.path)
+                    updatedimage3 = request.FILES.get('image3')
+            if 'image4' in request.FILES:
+            # Delete the existing image1 file
+                if content.image4:
+                    os.remove(content.image4.path)
+                    updatedimage4 = request.FILES.get('image4')
+
+
+
+            updated=Products(id=someid,name=name,price=price,quantity=quantity,category=categoryobject,description=description,image1=updatedimage1,image2=updatedimage2,image3=updatedimage3,image4=updatedimage4)
             updated.save()
             successmsg="Successfully Updated"
             return redirect(products)
@@ -279,3 +357,29 @@ def addcategories(request):
 
 #     return render(request,"storeadmin/categories/addcategories.html")
 
+
+def orders(request):
+    orderobjs=Orders.objects.all()
+
+
+    return render(request,"storeadmin/orders/orders.html",{"orderobjs":orderobjs})
+
+
+def editorderstatus(request,someid):
+
+    if request.method=="POST":
+        orderstatus=request.POST.get("orderstatus")
+
+        orderobj=Orders.objects.get(id=someid)
+        quantity=orderobj.quantity
+        address=orderobj.address
+        orderdate=orderobj.orderdate
+        product=orderobj.product
+        user=orderobj.user
+        ordertype=orderobj.ordertype
+        
+        orderupdates=Orders(id=someid,orderstatus=orderstatus,ordertype=ordertype,quantity=quantity,address=address,orderdate=orderdate,product=product,user=user)
+        orderupdates.save()
+        return redirect(orders)
+
+    return render(request,"storeadmin/orders/editorderstatus.html")
