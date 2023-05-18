@@ -20,47 +20,140 @@
 							<table class="table-shopping-cart">
 								<tr class="table_head">
 									<th class="column-1">Product</th>
-									<th class="column-2"></th>
+									<th class="column-2">Name</th>
 									<th class="column-3">Price</th>
-									<th class="column-4">Quantity</th>
-									<th class="column-5">Total</th>
+									<th class="column-4">Total</th>
+									<th class="column-5 ">Quantity</th>
+									
 								</tr>
-                                {% for item in cartobjs  %}
-								<tr class="table_row">
-									<td class="column-1">
-										<div class="how-itemcart1">
-											<img src='{{item.product.image1.url}}' alt="IMG">
-										</div>
-									</td>
-									<td class="column-2">{{item.product.name}}</td>
-									<td class="column-3">{{item.product.price}}</td>
-									<td class="column-4">
+								<div id="cart-content">
 
-										{{item.quantity}} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-
-
-
-
-
-										{% comment %} <div class="wrap-num-product flex-w m-l-auto m-r-0">
-											<div class="btn-num-product-down cl8 hov-btn3 trans-04 flex-c-m">
-												<i class="fs-16 zmdi zmdi-minus"></i>
+									{% for item in cartobjs  %}
+									<tr class="table_row">
+										<td class="column-1">
+											<div class="how-itemcart1">
+												<img src='{{item.product.image1.url}}' alt="IMG">
 											</div>
+										</td>
+										<td class="column-2">{{item.product.name}}</td>
+										<td class="column-3">{{item.product.price}}</td>
+										
+										<td class="column-4">{{item.total}}</td>
 
-											<input class="mtext-104 cl3 txt-center num-product" type="number" name="num-product1" value="1">
+										<td class="column-5 ">
 
-											<div class="btn-num-product-up cl8 hov-btn3 trans-04 flex-c-m">
-												<i class="fs-16 zmdi zmdi-plus"></i>
-											</div>
-										</div> {% endcomment %}
-									</td>
-									<td class="column-5">{{item.total}}</td>
-								</tr>
-                                {% endfor %}
+											{% comment %} {{item.quantity}} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {% endcomment %}
+
+											
+
+												<form class="ml-5" method="POST" action="{% url 'updatecart' item.id %}">
+													{% csrf_token %}
+													<div class="row mt-3"></div>
+													<div class="row mt-3"></div>
+													<div class="row mt-3"></div>
+													<div class="mt-5">
+
+
+														<div class="wrap-num-product flex-w m-r-20 m-tb-10 ml-5 ">
+															<div class="btn-num-product-down cl8 hov-btn3 trans-04 flex-c-m">
+																<i class="fs-16 zmdi zmdi-minus"></i>
+															</div>
+															
+															<input class="mtext-104 cl3 txt-center num-product" type="number" name="quantity" value={{item.quantity}}>
+				
+															<div class="btn-num-product-up cl8 hov-btn3 trans-04 flex-c-m">
+																<i class="fs-16 zmdi zmdi-plus"></i>
+															</div>
+														</div>
+
+													</div>
+		
+													
+
+													<div>
+														<button   type="submit" class="btn  btn-danger mt-5" >Update Cart</button>
+
+													</div>
+			
+						
+													
+						
+						
+												</form>
+
+											
+
+											
+					
+											
+					
+											
+											
+											
+											
+					
+											
+
+											{% comment %} <div class="wrap-num-product flex-w m-l-auto m-r-0">
+												<div class="btn-num-product-down cl8 hov-btn3 trans-04 flex-c-m">
+													<i class="fs-16 zmdi zmdi-minus"></i>
+												</div>
+
+												<input class="mtext-104 cl3 txt-center num-product" type="number" name="num-product1" value="1">
+
+												<div class="btn-num-product-up cl8 hov-btn3 trans-04 flex-c-m">
+													<i class="fs-16 zmdi zmdi-plus"></i>
+												</div>
+											</div> {% endcomment %}
+										</td>
+				
+									</tr>
+									{% endfor %}
+
+								</div>
+                                
 
 								
 							</table>
 						</div>
+						
+						
+						{% if cartobjs %}
+
+						<div class="mt-5">
+							
+							<button  type="button" class="btn delete-btn btn-danger" >Remove All Items</button>
+						
+						
+						</div>
+
+					
+						{% comment %} <div class="mt-5">
+							
+							<button  type="button" class="btn update-btn btn-danger" >Update Cart</button>
+						
+						
+						</div> {% endcomment %}
+
+						
+						
+						
+						
+						
+						{% endif %}
+
+						{% if not cartobjs %}
+						<div>
+
+							<h5 class=" text-danger  ml-5 mt-5">No items in Cart!</h5>
+
+
+						</div>
+						
+						
+						
+						{% endif %}
+						
 
 
 
@@ -164,8 +257,11 @@
 						</div>
 
 
+
+
+						
 						<button class="flex-c-m stext-101 cl0 size-116 bg3 bor14 hov-btn3 p-lr-15 trans-04 pointer">
-							<a href={% url 'checkout' %}>Proceed to Checkout</a>
+							<a class="text-info" href={% url 'checkout' %}>Proceed to Checkout</a>
 							
 						</button> 
 					</div>
@@ -178,6 +274,89 @@
 
 
 
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js" integrity="sha512-pumBsjNRGGqkPzKHndZMaAG+bir374sORyzM3uulLV14lN5LyykqNk8eEeUlUkB3U0M4FApyaHraT65ihJhDpQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script>
+
+  {% comment %} $(".delete-categ").click(function(e) {
+	  e.preventDefault()
+    var someid  = $(this).data("category-id");
+    if (confirm("Are you sure you want to delete all items in the cart?")) {
+        
+        $.ajax({
+            url: "/deletecart/" ,
+            type: "GET",
+            beforeSend: function(xhr) {
+              xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
+            },
+            success: function(response) {
+                alert(response.message);
+                location.reload();
+            },
+            error: function(xhr, status, error) {
+                alert("Error: " + error);
+            }
+        });
+    }
+});   {% endcomment %}
+
+
+
+$(".delete-btn").click(function() {
+    //var someid = $(this).data("category-id");
+    if (confirm("Are you sure you want to delete all items in cart?")) {
+        
+        $.ajax({
+            url: "/deletecart/" ,
+            type: "GET",
+            beforeSend: function(xhr) {
+              xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
+            },
+            success: function(response) {
+                //alert(response.message);
+                location.reload(true);
+				//$("#cart-content").empty();
+				//$("#cart-content").html(response.message);
+				console.log(response.message);
+            },
+            error: function(xhr, status, error) {
+                alert("Error: " + error);
+            }
+        });
+    }
+});  
+
+
+
+
+{% comment %} $(".update-btn").click(function() {
+    var someid = $(this).data("category-id");
+	var data = {
+        // Add your data properties here
+        key1: value1,
+        key2: value2,
+        // ...
+    };
+    if (confirm("Are you sure you want to update the cart?")) {
+        
+        $.ajax({
+            url: "/updatecart/"+ someid ,
+            type: "GET",
+            beforeSend: function(xhr) {
+              xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
+            },
+            success: function(response) {
+                alert(response.message);
+                location.reload();
+            },
+            error: function(xhr, status, error) {
+                alert("Error: " + error);
+            }
+        });
+    }
+});   {% endcomment %}
+</script>
 
 
 

@@ -380,8 +380,16 @@ def editcategories(request,someid):
         elif len(name)>20:
             error="Category name can atmost can have 20 letters"
         else:
-            edited=Category(id=someid,name=name,noofitems=items)
-            edited.save()
+            obj.name=name
+            obj.noofitems=items
+            if 'image' in request.FILES:
+                # Delete the existing image1 file
+                if obj.image:
+                    os.remove(obj.image.path)
+                obj.image = request.FILES.get('image')
+            obj.save()
+            # edited=Category(id=someid,name=name,noofitems=items)
+            # edited.save()
             return redirect(categories)
         if error:
             return render(request,"storeadmin/categories/editcategories.html",{"obj":obj,"error":error})
@@ -427,6 +435,7 @@ def addcategories(request):
     if request.method == "POST":
         name = request.POST.get("name")
         quantity=request.POST.get("quantity")
+        image=request.FILES.get("image")
         if len(name) == 0:
             error = "Category name field can't be empty"
         elif not name.isalpha():
@@ -437,7 +446,7 @@ def addcategories(request):
             error = "Category name can have at most 20 letters"
         else:
             try:
-                added = Category(name=name,noofitems=quantity)
+                added = Category(name=name,noofitems=quantity,image=image)
                 added.save()
                 return redirect(categories)
             except IntegrityError:

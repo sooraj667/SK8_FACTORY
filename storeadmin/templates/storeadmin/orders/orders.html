@@ -12,6 +12,7 @@
               <th>Quantity</th>
               <th>Date</th>
               <th>Status</th>
+              <th>Address</th>
               <th>Edit</th>
           
             </tr>
@@ -25,7 +26,9 @@
               <td>{{ item.quantity }}</td>
               <td>{{ item.orderdate }}</td>
               <td>{{ item.orderstatus }}</td>
+              <td>{{ item.address.house }} ,{{ item.address.locality }}</td>
               <td><a href={% url 'admin_editorderstatus' item.id %}><button class="btn edit-btn btn-warning">Edit</button></a></td>
+
               
               {% comment %} <td>
                 <a href="{% url 'admin_editproducts' item.id %}">

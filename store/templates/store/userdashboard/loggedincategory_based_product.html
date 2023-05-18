@@ -1,0 +1,95 @@
+{% extends 'store/userdashboard/loggedin.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row mt-5"></div>
+    <div class="row mt-5"></div>
+    <div class="row mt-5">
+        
+
+        {% for item in productobjs  %}
+					
+					<div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item women">
+						<!-- Block2 -->
+						<div class="block2">
+							<div class="block2-pic hov-img0">
+								
+								
+									  <img src="{{ item.image1.url }}" alt="{{ item.name }} image" class="image-zoom-container">
+								
+	
+		
+							
+							</div>
+	
+							<div class="block2-txt flex-w flex-t p-t-14">
+								<div class="block2-txt-child1 flex-col-l ">
+									<a href="product-detail.html" class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
+										{{item.name}}
+									</a>
+	
+									<span class="stext-105 cl3">
+										Rs.{{item.price}}
+									</span>
+									<br>
+									{% comment %} <a href={% url 'buynow' item.id %}>
+										Buy it
+									</a> {% endcomment %}
+									
+									<a href={% url 'preview' item.id %}> <button class="btn btn-info">Preview</button> </a>
+									{% comment %} <a href={% url 'addtocart' item.id %}> Add to Cart</a> {% endcomment %}
+									{% comment %} <button type="button" class="addit" data-toggle="modal" data-target="#myModal" data-category-id="{{ item.id }}">Add to Cart</button> {% endcomment %}
+	
+										<!-- Modal -->
+										{% comment %} <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
+										<div class="modal-dialog" role="document">
+											<div class="modal-content">
+											<div class="modal-header">
+												<h5 class="modal-title" id="modalLabel">Confirm?</h5>
+												<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+												<span aria-hidden="true">&times;</span>
+												</button>
+											</div>
+											<div class="modal-body">
+												<a id="modalLink" href="#">Yes</a>
+											</div>
+											<div class="modal-footer">
+												<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+											</div>
+											</div>
+										</div>
+										</div> {% endcomment %}
+									  
+	
+	
+									
+									
+										
+									
+								</div>
+						
+								<div class="block2-txt-child2 flex-r p-t-3">
+									<a href="#" class="btn-addwish-b2 dis-block pos-relative js-addwish-b2">
+										<img class="icon-heart1 dis-block trans-04" src="{% static 'store/images/icons/icon-heart-01.png' %}" alt="ICON">
+										<img class="icon-heart2 dis-block trans-04 ab-t-l" src="images/icons/icon-heart-02.png" alt="ICON">
+									</a>
+								</div>
+							</div>
+						</div>
+					</div>
+					
+					
+		
+		{% endfor %}
+
+    </div>
+</div>
+
+
+        
+
+
+
+
+{% endblock content %}

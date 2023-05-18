@@ -6,7 +6,7 @@ import random
 from twilio.rest import Client
 from django.contrib import messages
 import razorpay
-
+from django.conf import settings
 from django.http import JsonResponse
 from django.http import HttpResponse
 from decimal import Decimal
@@ -19,7 +19,7 @@ def index(request):
     if "username" in request.session:
         return redirect(loggedin)
     products=Products.objects.all()
-    category=Products.objects.all()
+    category=Category.objects.all()
     return render(request,"store/index.html",{"products":products,"category":category})
 
 def about(request):
@@ -45,6 +45,18 @@ def shop(request):
     # productimages=ProductImages.objects.all()
 
     return render(request,"store/product.html",{"products":products})
+
+
+
+def category_based_product(request,someid):
+    categoryobj=Category.objects.get(id=someid)
+    productobjs=Products.objects.filter(category=categoryobj)
+    return render(request,"store/category_based_product.html",{"productobjs":productobjs})
+
+def loggedincategory_based_product(request,someid):
+    categoryobj=Category.objects.get(id=someid)
+    productobjs=Products.objects.filter(category=categoryobj)
+    return render(request,"store/userdashboard/loggedincategory_based_product.html",{"productobjs":productobjs})
 
 def signup(request): 
     if "username" in request.session:
@@ -162,14 +174,6 @@ def login(request):
 
             
             
-            # fieldvalues=Customers.objects.get(username=username,password=password)
-            # count=Customers.objects.get(username=username,password=password).count()
-            # if count==1 and fieldvalues.isblocked==False:
-            #     # request.session["username"]=username
-            #     return redirect(otplogin)
-            # if count!=1 or fieldvalues.isblocked==True:
-            #     context="Invalid Credentials"
-            #     return render(request,"store/login.html",{"context":context}) 
 
 
         if error:
@@ -190,14 +194,25 @@ def logout(request):
 
 def loggedin(request):
     if "username" in request.session:
-        return render(request,"store/userdashboard/loggedin.html")
+        category=Category.objects.all()
+        products=Products.objects.all()
+        cartobjs=Cart.objects.all()
+        totalsum=0
+        for item in cartobjs:
+            totalsum+=item.total
+        return render(request,"store/userdashboard/loggedin.html",{"category":category,"products":products,"cartobjs":cartobjs,"totalsum":totalsum})
     else:
         return redirect(login)
 
 def loggedinproduct(request):
     if "username" in request.session:
         products=Products.objects.all()
-        return render(request,"store/userdashboard/loggedinproduct.html",{"products":products})
+        cartobjs=Cart.objects.all()
+        totalsum=0
+        for item in cartobjs:
+            totalsum+=item.total
+
+        return render(request,"store/userdashboard/loggedinproduct.html",{"products":products,"cartobjs":cartobjs,"totalsum":totalsum})
     else:
         return redirect(login)
 
@@ -205,7 +220,12 @@ def preview(request,someid):
     if "username" in request.session:
         print(request.session["username"],"######################")
         pdtobj=Products.objects.get(id=someid)
-        return render(request,"store/userdashboard/preview.html",{"pdtobj":pdtobj})
+        cartobjs=Cart.objects.all()
+        totalsum=0
+        for item in cartobjs:
+            totalsum+=item.total
+
+        return render(request,"store/userdashboard/preview.html",{"pdtobj":pdtobj,"totalsum":totalsum})
     else:
         return redirect(login)
     
@@ -221,10 +241,36 @@ def loggedincart(request):
     else:
         return redirect(login)
     
+
+def deletecart(request):
+    cartobjs=Cart.objects.all()
+    cartobjs.delete()
+    return JsonResponse({"message":"All items in Cart is deleted!"})
+
+def updatecart(request,someid):
+    if request.method=="POST":
+
+        cartobj=Cart.objects.get(id=someid)
+        cartobj.quantity=request.POST.get("quantity")
+        cartobj.total=cartobj.product.price*Decimal(cartobj.quantity)
+        cartobj.save()
+        return redirect(loggedincart)
+
+
+
+
 def checkout(request):
+    
+        
+    cartobjs=Cart.objects.all()
+    if not cartobjs:
+        return redirect(loggedincart)
+    totalsum=0
+    for item in cartobjs:
+        totalsum+=item.total
     client = razorpay.Client(
     auth=(RAZORPAY_API_KEY, RAZORPAY_API_SECRET_KEY))
-    amount=2000
+    amount=int(totalsum*100)
     currency='INR'
     data = dict(amount=amount,currency=currency,payment_capture=1)
             
@@ -289,30 +335,66 @@ def checkout(request):
     totalsum=0
     for item in cartobjs:
         totalsum+=item.total
-    return render(request,"store/userdashboard/checkout.html",{"addressobjs":addressobjs,"cartobjs":cartobjs,"totalsum":totalsum,     "amount":200,"order_id":payment_order_id,"api_key":RAZORPAY_API_KEY })
+    return render(request,"store/userdashboard/checkout.html",{"addressobjs":addressobjs,"cartobjs":cartobjs,"totalsum":totalsum,     "amount":300,"order_id":payment_order_id,"api_key":RAZORPAY_API_KEY})
 
 def cashondelivery(request):
     if request.method=="POST":
+        action=request.POST.get("action")
+        if action=="cashondelivery":
 
-        cartobjs=Cart.objects.all()
-        housename=request.POST.get("address")
-        print("$$$$$$$$$$$$",housename)
-        for item in cartobjs:
-            userobj=item.user
-            pdtobj=item.product
-            quantityobj=item.quantity
-            addressobj=Address.objects.get(house=housename)
-            orderstatusobj="Ordered"
-            ordertypeobj="Cash On Delivery"
-            orderdateobj=date.today() 
-        orderdata=Orders(user=userobj,product=pdtobj,quantity=quantityobj,address=addressobj,orderstatus=orderstatusobj,orderdate=orderdateobj,ordertype=ordertypeobj)
-        orderdata.save()
-        cartobjs.delete()
-        totalsum=0
-        for item in cartobjs:
-            totalsum+=item.total
 
-        return render(request,"store/userdashboard/orderplaced.html",{"totalsum":totalsum,"cartobjs":cartobjs})
+            cartobjs=Cart.objects.all()
+            housename=request.POST.get("address")
+            print("$$$$$$$$$$$$",housename)
+            for item in cartobjs:
+                userobj=item.user
+                pdtobj=item.product
+                quantityobj=item.quantity
+                addressobj=Address.objects.get(house=housename)
+                orderstatusobj="Ordered"
+                ordertypeobj="Cash On Delivery"
+                orderdateobj=date.today() 
+            orderdata=Orders(user=userobj,product=pdtobj,quantity=quantityobj,address=addressobj,orderstatus=orderstatusobj,orderdate=orderdateobj,ordertype=ordertypeobj)
+            orderdata.save()
+            cartobjs.delete()
+            totalsum=0
+            for item in cartobjs:
+                totalsum+=item.total
+
+            return render(request,"store/userdashboard/orderplaced.html",{"totalsum":totalsum,"cartobjs":cartobjs})
+        
+        # elif action=="razorpay":
+        #     client = razorpay.Client(
+        #     auth=(RAZORPAY_API_KEY, RAZORPAY_API_SECRET_KEY))
+        #     amount=2000
+        #     currency='INR'
+        #     data = dict(amount=amount,currency=currency,payment_capture=1)
+                    
+        #     payment_order = client.order.create(data=data)
+        #     payment_order_id=payment_order['id']
+        #     print(payment_order)
+
+        #     cartobjs=Cart.objects.all()
+        #     housename=request.POST.get("address")
+        #     print("$$$$$$$$$$$$",housename)
+        #     for item in cartobjs:
+        #         userobj=item.user
+        #         pdtobj=item.product
+        #         quantityobj=item.quantity
+        #         addressobj=Address.objects.get(house=housename)
+        #         orderstatusobj="Ordered"
+        #         ordertypeobj="Cash On Delivery"
+        #         orderdateobj=date.today() 
+        #     orderdata=Orders(user=userobj,product=pdtobj,quantity=quantityobj,address=addressobj,orderstatus=orderstatusobj,orderdate=orderdateobj,ordertype=ordertypeobj)
+        #     orderdata.save()
+        #     cartobjs.delete()
+        #     totalsum=0
+        #     for item in cartobjs:
+        #         totalsum+=item.total
+
+        #     return render(request,"store/userdashboard/checkout.html",{ "amount":200,"order_id":payment_order_id,"api_key":RAZORPAY_API_KEY})
+    return HttpResponse("Invalid request")
+
 
 def addtocart(request,someid):
    
@@ -334,7 +416,7 @@ def addtocart(request,someid):
 
             cartadd=Cart(product=pdtobj,user=userobj,quantity=int(quantity),total=total)
             cartadd.save()
-            return redirect(loggedinproduct) 
+            return redirect(loggedincart) 
 
 def previousorders(request):
     orderobjs=Orders.objects.all()
@@ -378,4 +460,4 @@ def cancelorder(request,someid):
     print("******************")
 
 
-    return JsonResponse({"message": "Order cancelled successfully."})
+    return JsonResponse({"message": "Confirm !"})

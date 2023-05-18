@@ -20,6 +20,7 @@ class Address(models.Model):
 
 class Category(models.Model):
     name=models.CharField(max_length=200,unique=True)
+    image=models.ImageField(upload_to='store/categorys/', blank=True)
     noofitems=models.IntegerField()
 
 

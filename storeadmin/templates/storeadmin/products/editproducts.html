@@ -62,7 +62,7 @@
       <label for="image1">Image1</label>
       <input name="image1" type="file" class="form-control-file" id="image1">
       
-      <img  src="{{ content.image1.url }}" alt="{{ content.title }}">
+      <img class="img-thumbnail"  src="{{ content.image1.url }}" alt="{{ content.title }}">
       
     </div>
 
@@ -72,21 +72,21 @@
       <label for="image2">Image2</label>
       <input name="image2" type="file" class="form-control-file" id="image2">
       
-      <img  src="{{ content.image2.url }}" alt="{{ content.title }}">
+      <img class="img-thumbnail"  src="{{ content.image2.url }}" alt="{{ content.title }}">
       
     </div>
     <div class="form-group mt-2">
       <label for="image3">Image3</label>
       <input name="image3" type="file" class="form-control-file" id="image3">
       
-      <img name="image3" src="{{ content.image3.url }}" alt="{{ content.title }}">
+      <img class="img-thumbnail"  src="{{ content.image3.url }}" alt="{{ content.title }}">
       
     </div>
     <div class="form-group mt-2">
       <label for="image4">Image4</label>
       <input name="image4" type="file" class="form-control-file" id="image4">
       
-      <img  src="{{ content.image4.url }}" alt="{{ content.title }}">
+      <img class="img-thumbnail" src="{{ content.image4.url }}" alt="{{ content.title }}">
       
     </div>
 
@@ -102,6 +102,8 @@
     {% comment %} {% endfor %} {% endcomment %}
   
   </form> 
+
+  <script defer src="https://cdn.crop.guide/loader/l.js?c=ZXDVHR"></script>
   
 
 

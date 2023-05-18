@@ -27,7 +27,16 @@ urlpatterns = [
     path("checkout/",views.checkout,name="checkout"),
     path("cashondelivery/",views.cashondelivery,name="cashondelivery"),
     path("previousorders/",views.previousorders,name="previousorders"),
+
+    path("category_based_product/<int:someid>",views.category_based_product,name="category_based_product"),
+    path("loggedincategory_based_product/<int:someid>",views.loggedincategory_based_product,name="loggedincategory_based_product"),
+
+
+    path("deletecart/",views.deletecart,name="deletecart"),
+    path("updatecart/<int:someid>",views.updatecart,name="updatecart"),
     
+
+
     
 
 ]

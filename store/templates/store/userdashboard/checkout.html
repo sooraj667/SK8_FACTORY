@@ -17,48 +17,48 @@
 					<form method="POST"> {% csrf_token %}
 						<div class="form-group">
 							<label for="email">Country</label>
-							<input type="text" value="{{country}}" class="form-control" id="email" placeholder="Enter Username" name="country" Required>
+							<input type="text" value="{{country}}" class="form-control" id="email" placeholder="Enter Country" name="country" Required>
 							{% if error and "country" in error %}
 							<span style="color: red">{{error.country}}</span>
 							{% endif %}
 						</div>
 						<div class="form-group">
 							<label for="email">State</label>
-							<input type="text" value="{{state}}" class="form-control" id="email" placeholder="Enter Name" name="state" Required>
+							<input type="text" value="{{state}}" class="form-control" id="email" placeholder="Enter State" name="state" Required>
 							{% if error and "state" in error %}
 							<span style="color: red">{{error.state}}</span>
 							{% endif %}
 	
 						<div class="form-group">
 							<label for="email">District</label>
-							<input type="text" value="{{district}}" class="form-control" id="email" placeholder="Enter email" name="district" Required>
+							<input type="text" value="{{district}}" class="form-control" id="email" placeholder="Enter District" name="district" Required>
 							{% if error and "district" in error %}
 							<span style="color: red">{{error.district}}</span>
 							{% endif %}
 						</div>
 						<div class="form-group">
 							<label for="email">Locality</label>
-							<input type="text" value="{{locality}}" class="form-control" id="email" placeholder="Enter contact number" name="locality" Required>
+							<input type="text" value="{{locality}}" class="form-control" id="email" placeholder="Enter Locality" name="locality" Required>
 							{% if error and "locality" in error %}
 							<span style="color: red">{{error.locality}}</span>
 							{% endif %}
 						</div>
 						<div class="form-group">
 							<label for="password">House</label>
-							<input type="text" value="{{house}}" class="form-control" id="password" placeholder="Enter Password" name="house" Required>
+							<input type="text" value="{{house}}" class="form-control" id="password" placeholder="Enter House" name="house" Required>
 							{% if error and "house" in error %}
 							<span style="color: red">{{error.house}}</span>
 							{% endif %}
 						</div>
 						<div class="form-group">
 							<label for="password">Pincode</label>
-							<input type="number" value="{{pincode}}" class="form-control" id="password" placeholder="Re- enter Password" name="pincode" Required>
+							<input type="number" value="{{pincode}}" class="form-control" id="password" placeholder="Enter Pincode" name="pincode" Required>
 							{% if error and "pincode" in error %}
 							<span style="color: red">{{error.pincode}}</span>
 							{% endif %}
 						</div>
 						<div class="justify-content-center ">
-							<button type="submit" class="flex-c-m stext-101 cl5 size-103 bg2 bor1 hov-btn1 p-lr-15 trans-04 ">Submit</button>
+							<button type="submit" class="flex-c-m stext-101 cl5 size-103 bg2 bor1 hov-btn1 p-lr-15 trans-04 ">Add Address</button>
 
 						</div>
 						<div>
@@ -76,14 +76,20 @@
 								{{context}} 
 							</h5>
 						  
-						</div>
+					</div>
 						
 
 					</form>
 				
 				</div>
 			</div>
-			<label for="dropdown">Select an option:</label>
+
+
+
+			
+
+
+			
 
 			{% comment %} <select name="orderstatus" class="form-control" id="orderstatus">
 				<option value="Ordered" {% if item.orderstatus == "Ordered" %}selected{% endif %}>Ordered</option>
@@ -116,7 +122,7 @@
 	<div class="col-md-6">
 		<div class="ml-5">
 			<span class="block1-name ltext-102 trans-04 p-b-8">
-				Your Order
+				Checkout
 			</span>
 			<br><br><br>
 
@@ -157,33 +163,61 @@
 	
 				</div>
 				<div class="col-md-8">
-					<span class="font-weight-bold display-4">{{totalsum}}</span>
+					<span class="font-weight-bold display-4">Rs. {{totalsum}}/-</span>
 	
 				</div>
 
 			</div>
 
-			<form method="POST" action="{% url 'cashondelivery' %}">
+			<div class="row">
+
+			</div>
+
+			<div class="col-md-4 mt-5">
+				<span class="block1-name ltext-100 trans-04 p-b-8 font-weight-bold">
+					Choose Shipping Address 
+				</span>
+
+			</div>
+			<form class="card-body" method="POST" action="{% url 'cashondelivery' %}">
 				{% csrf_token %}
 				<select id="dropdown" name="address">
 					{% for item in addressobjs  %}
-					<option value="{{item.house}}">{{item.country}} <br>{{item.state}}<br>{{item.house}} </option>
+					<option value="{{item.house}}">{{item.house}} -  {{item.district}} - {{item.state}} - {{item.country}} <br><br> </option>
 					{% endfor %}
 		
 				</select> 
+				<div class="row mt-5">
+					<button type="submit" name="action" value="cashondelivery" class="btn btn-primary">Cash On Delivery</button>
+					{% comment %} <button type="submit" name="action" value="razorpay"  class="btn btn-success" id="rzp-button1">Pay with Razorpay</button> {% endcomment %}
+				</div>
+				
 
-				<button type="submit" class="btn btn-primary">Cash On Delivery</button>
+				
 				
 
 
 
 			</form>
+
+
+
+			<button type="submit"   class="btn btn-success" id="rzp-button1">Pay with Razorpay</button>
+
+			
+
+
+
+
+
+
+
+			
 			{% comment %} <a href=>
 				<button type="button" class="btn btn-primary">Cash On Delivery</button>
 
 			</a> {% endcomment %}
-
-			<button type="submit" class="btn-success" id="rzp-button1">Pay with Razorpay</button>
+			
 			
 			
 			
@@ -195,7 +229,7 @@
 
 	</div>
 </div>
-
+<br>
 
 
 
