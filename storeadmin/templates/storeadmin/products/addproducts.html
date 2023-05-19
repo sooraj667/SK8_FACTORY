@@ -17,8 +17,14 @@
       <input  value=""  name="quantity" type="text" class="form-control" id="inputPassword" placeholder="Enter Quantity">
     </div>
     <div class="form-group mt-2">
-      <label for="inputConfirmPassword">Category </label>
-      <input  value=""   name="category" type="text" class="form-control" id="inputConfirmPassword" placeholder="Enter the category">
+      <label for="inputPassword">Category</label>
+      <select id="dropdown" name="category">
+        {% for item in categoryobjs  %}
+        <option value="{{item.name}}">{{item.name}}<br><br> </option>
+        {% endfor %}
+  
+      </select> 
+
     </div>
     <div class="form-group mt-2">
         <label for="inputConfirmPassword">Description </label>

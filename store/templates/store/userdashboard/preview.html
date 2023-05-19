@@ -30,7 +30,10 @@
                             <div class="wrap-slick3 flex-sb flex-w">
                                 <div class="wrap-slick3-dots"></div>
                                 <div class="wrap-slick3-arrows flex-sb-m flex-w"></div>
-
+                                {% if pdtobj.image1 %}
+                                
+                                
+                               
                                 <div class="slick3 gallery-lb">
                                     <div class="item-slick3" data-thumb="{{pdtobj.image1.url}}" >
                                         <div class="wrap-pic-w pos-relative">
@@ -41,7 +44,11 @@
                                             </a>
                                         </div>
                                     </div>
+                                    {% endif %}
 
+
+
+                                    {% if pdtobj.image2 %}
                                     <div class="item-slick3" data-thumb="{{pdtobj.image2.url}}">
                                         <div class="wrap-pic-w pos-relative">
                                             <img src="{{pdtobj.image2.url}}" alt="IMG-PRODUCT" >
@@ -51,7 +58,11 @@
                                             </a>
                                         </div>
                                     </div>
+                                    {% endif %}
 
+
+
+                                    {% if pdtobj.image3 %}
                                     <div class="item-slick3" data-thumb="{{pdtobj.image3.url}}">
                                         <div class="wrap-pic-w pos-relative">
                                             <img src="{{pdtobj.image3.url}}" alt="IMG-PRODUCT" >
@@ -61,6 +72,10 @@
                                             </a>
                                         </div>
                                     </div>
+                                     {% endif %}
+
+
+
                                 </div>
                             </div>
                         </div>

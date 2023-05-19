@@ -17,9 +17,22 @@
       <label for="inputPassword">Quantity</label>
       <input  value="{{content.quantity}}"  name="quantity" type="text" class="form-control" id="inputPassword" placeholder="Password">
     </div>
+
+
     <div class="form-group mt-2">
-      <label for="inputConfirmPassword">Category </label>
-      <input  value="{{content.category.name}}"   name="category" type="text" class="form-control" id="inputConfirmPassword" placeholder="Confirm Password">
+
+      <label for="inputPassword">Category</label>
+      <select id="dropdown" name="category">
+        {% for item in categoryobjs  %}
+        <option value="{{item.name}}">{{item.name}}<br><br> </option>
+        {% endfor %}
+  
+      </select> 
+
+
+
+      {% comment %} <label for="inputConfirmPassword">Category </label>
+      <input  value="{{content.category.name}}"   name="category" type="text" class="form-control" id="inputConfirmPassword" placeholder="Confirm Password"> {% endcomment %}
     </div>
 
 
@@ -56,6 +69,8 @@
 
 
 
+    
+    {% if content.image1 %}
 
     <div class="form-group mt-2">
 
@@ -66,8 +81,10 @@
       
     </div>
 
+    {% endif %}
 
 
+    {% if content.image2 %}
     <div class="form-group mt-2">
       <label for="image2">Image2</label>
       <input name="image2" type="file" class="form-control-file" id="image2">
@@ -75,6 +92,12 @@
       <img class="img-thumbnail"  src="{{ content.image2.url }}" alt="{{ content.title }}">
       
     </div>
+    {% endif %}
+
+
+
+
+    {% if content.image3 %}
     <div class="form-group mt-2">
       <label for="image3">Image3</label>
       <input name="image3" type="file" class="form-control-file" id="image3">
@@ -82,6 +105,12 @@
       <img class="img-thumbnail"  src="{{ content.image3.url }}" alt="{{ content.title }}">
       
     </div>
+    {% endif %}
+
+
+
+
+    {% if content.image4 %}
     <div class="form-group mt-2">
       <label for="image4">Image4</label>
       <input name="image4" type="file" class="form-control-file" id="image4">
@@ -89,6 +118,7 @@
       <img class="img-thumbnail" src="{{ content.image4.url }}" alt="{{ content.title }}">
       
     </div>
+    {% endif %}
 
 
 

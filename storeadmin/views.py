@@ -142,6 +142,7 @@ def products(request):
 #ARUN'S CODE
 def editproducts(request, someid):
     content=Products.objects.get(id=someid)
+    categoryobjs=Category.objects.all()
 
     if request.method == 'POST':
         name=request.POST.get("name")
@@ -209,9 +210,9 @@ def editproducts(request, someid):
             content.save()
             return redirect(products)
         if error:
-            return render(request,"storeadmin/products/editproducts.html",{"content":content,"error":error})
+            return render(request,"storeadmin/products/editproducts.html",{"content":content,"error":error,"categoryobjs":categoryobjs})
 
-    return render(request,"storeadmin/products/editproducts.html",{"content":content})
+    return render(request,"storeadmin/products/editproducts.html",{"content":content,"categoryobjs":categoryobjs})
 
 
 
@@ -313,6 +314,7 @@ def deleteproducts(request, someid):
 #     return render(request,"storeadmin/products/deleteproducts.html",{"content":content})
 
 def addproducts(request):
+    categoryobjs=Category.objects.all()
     if request.method=="POST":
         name=request.POST.get("name")
         price=request.POST.get("price")
@@ -355,9 +357,9 @@ def addproducts(request):
             # newproduct.save()
             return redirect(products)
         if error:
-            return render(request,"storeadmin/products/addproducts.html",{"error":error})
+            return render(request,"storeadmin/products/addproducts.html",{"error":error,"categoryobjs":categoryobjs})
 
-    return render(request,"storeadmin/products/addproducts.html")
+    return render(request,"storeadmin/products/addproducts.html",{"categoryobjs":categoryobjs})
 @never_cache
 def categories(request):
     if "adminname" in request.session:
@@ -368,6 +370,7 @@ def categories(request):
 
 def editcategories(request,someid):
     obj=Category.objects.get(id=someid)
+    categoryobjs=Category.objects.all()
     if request.method=="POST":
         name=request.POST.get("name")
         items=request.POST.get("noofitems")
@@ -377,6 +380,8 @@ def editcategories(request,someid):
             error="Category name can;t be numbers"
         elif len(name)<4:
             error="Category name should atleast have 4 letters"
+        elif Category.objects.filter(name=name):
+            error="Same Category name is not allowed"
         elif len(name)>20:
             error="Category name can atmost can have 20 letters"
         else:
@@ -392,7 +397,7 @@ def editcategories(request,someid):
             # edited.save()
             return redirect(categories)
         if error:
-            return render(request,"storeadmin/categories/editcategories.html",{"obj":obj,"error":error})
+            return render(request,"storeadmin/categories/editcategories.html",{"obj":obj,"error":error,"categoryobjs":categoryobjs})
 
 
 
@@ -401,7 +406,7 @@ def editcategories(request,someid):
     
 
 
-    return render(request,"storeadmin/categories/editcategories.html",{"obj":obj})
+    return render(request,"storeadmin/categories/editcategories.html",{"obj":obj,"categoryobjs":categoryobjs})
 
 
 # def deletecategories(request,someid):
@@ -432,6 +437,7 @@ def deletecategories(request, someid):
     
 
 def addcategories(request):
+    categoryobjs=Category.objects.all()
     if request.method == "POST":
         name = request.POST.get("name")
         quantity=request.POST.get("quantity")
@@ -454,7 +460,7 @@ def addcategories(request):
 
         return render(request, "storeadmin/categories/addcategories.html", {"error": error})
 
-    return render(request, "storeadmin/categories/addcategories.html")
+    return render(request, "storeadmin/categories/addcategories.html",{"categoryobjs":categoryobjs})
 
 
 

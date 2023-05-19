@@ -70,6 +70,8 @@ def signup(request):
         password=request.POST.get("password")
         repassword=request.POST.get("repassword")
 
+        
+
         if len(username)<4:
             error["username"]="Username should contain minimum four characters"
         elif len(username)>10:
@@ -78,10 +80,18 @@ def signup(request):
             error["name"]="Name can't have numbers" 
         elif not re.match(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$', email):
             error["email"]="Invalid Email"
+        elif Customers.objects.filter(email=email):
+            error["email"]="Email already exists! Please Use a different email"
         elif phonenumber.isalpha()==True:
             error["phonenumber"]="Phonenumber can't have letters"
-        elif len(phonenumber)!=10 or int(phonenumber) < 0:
+        elif len(phonenumber)!=10:
             error["phonenumber"]="Invalid Phonennumber"
+        elif phonenumber[0]==0:
+            error["phonenumber"]="Invalid Phone number"
+        elif int(phonenumber)<0:
+            error["phonenumber"]="Phone number can't be negative value"  
+        elif Customers.objects.filter(phonenumber=phonenumber):
+            error["phonenumber"]="Phone number already exists! Please Use a differnet number"
         elif len(password)<6:
             error["password"]="Password must atleast contain 6 characters"
         elif len(password)>12:
