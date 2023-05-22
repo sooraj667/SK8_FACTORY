@@ -156,7 +156,8 @@ def verifyotp(request):
     return render(request,"store/verifyotp.html",{"msg":msg})
 
 def login(request):
-    if "username" in request.session:
+    
+    if "username" in request.session and not Customers.objects.get(username=request.session["username"]).isblocked:
         return redirect(loggedin)
     if request.method=="POST":
         username=request.POST.get("username")
@@ -203,7 +204,7 @@ def logout(request):
     return redirect(login)
 
 def loggedin(request):
-    if "username" in request.session:
+    if "username" in request.session and not Customers.objects.get(username=request.session["username"]).isblocked:
         category=Category.objects.all()
         products=Products.objects.all()
         cartobjs=Cart.objects.all()
@@ -215,7 +216,7 @@ def loggedin(request):
         return redirect(login)
 
 def loggedinproduct(request):
-    if "username" in request.session:
+    if "username" in request.session and not Customers.objects.get(username=request.session["username"]).isblocked:
         products=Products.objects.all()
         cartobjs=Cart.objects.all()
         totalsum=0
@@ -227,7 +228,7 @@ def loggedinproduct(request):
         return redirect(login)
 
 def preview(request,someid):
-    if "username" in request.session:
+    if "username" in request.session and not Customers.objects.get(username=request.session["username"]).isblocked:
         print(request.session["username"],"######################")
         pdtobj=Products.objects.get(id=someid)
         cartobjs=Cart.objects.all()
@@ -241,7 +242,7 @@ def preview(request,someid):
     
     
 def loggedincart(request):
-    if "username" in request.session:
+    if "username" in request.session and not Customers.objects.get(username=request.session["username"]).isblocked:
         print(request.session["username"],"######################")
         cartobjs=Cart.objects.all()
         totalsum=0
@@ -258,94 +259,98 @@ def deletecart(request):
     return JsonResponse({"message":"All items in Cart is deleted!"})
 
 def updatecart(request,someid):
-    if request.method=="POST":
+    if "username" in request.session and not Customers.objects.get(username=request.session["username"]).isblocked:
+        if request.method=="POST":
 
-        cartobj=Cart.objects.get(id=someid)
-        cartobj.quantity=request.POST.get("quantity")
-        cartobj.total=cartobj.product.price*Decimal(cartobj.quantity)
-        cartobj.save()
-        return redirect(loggedincart)
+            cartobj=Cart.objects.get(id=someid)
+            cartobj.quantity=request.POST.get("quantity")
+            cartobj.total=cartobj.product.price*Decimal(cartobj.quantity)
+            cartobj.save()
+            return redirect(loggedincart)
 
 
 
 
 def checkout(request):
+
+    if Customers.objects.get(username=request.session["username"]).isblocked:
+        return redirect(login)
     
-        
-    cartobjs=Cart.objects.all()
-    if not cartobjs:
-        return redirect(loggedincart)
-    totalsum=0
-    for item in cartobjs:
-        totalsum+=item.total
-    client = razorpay.Client(
-    auth=(RAZORPAY_API_KEY, RAZORPAY_API_SECRET_KEY))
-    amount=int(totalsum*100)
-    currency='INR'
-    data = dict(amount=amount,currency=currency,payment_capture=1)
-            
-    payment_order = client.order.create(data=data)
-    payment_order_id=payment_order['id']
-    print(payment_order)
+    if "username" in request.session and not Customers.objects.get(username=request.session["username"]).isblocked:    
+        cartobjs=Cart.objects.all()
+        if not cartobjs:
+            return redirect(loggedincart)
+        totalsum=0
+        for item in cartobjs:
+            totalsum+=item.total
+        client = razorpay.Client(
+        auth=(RAZORPAY_API_KEY, RAZORPAY_API_SECRET_KEY))
+        amount=int(totalsum*100)
+        currency='INR'
+        data = dict(amount=amount,currency=currency,payment_capture=1)
+                
+        payment_order = client.order.create(data=data)
+        payment_order_id=payment_order['id']
+        print(payment_order)
 
-    if request.method=="POST":
-        error={}
-        country=request.POST.get("country")
-        state=request.POST.get("state")
-        district=request.POST.get("district")
-        locality=request.POST.get("locality")
-        house=request.POST.get("house")
-        pincode=request.POST.get("pincode")
+        if request.method=="POST":
+            error={}
+            country=request.POST.get("country")
+            state=request.POST.get("state")
+            district=request.POST.get("district")
+            locality=request.POST.get("locality")
+            house=request.POST.get("house")
+            pincode=request.POST.get("pincode")
 
 
-        if country.isalpha()=="False":
-            error["country"]="Country name can't have numbers"
-        elif len(country)<3:
-            error["country"]="Country name should contain minimum three characters"
-        elif state.isalpha()=="False":
-            error["state"]="State name can't have numbers"
-        elif len(state)<3:
-            error["state"]="State name should contain minimum three characters"
-        elif district.isalpha()=="False":
-            error["district"]="District name can't have numbers"
-        elif len(district)<3:
-            error["district"]="District name should contain minimum three characters"
-        elif len(locality)<3:
-            error["locality"]="Locality name should contain minimum three characters"
-        elif len(house)<3:
-            error["house"]="House name should contain minimum three characters"
-        elif pincode.isalpha()=="True":
-            error["pincode"]="Pincode  can't have alphabets"
-        elif len(pincode)!=6:
-            error["pincode"]="Invalid Pincode"
+            if country.isalpha()=="False":
+                error["country"]="Country name can't have numbers"
+            elif len(country)<3:
+                error["country"]="Country name should contain minimum three characters"
+            elif state.isalpha()=="False":
+                error["state"]="State name can't have numbers"
+            elif len(state)<3:
+                error["state"]="State name should contain minimum three characters"
+            elif district.isalpha()=="False":
+                error["district"]="District name can't have numbers"
+            elif len(district)<3:
+                error["district"]="District name should contain minimum three characters"
+            elif len(locality)<3:
+                error["locality"]="Locality name should contain minimum three characters"
+            elif len(house)<3:
+                error["house"]="House name should contain minimum three characters"
+            elif pincode.isalpha()=="True":
+                error["pincode"]="Pincode  can't have alphabets"
+            elif len(pincode)!=6:
+                error["pincode"]="Invalid Pincode"
 
-        else:
-            user=request.session["username"]
-            userobj=Customers.objects.get(username=user)
+            else:
+                user=request.session["username"]
+                userobj=Customers.objects.get(username=user)
 
-            addressvalues=Address(customer=userobj,country=country,state=state,district=district,locality=locality,house=house,pincode=pincode)
-            addressvalues.save()
-            success='Address Saved successfully!'
-            
-
-            
-            
-
+                addressvalues=Address(customer=userobj,country=country,state=state,district=district,locality=locality,house=house,pincode=pincode)
+                addressvalues.save()
+                success='Address Saved successfully!'
                 
 
-            return redirect(checkout)
-        
-        datas={"error":error,"country":country,"state":state,"district":district,"locality":locality,"pincode":pincode}
-        return render(request,"store/userdashboard/checkout.html",datas)
-    
-    cust=Customers.objects.get(username=request.session["username"])
-    addressobjs=Address.objects.filter(customer=cust)
+                
+                
 
-    cartobjs=Cart.objects.all()
-    totalsum=0
-    for item in cartobjs:
-        totalsum+=item.total
-    return render(request,"store/userdashboard/checkout.html",{"addressobjs":addressobjs,"cartobjs":cartobjs,"totalsum":totalsum,     "amount":300,"order_id":payment_order_id,"api_key":RAZORPAY_API_KEY})
+                    
+
+                return redirect(checkout)
+            
+            datas={"error":error,"country":country,"state":state,"district":district,"locality":locality,"pincode":pincode}
+            return render(request,"store/userdashboard/checkout.html",datas)
+        
+        cust=Customers.objects.get(username=request.session["username"])
+        addressobjs=Address.objects.filter(customer=cust)
+
+        cartobjs=Cart.objects.all()
+        totalsum=0
+        for item in cartobjs:
+            totalsum+=item.total
+        return render(request,"store/userdashboard/checkout.html",{"addressobjs":addressobjs,"cartobjs":cartobjs,"totalsum":totalsum,     "amount":300,"order_id":payment_order_id,"api_key":RAZORPAY_API_KEY})
 
 def cashondelivery(request):
     if request.method=="POST":
@@ -412,6 +417,9 @@ def addtocart(request,someid):
         if request.method=="POST":
 
             pdtobj=Products.objects.get(id=someid)
+            cartobjs=Cart.objects.all()
+
+            print(cartobjs,"llllllllllllllllllllllllllllllllllllllllll")
 
             print(pdtobj.name,"################")
 
@@ -421,12 +429,32 @@ def addtocart(request,someid):
             userobj=Customers.objects.get(username=currentuser)
             quantity=request.POST.get("quantity")
             total=Decimal(quantity)*pdtobj.price
-            # if quantity is None:
-            #     quantity=1
+            cartdict={}
+            if cartobjs:
+                
+                for item in cartobjs:
+                    if item.product.name not in cartdict:
+                        cartdict[item.product.name]=item.quantity
+                    else:
+                        cartdict[item.product.name]+=item.quantity
+                if cartdict[pdtobj.name]:
+
+                    remaining_quantity=pdtobj.quantity-cartdict[pdtobj.name]
+                if not cartdict[pdtobj.name]:
+                    remaining_quantity=pdtobj.quantity
+
+                if int(quantity)>remaining_quantity:
+                    error="Product Out of Stock"
+                    # return render(request,"store/userdashboard/preview.html",{"error":error})
+                    return redirect(preview,someid)
+            
+     
 
             cartadd=Cart(product=pdtobj,user=userobj,quantity=int(quantity),total=total)
             cartadd.save()
             return redirect(loggedincart) 
+        
+            
 
 def previousorders(request):
     orderobjs=Orders.objects.all()
@@ -471,3 +499,55 @@ def cancelorder(request,someid):
 
 
     return JsonResponse({"message": "Confirm !"})
+
+
+
+def userprofile(request):
+    orderobjs=Orders.objects.all()
+    username=request.session["username"]
+    customerobj=Customers.objects.get(username=username)
+    addressobjs=Address.objects.filter(customer=customerobj)
+    username=request.session["username"]
+
+
+
+    
+
+
+    context={"orderobjs":orderobjs,"username":username,"addressobjs":addressobjs,"username":username,"addressobjs":addressobjs,"customerobj":customerobj}
+    return render(request,"store/userdashboard/userprofile.html",context)
+
+
+def edituserdetails(request):
+    if request.method=="POST":
+        name=request.POST["name"]
+        name=request.POST["name"]
+        email=request.POST["email"]
+        phonenumber=request.POST["phonenumber"]
+    
+    customerobj=Customers.objects.get(username=request.session.get("username"))
+    customerobj.name=name
+    customerobj.email=email
+    customerobj.phonenumber=phonenumber
+    customerobj.save()
+    return redirect(userprofile)
+
+def edituseraddress(request,someid):
+    if request.method=="POST":
+        house=request.POST["house"]
+        locality=request.POST["locality"]
+        district=request.POST["district"]
+        state=request.POST["state"]
+        country=request.POST["country"]
+        pincode=request.POST["pincode"]
+    
+    addressobj=Address.objects.get(id=someid)
+    addressobj.house=house
+    addressobj.locality=locality
+    addressobj.district=district
+    addressobj.state=state
+    addressobj.country=country
+    addressobj.pincode=pincode
+    addressobj.save()
+    return redirect(userprofile)
+

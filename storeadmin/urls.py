@@ -16,7 +16,11 @@ urlpatterns = [
     path("unblockuser/<int:someid>",views.unblockuser,name="admin_unblockuser"),
     path("adminsignin/",views.adminsignin,name="admin_signin"),
     path("adminsignout/",views.adminsignout,name="admin_signout"),
+    path("salesreport/",views.salesreport,name="salesreport"),
     
+
+
+
     path("orders/",views.orders,name="admin_orders"),
     path("editorderstatus/<int:someid>/",views.editorderstatus,name="admin_editorderstatus"),
     

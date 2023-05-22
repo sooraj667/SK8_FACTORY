@@ -18,6 +18,13 @@ urlpatterns = [
 
 
 
+    path("userprofile/",views.userprofile,name="userprofile"),
+    path("edituserdetails/",views.edituserdetails,name="edituserdetails"),
+    path("edituseraddress/<int:someid>",views.edituseraddress,name="edituseraddress"),
+
+
+
+
 
     path("loggedin/",views.loggedin,name="loggedin"),
     path("loggedinproduct/",views.loggedinproduct,name="loggedinproduct"),
@@ -27,6 +34,13 @@ urlpatterns = [
     path("checkout/",views.checkout,name="checkout"),
     path("cashondelivery/",views.cashondelivery,name="cashondelivery"),
     path("previousorders/",views.previousorders,name="previousorders"),
+
+    
+
+
+
+
+
 
     path("category_based_product/<int:someid>",views.category_based_product,name="category_based_product"),
     path("loggedincategory_based_product/<int:someid>",views.loggedincategory_based_product,name="loggedincategory_based_product"),

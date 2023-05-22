@@ -6,9 +6,6 @@
     <form action="" method="POST">{% csrf_token %}
       <div class="input-group">
         <div class="input-group-prepend hover-cursor" id="navbar-search-icon">
-          {% comment %} <span class="input-group-text" id="search">
-            <i class="icon-search"></i>
-          </span> {% endcomment %}
         </div>
         <input type="text" name="searchitem" class="form-control" id="navbar-search-input" placeholder="Search user" aria-label="search" aria-describedby="search">
         <div>
@@ -21,8 +18,7 @@
   
   </div>
   
-  
-  
+ 
   
   <div class="container">
     <div class="row justify-content-end">
@@ -60,9 +56,7 @@
             </td>
             <td>
               <button  type="button" class="btn delete-btn btn-danger" data-category-id="{{ item.id }}">Delete</button>
-              {% comment %} <a href="{% url 'admin_deleteproducts' item.id %}">
-                <button class="btn delete-btn btn-danger">Delete</button>
-              </a> {% endcomment %}
+          
             </td>
           </tr>
           {% endfor %}
@@ -75,85 +69,6 @@
 </div>
 
 
-{% comment %} <div>
-  <div class="row  justify-content-end">
-    <a href={% url 'admin_addproducts' %}><button>Add Product</button></a>
-  </div>
-  <div class="row">
-    
-      <table class="table table-striped">
-        <thead>
-          <tr>
-            <th>
-                Name
-              </th>
-            <th>
-              Price
-            </th>
-            <th>
-              Quantity
-            </th>
-            <th> 
-              Category
-            </th>
-            <th>
-              Description
-            </th>
-            <th>
-              Edit
-            </th>
-            <th>
-              Delete
-            </th>
-        
-          </tr>
-        </thead>
-        <tbody>
-          {% for item in datas  %}
-          <tr>
-            <td class="py-1">
-                {{item.name}}
-            </td>
-            <td>
-                {{item.price}}
-            </td>
-            <td>
-                {{item.quantity}}
-            </td>
-            <td>
-                {{item.category.id}}
-            </td>
-            <td>
-                {{item.description}}
-            </td>
-           <td>
-                <a href={% url 'admin_editproducts' item.id %}>Edit</a>
-            </td>
-            <td>
-              <a href={% url 'admin_deleteproducts' item.id %}>Delete</a>
-              
-          </td>
-          </tr>
-          
-          
-          {% endfor %}
-          
-        </tbody>
-      </table>
-    
-    
-
-  </div>
-  
-
-</div> {% endcomment %}
-{% comment %} <div class="container">
-  <div class="row">
-    <div class="col-md-2">
-      <a href={% url 'admin_addproducts' %}><button>Add Product</button></a>
-    </div>
-  </div>
-</div> {% endcomment %}
 
 
 

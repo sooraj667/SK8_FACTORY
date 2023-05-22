@@ -174,6 +174,7 @@ def editproducts(request, someid):
             content.name = request.POST.get('name')
             content.description = request.POST.get('description')
             content.price = request.POST.get('price')
+            content.quantity=quantity
 
             # Check if new images are provided
             if 'image1' in request.FILES:
@@ -421,19 +422,24 @@ def deletecategories(request, someid):
 
     content = Category.objects.get(id=someid)
     print(content.name,"CONTENT###########################")
-    content.delete()
+    if content.isblocked==True:
+        content.isblocked=False
+        content.save()
+    elif content.isblocked==False:
+        content.isblocked=True
+        content.save()
 
 
 
-    all=Category.objects.all()
-    for item in all:
-        print(item.name,"$$$$$$$$$$$$$$$")
+    # all=Category.objects.all()
+    # for item in all:
+    #     print(item.name,"$$$$$$$$$$$$$$$")
 
 
 
 
 
-    return JsonResponse({"message": "Category deleted successfully."})
+    return JsonResponse({"message": "Category updated successfully."})
     
 
 def addcategories(request):
@@ -517,3 +523,8 @@ def editorderstatus(request,someid):
         return redirect(orders)
 
     return render(request,"storeadmin/orders/editorderstatus.html")
+
+
+
+def salesreport(request):
+    return render(request,"storeadmin/salesreport.html")

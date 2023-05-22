@@ -160,16 +160,43 @@
                                                     <i class="fs-16 zmdi zmdi-plus"></i>
                                                 </div>
                                             </div>
-    
+
+                                            {% if pdtobj.quantity > 0 %}
+                                    
                                             <button type="submit" class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04 js-addcart-detail">
                                                 {% comment %} <a href={% url 'addtocart' pdtobj.id %}> Add to cart</a>  {% endcomment %}
                                                 Add To Cart
                                             </button>
+                                            {% else %}
+                                            <div class="row">
+                                                <div class="text-danger"> Sorry Out Of Stock! </div>
+                                              
+
+                                            </div>
+                                            <div class="row mt-4 ml-3">
+                                                <button class="btn btn-info">
+                                                    <a class="text-dark " href={% url 'loggedinproduct' %}> Back To Shop </a>
+
+                                                </button>
+                                            </div>
+                                            
+
+                                            {% endif %}
+    
                                         </div>
                                     </div>	
 
 
                                 </form>
+                                {% if error %}
+
+                                <div class="text-danger">
+                                    {{error}}
+                                </div>
+                                
+                                
+                                {% endif %}
+                            
                                 
                             </div>
 

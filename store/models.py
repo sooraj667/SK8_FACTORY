@@ -22,6 +22,8 @@ class Category(models.Model):
     name=models.CharField(max_length=200,unique=True)
     image=models.ImageField(upload_to='store/categorys/', blank=True)
     noofitems=models.IntegerField()
+    isblocked=models.BooleanField(default=False)
+
 
 
 
@@ -32,7 +34,7 @@ class Category(models.Model):
 class Products(models.Model):
     name=models.CharField(max_length=200,unique=True)
     price = models.DecimalField(max_digits=10, decimal_places=2)
-    quantity=models.IntegerField(max_length=200)
+    quantity=models.PositiveIntegerField()
     category=models.ForeignKey(Category,on_delete=models.CASCADE)
     description=models.TextField(blank=True)
     image1=models.ImageField(upload_to='store/products/', blank=True)
