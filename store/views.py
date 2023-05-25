@@ -229,7 +229,6 @@ def loggedinproduct(request):
 
 def preview(request,someid):
     if "username" in request.session and not Customers.objects.get(username=request.session["username"]).isblocked:
-        print(request.session["username"],"######################")
         pdtobj=Products.objects.get(id=someid)
         cartobjs=Cart.objects.all()
         totalsum=0
@@ -443,11 +442,13 @@ def addtocart(request,someid):
                 if not cartdict[pdtobj.name]:
                     remaining_quantity=pdtobj.quantity
 
+                print("***********",quantity,remaining_quantity)
+
                 if int(quantity)>remaining_quantity:
                     error="Product Out of Stock"
                     # return render(request,"store/userdashboard/preview.html",{"error":error})
                     return redirect(preview,someid)
-            
+
      
 
             cartadd=Cart(product=pdtobj,user=userobj,quantity=int(quantity),total=total)

@@ -8,6 +8,18 @@ from django.core.files.storage import FileSystemStorage
 from django.http import JsonResponse
 from django.db import IntegrityError
 import os
+
+
+
+from django.http import FileResponse
+import io
+from reportlab.pdfgen import canvas
+from reportlab.lib.units import inch
+from reportlab.lib.pagesizes import letter
+from datetime import datetime
+
+
+
 # Create your views here.
 @never_cache
 def adminsignin(request):
@@ -527,4 +539,53 @@ def editorderstatus(request,someid):
 
 
 def salesreport(request):
+    
+
+
     return render(request,"storeadmin/salesreport.html")
+
+
+def downloadsales(request):
+    start_date_str = request.GET.get('start_date')
+    end_date_str = request.GET.get('end_date')
+
+    start_date = datetime.strptime(start_date_str, "%Y-%m-%d")
+    end_date = datetime.strptime(end_date_str, "%Y-%m-%d")
+
+
+
+    buf=io.BytesIO()
+    c=canvas.Canvas(buf,pagesize=letter,bottomup=0)
+    textobj=c.beginText()
+    textobj.setTextOrigin(inch,inch)
+    textobj.setFont("Helvetica",14)
+
+    ords = Orders.objects.filter(orderdate__range=[start_date, end_date])
+    customer=Customers.objects.get(username=request.session["username"])
+
+
+    if ords:
+        lines=[]
+        slno=0
+        for ord in ords:
+            slno+=1
+            orderdetails=f"{slno},{ord.user.name},{ord.product.name},{ord.address.house},{ord.orderdate},{ord.orderstatus},{ord.quantity} and Thank You for your order."
+            lines.append(orderdetails)
+    else:
+        lines=["No orders"]
+
+
+
+
+
+
+   
+    for line in lines:
+        textobj.textLine(line)
+
+    c.drawText(textobj)
+    c.showPage()
+    c.save()
+    buf.seek(0)
+    return FileResponse(buf,as_attachment=True,filename='venue.pdf')
+    

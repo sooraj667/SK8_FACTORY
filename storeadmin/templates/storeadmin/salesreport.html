@@ -2,7 +2,32 @@
 
 {% block content %}
 
-Sales Report
+<div class="-col-md-5 ml-5 mt-4">
+    <form action={% url 'downloadsales' %} method="GET">
+        <label for="start_date">Start Date:</label>
+        <input type="date" id="start_date" name="start_date" required>
+        <br>
+        <label for="end_date">End Date:</label>
+        <input type="date" id="end_date" name="end_date" required>
+        <br>
+       
+        <button type="submit">Download Sales Report</button>
+
+
+  
+        
+    </form>
+
+</div>
+
+
+
+
+
+
+
+
+
 
 
 
