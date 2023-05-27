@@ -58,7 +58,7 @@
 							{% endif %}
 						</div>
 						<div class="justify-content-center ">
-							<button type="submit" class="flex-c-m stext-101 cl5 size-103 bg2 bor1 hov-btn1 p-lr-15 trans-04 ">Add Address</button>
+							<button type="submit" name="addressform" class="flex-c-m stext-101 cl5 size-103 bg2 bor1 hov-btn1 p-lr-15 trans-04 ">Add Address</button>
 
 						</div>
 						<div>
@@ -168,6 +168,34 @@
 				</div>
 
 			</div>
+			<div class="row">
+				<div class="col-md-4">
+					<span class="block1-name ltext-100 trans-04 p-b-8 font-weight-bold">
+						Coupon
+					</span>
+
+				</div>
+				<form method="POST" action=""> 
+					{% csrf_token %}
+					<div class="col-md-8">
+						<select name="coupon_select" id="coupon_select">
+							{% for coupon in couponobjs  %}						
+							<option id="couponid" data-category-id="{{coupon.id}}" value="{{coupon.code}}">{{coupon.code}}</option>
+							{% endfor %}
+		
+		
+						</select>
+	
+					</div>
+					<button type="submit" name="couponform" class="btn btn-primary" id="apply_coupon">Apply Coupon</button>
+
+
+
+				</form>
+				
+				
+				
+			</div>
 
 			<div class="row">
 
@@ -237,6 +265,7 @@
 
 
 
+	
 
 
 
@@ -254,6 +283,40 @@
 
 
 {% block script %}
+{% comment %} <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js" integrity="sha512-pumBsjNRGGqkPzKHndZMaAG+bir374sORyzM3uulLV14lN5LyykqNk8eEeUlUkB3U0M4FApyaHraT65ihJhDpQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script>
+	$(document).ready(function() {
+		// Listen for click event on the "Apply Coupon" button
+		$('#coupon_select').click(function(e) {
+			e.preventDefault(); // Prevent the default form submission behavior
+	
+			// Get the selected coupon code from the select element
+			var couponCode = $('#coupon_select').val();
+	
+			// Send an AJAX request to apply the coupon
+			$.ajax({
+				url: 'applycoupon/', // Replace with the actual URL to apply the coupon
+				method: 'POST',
+				data: {
+					'coupon_code': couponCode
+				},
+				success: function(response) {
+					// Handle the success response from the server
+					console.log(response); // Display or process the response as needed
+				},
+				error: function(xhr, errmsg, err) {
+					// Handle any errors that occur during the AJAX request
+					console.log(xhr.status + ': ' + xhr.responseText);
+				}
+			});
+		});
+	});
+	</script> {% endcomment %}
+
+
+
+
+
 
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script>

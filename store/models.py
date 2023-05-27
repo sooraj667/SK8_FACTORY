@@ -60,6 +60,16 @@ class Orders(models.Model):
     quantity=models.PositiveIntegerField()
 
 
+class Coupon(models.Model):
+    code=models.CharField(max_length=200,unique=True)
+    discount_percentage=models.PositiveIntegerField()
+    minprice=models.PositiveIntegerField()
+    maxprice=models.PositiveIntegerField()
+    isavailable=models.BooleanField(default=True)
+
+
+
+
 
 
 

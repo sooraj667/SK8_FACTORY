@@ -24,6 +24,10 @@ urlpatterns = [
 
     path("orders/",views.orders,name="admin_orders"),
     path("editorderstatus/<int:someid>/",views.editorderstatus,name="admin_editorderstatus"),
+
+    path("coupon/",views.coupon,name="coupon"),
+    path("addcoupon/",views.addcoupon,name="addcoupon"),
+
     
     
 ]

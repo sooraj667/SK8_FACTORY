@@ -48,9 +48,12 @@ urlpatterns = [
 
     path("deletecart/",views.deletecart,name="deletecart"),
     path("updatecart/<int:someid>",views.updatecart,name="updatecart"),
+
+
+
     
 
-
+    # path("applycoupon/",views.applycoupon,name="applycoupon"),
     
 
 ]

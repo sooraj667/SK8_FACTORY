@@ -1,0 +1,95 @@
+{% extends 'storeadmin/index.html' %}
+
+{% block content %}
+
+<div class="container">
+    <div class="row justify-content-end">
+      <a href="{% url 'addcoupon' %}">
+        <button class="btn add-product-btn btn-primary mt-2">Add Coupon</button>
+      </a>
+    </div>
+    <div class="row">
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Code</th>
+            <th>Discount</th>
+            <th>Min Price</th>
+            <th>Max Price</th>
+            <th>Is Available</th>
+            <th>Edit</th>
+            <th>Delete</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in couponobjs %}
+          <tr>
+            <td>{{ item.code }}</td>
+            <td>{{ item.discount_percentage }}</td>
+            <td>{{ item.minprice }}</td>
+            <td>{{ item.maxprice }}</td>
+            <td>{{ item.isavailable }}</td>
+            <td>
+              <a href="">
+                <button class="btn edit-btn btn-warning">Edit</button>
+              </a>
+            </td>
+            <td>
+              <button  type="button" class="btn delete-btn btn-danger" data-category-id="{{ item.id }}">Delete</button>
+          
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js" integrity="sha512-pumBsjNRGGqkPzKHndZMaAG+bir374sORyzM3uulLV14lN5LyykqNk8eEeUlUkB3U0M4FApyaHraT65ihJhDpQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script>
+
+  $(".delete-btn").click(function() {
+    var someid = $(this).data("category-id");
+    if (confirm("Are you sure you want to delete this product?")) {
+        
+        $.ajax({
+            url: "/storeadmin/deletecoupon/" + someid + "/",
+            type: "DELETE",
+            beforeSend: function(xhr) {
+              xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
+            },
+            success: function(response) {
+                alert(response.message);
+                location.reload();
+            },
+            error: function(xhr, status, error) {
+                alert("Error: " + error);
+            }
+        });
+    }
+});  
+</script>
+
+
+
+
+
+
+
+{% endblock content %}

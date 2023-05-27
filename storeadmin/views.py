@@ -589,3 +589,26 @@ def downloadsales(request):
     buf.seek(0)
     return FileResponse(buf,as_attachment=True,filename='venue.pdf')
     
+
+def coupon(request):  
+    couponobjs=Coupon.objects.all()
+    return render(request,"storeadmin/coupons/coupons.html",{"couponobjs":couponobjs})
+
+def addcoupon(request):
+
+    if request.method=="POST":
+
+        code=request.POST["code"]
+        discount_percent=request.POST["discount_percent"]
+        minprice=request.POST["minprice"]
+        maxprice=request.POST["maxprice"]
+        isavailable=request.POST["isavailable"]
+        print("DEIIIII",isavailable)
+        if isavailable=="Yes":
+            isavailable=True
+        else:
+            isavailable=False
+        coup=Coupon(code=code,discount_percentage=discount_percent,minprice=minprice,maxprice=maxprice,isavailable=isavailable)
+        coup.save()
+        return redirect(coupon)
+    return render(request,"storeadmin/coupons/addcoupons.html")

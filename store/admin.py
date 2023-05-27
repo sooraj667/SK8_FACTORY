@@ -18,6 +18,8 @@ class CartAdmin(admin.ModelAdmin):
     list_display=("product","user","quantity")
 class AddressAdmin(admin.ModelAdmin):
     list_display=("customer","country","state","district","locality","house","pincode")
+class CouponAdmin(admin.ModelAdmin):
+    list_display=("code","discount_percentage","isavailable")
 
 
 
@@ -30,6 +32,7 @@ admin.site.register(Products,ProductsAdmin)
 admin.site.register(Orders,OrdersAdmin)
 admin.site.register(Cart,CartAdmin)
 admin.site.register(Address,AddressAdmin)
+admin.site.register(Coupon,CouponAdmin)
 
 
 

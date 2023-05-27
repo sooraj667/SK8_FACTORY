@@ -1,0 +1,76 @@
+{% extends 'storeadmin/index.html' %}
+
+{% block content %}
+
+<form class="p-5" method="POST" action="" enctype="multipart/form-data"> {% csrf_token %}
+          
+    <div class="form-group mt-2">
+      {% comment %} {% for item in content  %} {% endcomment %}
+      <label for="username">Coupon Code</label>
+      <input value="{{obj.name}}" name="code" type="text" class="form-control" id="username" placeholder="Enter Category">
+      <br><br>
+
+
+
+
+      <label for="username">Discount Percent</label>
+      <input value="{{obj.noofitems}}" name="discount_percent" type="number" class="form-control" id="username" placeholder="Enter username">
+      <br><br>
+
+
+      <div class="mb-3">
+        <label for="image">Minimum Price</label>
+        <div class="card-img-top">
+            <input value="" name="minprice" type="text" class="form-control" id="username" placeholder="Enter Minimum Price">
+        </div>
+ 
+      </div>
+      <br><br>
+
+
+
+      <label for="username">Maximum price</label>
+      <input value="" name="maxprice" type="text" class="form-control" id="username" placeholder="Enter Category">
+      <br><br>
+
+
+      <label for="username">Available</label>
+      <select name="isavailable" id="">
+        <option value="Yes">Yes</option>
+        <option value="No">No</option>
+      </select>
+      <br><br>
+      
+
+
+     
+
+    </div>
+    <button type="submit" class="btn btn-primary mt-4">Add Coupon</button>
+    <h5> {{error}} {{duplicate}}</h5>
+    {% comment %} {% endfor %} {% endcomment %}
+  
+  </form> 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{% endblock content %}

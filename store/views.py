@@ -14,6 +14,7 @@ from datetime import date
 import paypal
 from ecommerce.settings import RAZORPAY_API_SECRET_KEY,RAZORPAY_API_KEY
 # Create your views here.
+from decimal import Decimal
 
 def index(request):
     if "username" in request.session:
@@ -268,9 +269,11 @@ def updatecart(request,someid):
             return redirect(loggedincart)
 
 
-
+# totalsum_withcoupon=request.GET.get("totalsum_withcoupon")
 
 def checkout(request):
+    
+    
 
     if Customers.objects.get(username=request.session["username"]).isblocked:
         return redirect(login)
@@ -291,56 +294,78 @@ def checkout(request):
         payment_order = client.order.create(data=data)
         payment_order_id=payment_order['id']
         print(payment_order)
+        totalsum_withcoupon=None
 
         if request.method=="POST":
-            error={}
-            country=request.POST.get("country")
-            state=request.POST.get("state")
-            district=request.POST.get("district")
-            locality=request.POST.get("locality")
-            house=request.POST.get("house")
-            pincode=request.POST.get("pincode")
-
-
-            if country.isalpha()=="False":
-                error["country"]="Country name can't have numbers"
-            elif len(country)<3:
-                error["country"]="Country name should contain minimum three characters"
-            elif state.isalpha()=="False":
-                error["state"]="State name can't have numbers"
-            elif len(state)<3:
-                error["state"]="State name should contain minimum three characters"
-            elif district.isalpha()=="False":
-                error["district"]="District name can't have numbers"
-            elif len(district)<3:
-                error["district"]="District name should contain minimum three characters"
-            elif len(locality)<3:
-                error["locality"]="Locality name should contain minimum three characters"
-            elif len(house)<3:
-                error["house"]="House name should contain minimum three characters"
-            elif pincode.isalpha()=="True":
-                error["pincode"]="Pincode  can't have alphabets"
-            elif len(pincode)!=6:
-                error["pincode"]="Invalid Pincode"
-
-            else:
-                user=request.session["username"]
-                userobj=Customers.objects.get(username=user)
-
-                addressvalues=Address(customer=userobj,country=country,state=state,district=district,locality=locality,house=house,pincode=pincode)
-                addressvalues.save()
-                success='Address Saved successfully!'
+            if "addressform" in request.POST:
                 
+                error={}
+                country=request.POST.get("country")
+                state=request.POST.get("state")
+                district=request.POST.get("district")
+                locality=request.POST.get("locality")
+                house=request.POST.get("house")
+                pincode=request.POST.get("pincode")
 
-                
-                
 
+                if country.isalpha()=="False":
+                    error["country"]="Country name can't have numbers"
+                elif len(country)<3:
+                    error["country"]="Country name should contain minimum three characters"
+                elif state.isalpha()=="False":
+                    error["state"]="State name can't have numbers"
+                elif len(state)<3:
+                    error["state"]="State name should contain minimum three characters"
+                elif district.isalpha()=="False":
+                    error["district"]="District name can't have numbers"
+                elif len(district)<3:
+                    error["district"]="District name should contain minimum three characters"
+                elif len(locality)<3:
+                    error["locality"]="Locality name should contain minimum three characters"
+                elif len(house)<3:
+                    error["house"]="House name should contain minimum three characters"
+                elif pincode.isalpha()=="True":
+                    error["pincode"]="Pincode  can't have alphabets"
+                elif len(pincode)!=6:
+                    error["pincode"]="Invalid Pincode"
+
+                else:
+                    user=request.session["username"]
+                    userobj=Customers.objects.get(username=user)
+
+                    addressvalues=Address(customer=userobj,country=country,state=state,district=district,locality=locality,house=house,pincode=pincode)
+                    addressvalues.save()
+                    success='Address Saved successfully!'
                     
 
-                return redirect(checkout)
+                    
+                    
+
+                        
+
+                    return redirect(checkout)
+                
+                datas={"error":error,"country":country,"state":state,"district":district,"locality":locality,"pincode":pincode}
+                return render(request,"store/userdashboard/checkout.html",datas)
             
-            datas={"error":error,"country":country,"state":state,"district":district,"locality":locality,"pincode":pincode}
-            return render(request,"store/userdashboard/checkout.html",datas)
+            elif "couponform" in request.POST:
+                coup=request.POST["coupon_select"]
+                couponobj=Coupon.objects.get(code=coup)
+                cartobjs=Cart.objects.all()
+
+                discount_percentage=couponobj.discount_percentage
+                totalsum=0
+                for item in cartobjs:
+                    totalsum+=item.total
+
+                totalsum_withcoupon=(totalsum)-(Decimal(discount_percentage/100)*(totalsum))
+                
+
+            
+
+
+
+
         
         cust=Customers.objects.get(username=request.session["username"])
         addressobjs=Address.objects.filter(customer=cust)
@@ -349,7 +374,32 @@ def checkout(request):
         totalsum=0
         for item in cartobjs:
             totalsum+=item.total
-        return render(request,"store/userdashboard/checkout.html",{"addressobjs":addressobjs,"cartobjs":cartobjs,"totalsum":totalsum,     "amount":300,"order_id":payment_order_id,"api_key":RAZORPAY_API_KEY})
+
+
+        if totalsum_withcoupon:
+            totalsum=totalsum_withcoupon
+        couponobjs=Coupon.objects.all()
+        return render(request,"store/userdashboard/checkout.html",{"addressobjs":addressobjs,"cartobjs":cartobjs,"totalsum":totalsum,"couponobjs":couponobjs,     "amount":300,"order_id":payment_order_id,"api_key":RAZORPAY_API_KEY})
+
+
+# def applycoupon(request):
+#     if request.method=="POST":
+#         coup=request.POST["coupon_select"]
+#         couponobj=Coupon.objects.get(code=coup)
+#         cartobjs=Cart.objects.all()
+
+#         discount_percentage=couponobj.discount_percentage
+#         totalsum=0
+#         for item in cartobjs:
+#             totalsum+=item.total
+
+#         totalsum_withcoupon=float(totalsum)-((discount_percentage/100)*(totalsum))
+#         return redirect (checkout,totalsum_withcoupon=totalsum_withcoupon) 
+
+  
+
+
+
 
 def cashondelivery(request):
     if request.method=="POST":
