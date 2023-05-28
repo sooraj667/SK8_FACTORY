@@ -28,7 +28,7 @@ urlpatterns = [
 
     path("loggedin/",views.loggedin,name="loggedin"),
     path("loggedinproduct/",views.loggedinproduct,name="loggedinproduct"),
-    path("addtocart/<int:someid>",views.addtocart,name="addtocart"),
+    # path("addtocart/<int:someid>",views.addtocart,name="addtocart"),
     path("preview/<int:someid>",views.preview,name="preview"),
     path("loggedincart/",views.loggedincart,name="loggedincart"),
     path("checkout/",views.checkout,name="checkout"),
@@ -49,7 +49,7 @@ urlpatterns = [
     path("deletecart/",views.deletecart,name="deletecart"),
     path("updatecart/<int:someid>",views.updatecart,name="updatecart"),
 
-
+    # path("update_offer_price/",views.update_offer_price,name="update_offer_price")
 
     
 

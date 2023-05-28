@@ -3,7 +3,7 @@
 {% block head %}	
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/elevatezoom/2.2.3/jquery.elevatezoom.min.js"></script>
-
+{% comment %} <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> {% endcomment %}
 {% endblock head %}
 
 
@@ -80,14 +80,14 @@
                             </div>
                         </div>
                     </div>
-                    
+                   
                      <div class="col-md-6 col-lg-5 p-b-30">
                         <div class="p-r-50 p-t-5 p-lr-0-lg">
-                            <h4 class="mtext-105 cl2 js-name-detail p-b-14">
+                            <h4  id="productname"   class="mtext-105 cl2 js-name-detail p-b-14">
                                 {{pdtobj.name}}
                             </h4>
 
-                            <span class="mtext-106 cl2">
+                            <span id="offer_price" class="mtext-106 cl2">
                                 {{pdtobj.price}}
                             </span>
 
@@ -140,25 +140,62 @@
                                 </div>
 
 
-
+                                <form method="POST" action="">
                                 <div class="flex-w flex-r-m p-b-10">
                                     <div class="size-203 flex-c-m respon6">
-                                        Offer Availability
+                                        Offer
                                     </div>
+                                
+                                    {% csrf_token %}
 
                                     <div class="size-204 respon6-next">
                                         <div class="rs1-select2 bor8 bg0">
-                                            <select class="js-select2" name="time">
-                                                <option>Available Offers</option>
-                                                <option>Red</option>
-                                                <option>Blue</option>
-                                                <option>White</option>
-                                                <option>Grey</option>
+                                            <select id="offerselect" class="js-select2" name="offerselect">
+                                                
+                                                {% for offer in offers  %}                                    
+                                                <option>{{offer.offer_description}}</option>
+                                                {% endfor %}
+                                               
                                             </select>
                                             <div class="dropDownSelect2"></div>
                                         </div>
                                     </div>
+                                   
+                                        
+                                    <br>
+                                    <button name="addoffer" type="submit" id="offerclick" class="flex-c-m stext-101 cl0 btn bg1 bor1 hov-btn1 p-lr-15 trans-04  mt-2">Add Offer</button>
+                                
+                                    
+                                    
                                 </div>
+
+                                </form>
+                                <div>
+                                    {% if offer %}
+
+                                    <span class="text-info">{{offer}} </span> <span class="text-success">applied &#10003;</span>
+                                    <span class="mtext-106 cl2 ml-4"> Rs.{{price_after_discount}}</span>
+                                    
+                                    {% endif %}
+                                    <form action="" method="POST">
+                                        {% csrf_token %}
+                                    {% if offer %}
+                                    
+                                    
+                                    <input type="hidden" name="price_after_discount" value="{{price_after_discount}}">
+
+                                    {% else %}
+
+                                    <input type="hidden" name="price_after_discount" value="{{pdtobj.price}}">
+
+
+
+
+                                    {% endif %}
+                                    
+                                </div>
+                          
+                                
 
 
                                
@@ -166,8 +203,7 @@
 
 
                             
-                                <form action="{% url 'addtocart' pdtobj.id %}" method="POST">
-                                    {% csrf_token %}
+                             
                                     <div class="flex-w flex-r-m p-b-10">
                                         <div class="size-204 flex-w flex-m respon6-next">
                                             <div class="wrap-num-product flex-w m-r-20 m-tb-10">
@@ -184,7 +220,7 @@
 
                                             {% if pdtobj.quantity > 0 %}
                                     
-                                            <button type="submit" class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04 js-addcart-detail">
+                                            <button name="addtocart" type="submit" class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 ">
                                                 {% comment %} <a href={% url 'addtocart' pdtobj.id %}> Add to cart</a>  {% endcomment %}
                                                 Add To Cart
                                             </button>
@@ -261,7 +297,37 @@
 </script>
 
 
-                            
+
+{% comment %} <script>
+$(document).ready(function() {
+    $("#offerclick").click(function() {
+      var selectedOffer = $("#offerselect").val();
+      //var productName = $("#productname").text(); 
+        // Get the selected offer value
+      
+      // Send an AJAX request to update the offer price
+      $.ajax({
+        url: "../update_offer_price/", // Replace with the URL of your Django view
+        type: "GET",
+        data: { offer: selectedOffer,//pdtname=productName,
+                
+                
+            },
+        success: function(response) {
+          // Update the offer price on the page
+          var newOfferPrice = response.offer_price;  // Assuming the response contains the updated offer price
+          // Update the appropriate HTML element with the new offer price
+          $("#offer_price").text(newOfferPrice);
+          alert(response.offer_price);
+        },
+        error: function(xhr, errmsg, err) {
+          // Handle any errors that occur during the AJAX request
+          console.log(xhr.status + ": " + xhr.responseText);
+        }
+      });
+    });
+  });
+</script> {% endcomment %}
 
 
 

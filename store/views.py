@@ -236,7 +236,75 @@ def preview(request,someid):
         for item in cartobjs:
             totalsum+=item.total
 
-        return render(request,"store/userdashboard/preview.html",{"pdtobj":pdtobj,"totalsum":totalsum})
+        offers=Productoffer.objects.filter(product=pdtobj)
+        price_after_discount=None
+        if request.method=="POST":
+            if "addoffer" in request.POST:
+
+                
+
+            
+            
+                offer=request.POST["offerselect"]
+                pdtofferobj=Productoffer.objects.get(product=pdtobj,offer_description=offer)
+                discount=pdtofferobj.discount
+                price_after_discount=pdtobj.price-(Decimal(discount/100)*pdtobj.price)
+                price_after_discount=float(price_after_discount)
+                print(price_after_discount,"ADDOFFERRRR")
+                return render(request,"store/userdashboard/preview.html",{"pdtobj":pdtobj,"totalsum":totalsum,"price_after_discount":price_after_discount,"offer":offer,     "offers":offers})
+
+            if "addtocart" in request.POST:
+
+                final_product_prize=request.POST.get("price_after_discount")
+                pdtobj=Products.objects.get(id=someid)
+                cartobjs=Cart.objects.all()
+
+                
+
+            
+
+                currentuser=request.session["username"]
+
+                
+                userobj=Customers.objects.get(username=currentuser)
+                quantity=request.POST.get("quantity")
+                offer=request.POST.get("offer")
+                
+              
+                    
+                total=Decimal(quantity)*Decimal(final_product_prize)
+                print("$$$$$$$$$$$$$$$",total)
+                cartdict={}
+                if cartobjs:
+                    
+                    for item in cartobjs:
+                        if item.product.name not in cartdict:
+                            cartdict[item.product.name]=item.quantity
+                        else:
+                            cartdict[item.product.name]+=item.quantity
+                    if cartdict[pdtobj.name]:
+
+                        remaining_quantity=pdtobj.quantity-cartdict[pdtobj.name]
+                    if not cartdict[pdtobj.name]:
+                        remaining_quantity=pdtobj.quantity
+
+                    print("***********",quantity,remaining_quantity)
+
+                    if int(quantity)>remaining_quantity:
+                        error="Product Out of Stock"
+                        # return render(request,"store/userdashboard/preview.html",{"error":error})
+                        return redirect(preview,someid)
+
+        
+
+                cartadd=Cart(product=pdtobj,user=userobj,quantity=int(quantity),total=total)
+                cartadd.save()
+                return redirect(loggedincart)
+
+
+         
+
+        return render(request,"store/userdashboard/preview.html",{"pdtobj":pdtobj,"totalsum":totalsum,     "offers":offers})
     else:
         return redirect(login)
     
@@ -460,52 +528,79 @@ def cashondelivery(request):
     return HttpResponse("Invalid request")
 
 
-def addtocart(request,someid):
+# def addtocart(request,someid):
    
 
-        if request.method=="POST":
+#         if request.method=="POST":
 
-            pdtobj=Products.objects.get(id=someid)
-            cartobjs=Cart.objects.all()
+#             pdtobj=Products.objects.get(id=someid)
+#             cartobjs=Cart.objects.all()
 
-            print(cartobjs,"llllllllllllllllllllllllllllllllllllllllll")
+            
 
-            print(pdtobj.name,"################")
+           
 
-            currentuser=request.session["username"]
+#             currentuser=request.session["username"]
 
-            print(currentuser,"########################")
-            userobj=Customers.objects.get(username=currentuser)
-            quantity=request.POST.get("quantity")
-            total=Decimal(quantity)*pdtobj.price
-            cartdict={}
-            if cartobjs:
+            
+#             userobj=Customers.objects.get(username=currentuser)
+#             quantity=request.POST.get("quantity")
+#             offer=request.POST.get("offer")
+#             total=Decimal(quantity)*pdtobj.price
+#             cartdict={}
+#             if cartobjs:
                 
-                for item in cartobjs:
-                    if item.product.name not in cartdict:
-                        cartdict[item.product.name]=item.quantity
-                    else:
-                        cartdict[item.product.name]+=item.quantity
-                if cartdict[pdtobj.name]:
+#                 for item in cartobjs:
+#                     if item.product.name not in cartdict:
+#                         cartdict[item.product.name]=item.quantity
+#                     else:
+#                         cartdict[item.product.name]+=item.quantity
+#                 if cartdict[pdtobj.name]:
 
-                    remaining_quantity=pdtobj.quantity-cartdict[pdtobj.name]
-                if not cartdict[pdtobj.name]:
-                    remaining_quantity=pdtobj.quantity
+#                     remaining_quantity=pdtobj.quantity-cartdict[pdtobj.name]
+#                 if not cartdict[pdtobj.name]:
+#                     remaining_quantity=pdtobj.quantity
 
-                print("***********",quantity,remaining_quantity)
+#                 print("***********",quantity,remaining_quantity)
 
-                if int(quantity)>remaining_quantity:
-                    error="Product Out of Stock"
-                    # return render(request,"store/userdashboard/preview.html",{"error":error})
-                    return redirect(preview,someid)
+#                 if int(quantity)>remaining_quantity:
+#                     error="Product Out of Stock"
+#                     # return render(request,"store/userdashboard/preview.html",{"error":error})
+#                     return redirect(preview,someid)
 
      
 
-            cartadd=Cart(product=pdtobj,user=userobj,quantity=int(quantity),total=total)
-            cartadd.save()
-            return redirect(loggedincart) 
+#             cartadd=Cart(product=pdtobj,user=userobj,quantity=int(quantity),total=total)
+#             cartadd.save()
+#             return redirect(loggedincart) 
         
-            
+
+
+# def update_offer_price(request):
+#     if request.method == "GET":
+#         selected_offer = request.GET.get("offer") 
+#         # pdtname=request.GET.get("pdtname") 
+#         # print("###########",pdtname)
+#         # offerobj=Productoffer.objects.get(offer_description=selected_offer)
+#         # discount=offerobj.discount
+#         # offer_price=productprice*
+        
+
+#          # Get the selected offer from the AJAX request
+
+#         # Perform necessary calculations to update the offer price based on the selected offer
+#         # Assuming you have the updated offer price as `new_offer_price`
+
+#         response = {
+#             "offer_price": 100
+#         }
+#         return JsonResponse(response)
+
+
+
+
+
+
 
 def previousorders(request):
     orderobjs=Orders.objects.all()
