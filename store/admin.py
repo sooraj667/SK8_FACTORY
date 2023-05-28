@@ -10,8 +10,6 @@ class CategoryAdmin(admin.ModelAdmin):
     list_display=("name",)
 class ProductsAdmin(admin.ModelAdmin):
     list_display=("name","price","quantity","category")
-# class ProductImagesAdmin(admin.ModelAdmin):
-#     list_display=("product","image")
 class OrdersAdmin(admin.ModelAdmin):
     list_display=("user","product","orderdate")
 class CartAdmin(admin.ModelAdmin):
@@ -22,6 +20,8 @@ class CouponAdmin(admin.ModelAdmin):
     list_display=("code","discount_percentage","isavailable")
 class ProductofferAdmin(admin.ModelAdmin):
     list_display=("product","offer_description","discount")
+class CategoryofferAdmin(admin.ModelAdmin):
+    list_display=("category","offer_description","discount")
 
 
 
@@ -30,11 +30,12 @@ class ProductofferAdmin(admin.ModelAdmin):
 admin.site.register(Customers,CustomersAdmin)
 admin.site.register(Category,CategoryAdmin)
 admin.site.register(Products,ProductsAdmin)
-# admin.site.register(ProductImages,ProductImagesAdmin)
 admin.site.register(Orders,OrdersAdmin)
 admin.site.register(Cart,CartAdmin)
 admin.site.register(Address,AddressAdmin)
 admin.site.register(Coupon,CouponAdmin)
 admin.site.register(Productoffer,ProductofferAdmin)
+admin.site.register(Categoryoffer,CategoryofferAdmin)
+
 
 

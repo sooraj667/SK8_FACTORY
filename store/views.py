@@ -208,11 +208,15 @@ def loggedin(request):
     if "username" in request.session and not Customers.objects.get(username=request.session["username"]).isblocked:
         category=Category.objects.all()
         products=Products.objects.all()
+
+        categoryofferobjs=Categoryoffer.objects.all()
+
+
         cartobjs=Cart.objects.all()
         totalsum=0
         for item in cartobjs:
             totalsum+=item.total
-        return render(request,"store/userdashboard/loggedin.html",{"category":category,"products":products,"cartobjs":cartobjs,"totalsum":totalsum})
+        return render(request,"store/userdashboard/loggedin.html",{"category":category,"products":products,"cartobjs":cartobjs,"totalsum":totalsum,       "categoryofferobjs":categoryofferobjs})
     else:
         return redirect(login)
 
@@ -231,27 +235,60 @@ def loggedinproduct(request):
 def preview(request,someid):
     if "username" in request.session and not Customers.objects.get(username=request.session["username"]).isblocked:
         pdtobj=Products.objects.get(id=someid)
+
+        categoryofferobjs=Categoryoffer.objects.all()
+        productofferobjs=Productoffer.objects.all()
+
+        categoryfound=False
+        productfound=False
+        for cat in categoryofferobjs:
+            if cat.category==pdtobj.category:
+                categoryfound=True
+                break
+        for pdt in productofferobjs:
+            if pdt.product ==pdtobj:
+                productfound=True
+                break
+
+
+
+
         cartobjs=Cart.objects.all()
         totalsum=0
         for item in cartobjs:
             totalsum+=item.total
 
         offers=Productoffer.objects.filter(product=pdtobj)
-        price_after_discount=None
+        price_after_discount=pdtobj.price
         if request.method=="POST":
             if "addoffer" in request.POST:
 
                 
 
-            
-            
-                offer=request.POST["offerselect"]
-                pdtofferobj=Productoffer.objects.get(product=pdtobj,offer_description=offer)
-                discount=pdtofferobj.discount
-                price_after_discount=pdtobj.price-(Decimal(discount/100)*pdtobj.price)
-                price_after_discount=float(price_after_discount)
-                print(price_after_discount,"ADDOFFERRRR")
-                return render(request,"store/userdashboard/preview.html",{"pdtobj":pdtobj,"totalsum":totalsum,"price_after_discount":price_after_discount,"offer":offer,     "offers":offers})
+                try:
+                    catoffer=request.POST["catofferselect"]
+                    pdtoffer=request.POST["pdtofferselect"]
+                    
+                    catofferobj=Categoryoffer.objects.get(category=pdtobj.category,offer_description=catoffer)
+                    pdtofferobj=Productoffer.objects.get(product=pdtobj,offer_description=pdtoffer)
+                    product_discount=pdtofferobj.discount
+                    category_discount=catofferobj.discount
+                    if category_discount>=product_discount:
+                        discount=category_discount
+                        offer=catoffer
+                    else:
+                        discount=product_discount
+                        offer=pdtoffer
+
+                    price_after_discount=pdtobj.price-(Decimal(discount/100)*pdtobj.price)
+                    price_after_discount=float(price_after_discount)
+                    print(price_after_discount,"ADDOFFERRRR")
+                    return render(request,"store/userdashboard/preview.html",{"pdtobj":pdtobj,"totalsum":totalsum,"price_after_discount":price_after_discount,"offer":offer,     "offers":offers,"categoryfound":categoryfound,"productfound":productfound,"categoryofferobjs":categoryofferobjs})
+                except:
+                    pass
+                
+
+                
 
             if "addtocart" in request.POST:
 
@@ -268,7 +305,7 @@ def preview(request,someid):
                 
                 userobj=Customers.objects.get(username=currentuser)
                 quantity=request.POST.get("quantity")
-                offer=request.POST.get("offer")
+                offer=request.POST.get("pdtoffer")
                 
               
                     
@@ -282,18 +319,22 @@ def preview(request,someid):
                             cartdict[item.product.name]=item.quantity
                         else:
                             cartdict[item.product.name]+=item.quantity
-                    if cartdict[pdtobj.name]:
+                    try:
 
-                        remaining_quantity=pdtobj.quantity-cartdict[pdtobj.name]
-                    if not cartdict[pdtobj.name]:
-                        remaining_quantity=pdtobj.quantity
+                        if cartdict[pdtobj.name]:
 
-                    print("***********",quantity,remaining_quantity)
+                            remaining_quantity=pdtobj.quantity-cartdict[pdtobj.name]
+                        if not cartdict[pdtobj.name]:
+                            remaining_quantity=pdtobj.quantity
 
-                    if int(quantity)>remaining_quantity:
-                        error="Product Out of Stock"
-                        # return render(request,"store/userdashboard/preview.html",{"error":error})
-                        return redirect(preview,someid)
+                        print("***********",quantity,remaining_quantity)
+
+                        if int(quantity)>remaining_quantity:
+                            error="Product Out of Stock"
+                            # return render(request,"store/userdashboard/preview.html",{"error":error})
+                            return redirect(preview,someid)
+                    except:
+                        pass
 
         
 
@@ -304,7 +345,7 @@ def preview(request,someid):
 
          
 
-        return render(request,"store/userdashboard/preview.html",{"pdtobj":pdtobj,"totalsum":totalsum,     "offers":offers})
+        return render(request,"store/userdashboard/preview.html",{"pdtobj":pdtobj,"totalsum":totalsum,     "offers":offers,"categoryofferobjs":categoryofferobjs,"categoryfound":categoryfound,"productfound":productfound})
     else:
         return redirect(login)
     
@@ -486,8 +527,8 @@ def cashondelivery(request):
                 orderstatusobj="Ordered"
                 ordertypeobj="Cash On Delivery"
                 orderdateobj=date.today() 
-            orderdata=Orders(user=userobj,product=pdtobj,quantity=quantityobj,address=addressobj,orderstatus=orderstatusobj,orderdate=orderdateobj,ordertype=ordertypeobj)
-            orderdata.save()
+                orderdata=Orders(user=userobj,product=pdtobj,quantity=quantityobj,address=addressobj,orderstatus=orderstatusobj,orderdate=orderdateobj,ordertype=ordertypeobj)
+                orderdata.save()
             cartobjs.delete()
             totalsum=0
             for item in cartobjs:

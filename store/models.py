@@ -25,7 +25,10 @@ class Category(models.Model):
     isblocked=models.BooleanField(default=False)
 
 
-
+class Categoryoffer(models.Model):
+    category=models.ForeignKey(Category,on_delete=models.CASCADE)
+    offer_description=models.CharField(max_length=200)
+    discount=models.PositiveIntegerField()
 
 
 
@@ -74,7 +77,6 @@ class Coupon(models.Model):
     minprice=models.PositiveIntegerField()
     maxprice=models.PositiveIntegerField()
     isavailable=models.BooleanField(default=True)
-
 
 
 

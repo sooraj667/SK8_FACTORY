@@ -141,16 +141,77 @@
 
 
                                 <form method="POST" action="">
+                                    {% csrf_token %}
+                                    {% comment %} Category Offer Select Tag {% endcomment %}
+                                
+                                
+                                {% if categoryfound == True %}
+                                
+                                
+                                
+                                
+
+
+                                
+                                
+                                
+                                
+                                
+                                <div class="flex-w flex-r-m p-b-10">
+                                    <div class="size-203 flex-c-m respon6">
+                                        Category Offer
+                                    </div>
+                                
+                                    
+
+                                    <div class="size-204 respon6-next">
+                                        <div class="rs1-select2 bor8 bg0">
+                                            <select id="offerselect" class="js-select2" name="catofferselect">
+                                                {% for catoffer in categoryofferobjs  %}  
+                                                {% if catoffer.category == pdtobj.category %}                                
+                                                <option>{{catoffer.offer_description}}</option>
+                                                {% endif %}
+                                                {% endfor %}
+                                            </select>
+                                            <div class="dropDownSelect2"></div>
+                                        </div>
+                                    </div>
+                                   
+                                        
+                                    
+                                
+                                    
+                                    
+                                </div>
+                               
+
+                                {% endif %}
+
+                                
+
+
+
+                                
+                                {% comment %} Category Offer Select Tag Ends {% endcomment %}
+
+
+
+
+
+
+
+                                {% comment %} Product Offer Select Tag {% endcomment %}
+                                {% if productfound == True %}
                                 <div class="flex-w flex-r-m p-b-10">
                                     <div class="size-203 flex-c-m respon6">
                                         Offer
                                     </div>
                                 
-                                    {% csrf_token %}
+                                    
 
                                     <div class="size-204 respon6-next">
                                         <div class="rs1-select2 bor8 bg0">
-                                            <select id="offerselect" class="js-select2" name="offerselect">
+                                            <select id="offerselect" class="js-select2" name="pdtofferselect">
                                                 
                                                 {% for offer in offers  %}                                    
                                                 <option>{{offer.offer_description}}</option>
@@ -163,13 +224,22 @@
                                    
                                         
                                     <br>
-                                    <button name="addoffer" type="submit" id="offerclick" class="flex-c-m stext-101 cl0 btn bg1 bor1 hov-btn1 p-lr-15 trans-04  mt-2">Add Offer</button>
+                                    
+                                    
                                 
                                     
                                     
                                 </div>
+                                {% endif %}
 
+                                {% comment %} Product Offer Select Tag Ends {% endcomment %}
+                                {% if productfound or categoryfound %}
+                                <button name="addoffer" type="submit" id="offerclick" class="flex-c-m stext-101 cl0 btn bg1 bor1 hov-btn1 p-lr-15 trans-04  mt-2">Add Offer</button>
+                                {% endif %}
                                 </form>
+
+
+
                                 <div>
                                     {% if offer %}
 

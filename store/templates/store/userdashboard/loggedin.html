@@ -496,9 +496,27 @@
 							</div>
 						</a>
 					</div>
+
+					{% for catoffer in categoryofferobjs   %}
+
+					{% if catoffer.category == item %}
+
+					<span class="text-success"> {{catoffer.offer_description}} AVAILABLE</span>
+					
+					
+					{% endif %}
+					
+					
+					
+					{% endfor %}
+
+
+
+
 				</div>
 				{% endif %}
 				{% endfor %}
+
 
 				{% comment %} <div class="col-md-6 col-xl-4 p-b-30 m-lr-auto">
 					<!-- Block1 -->
