@@ -28,6 +28,18 @@ urlpatterns = [
     path("coupon/",views.coupon,name="coupon"),
     path("addcoupon/",views.addcoupon,name="addcoupon"),
 
+
+    path("categoryoffer/",views.categoryoffer,name="categoryoffer"),
+    path("editcategoryoffer/<int:offerid>",views.editcategoryoffer,name="editcategoryoffer"),
+    path("deletecategoryoffer/<int:offerid>",views.deletecategoryoffer,name="deletecategoryoffer"),
+
+
+
+
+    path("productoffer/",views.productoffer,name="productoffer"),
+    path("editproductoffer/<int:offerid>",views.editproductoffer,name="editproductoffer"),
+    path("deleteproductoffer/<int:offerid>",views.deleteproductoffer,name="deleteproductoffer"),
+
     
     
 ]

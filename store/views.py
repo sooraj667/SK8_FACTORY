@@ -352,7 +352,6 @@ def preview(request,someid):
     
 def loggedincart(request):
     if "username" in request.session and not Customers.objects.get(username=request.session["username"]).isblocked:
-        print(request.session["username"],"######################")
         cartobjs=Cart.objects.all()
         totalsum=0
         for item in cartobjs:
@@ -527,7 +526,8 @@ def cashondelivery(request):
                 orderstatusobj="Ordered"
                 ordertypeobj="Cash On Delivery"
                 orderdateobj=date.today() 
-                orderdata=Orders(user=userobj,product=pdtobj,quantity=quantityobj,address=addressobj,orderstatus=orderstatusobj,orderdate=orderdateobj,ordertype=ordertypeobj)
+                finalprice=item.total
+                orderdata=Orders(user=userobj,product=pdtobj,quantity=quantityobj,address=addressobj,orderstatus=orderstatusobj,orderdate=orderdateobj,ordertype=ordertypeobj,finalprice=finalprice)
                 orderdata.save()
             cartobjs.delete()
             totalsum=0

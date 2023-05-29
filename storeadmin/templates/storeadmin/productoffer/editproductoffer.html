@@ -1,0 +1,54 @@
+{% extends 'storeadmin/index.html' %}
+
+{% block content %}
+
+<form class="p-5" method="POST" action="" enctype="multipart/form-data"> {% csrf_token %}
+          
+    <div class="form-group mt-2">
+      {% comment %} {% for item in content  %} {% endcomment %}
+      <label for="username">Product Name</label>
+      <select id="dropdown" name="productname">
+        {% for item in productobjs  %}
+        <option value="{{item.name}}">{{item.name}}<br><br> </option>
+        {% endfor %}
+  
+      </select> 
+    </div>
+ 
+      <div>
+
+        <label for="username">Offer</label>
+      <input value="{{pdtofferobj.offer_description}}" name="offer_description" type="text" class="form-control" id="username" placeholder="Enter username">
+
+      </div>
+
+      <div>
+
+        <label for="username">Discount</label>
+      <input value="{{pdtofferobj.discount}}" name="discount" type="number" class="form-control" id="username" placeholder="Enter username">
+
+      </div>
+      <div>
+        
+        <button type="submit" class="btn btn-primary mt-4">Update</button>
+        <h5> {{error}}</h5>
+
+    </div>
+
+      
+
+
+    </div>
+    
+    
+    {% comment %} {% endfor %} {% endcomment %}
+  
+  </form> 
+
+
+
+
+  
+
+
+{% endblock content %}

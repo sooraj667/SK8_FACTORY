@@ -69,6 +69,7 @@ class Orders(models.Model):
     orderstatus=models.CharField(max_length=200,default="pending")
     ordertype=models.CharField(max_length=200)
     quantity=models.PositiveIntegerField()
+    finalprice=models.DecimalField(max_digits=10, decimal_places=2)
 
 
 class Coupon(models.Model):

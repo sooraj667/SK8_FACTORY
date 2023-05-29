@@ -1,0 +1,245 @@
+{% extends 'storeadmin/index.html' %}
+
+{% block content %}
+
+
+<div class="container">
+  <div class="row justify-content-end">
+    <a href="{% url 'admin_addcategories' %}">
+      <button class="btn add-category-btn btn-primary mt-2">Add Category</button>
+    </a>
+  </div>
+  <div class="row">
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Category</th>
+          <th>Offer</th>
+          <th>Discount Percent</th>
+        </tr>
+      </thead>
+      <tbody>
+
+
+        {% comment %} var csrfToken =  $('input[name=csrfmiddlewaretoken]').val(); {% endcomment %}
+
+
+
+        {% for item in catofferobjs %}
+        <tr id="offer{{item.id}}">
+          <td class="py-1">{{ item.category.name }}</td>
+          <td class="py-1">{{ item.offer_description }}</td>
+          <td class="py-1">{{ item.discount}}%</td>
+          <td class="py-1">
+            <a href="{% url 'editcategoryoffer' item.id %}">
+              <button class="btn edit-btn btn-warning">Edit</button>
+            </a>
+          </td>
+          <td class="py-1">
+     
+            
+
+            
+
+            <button  class="btn delete-btn btn-danger" data-category-id="{{ item.id }}">Delete</button> 
+             
+            {% comment %} <a href="{% url 'admin_deletecategories' item.id %}">
+              <button class="btn delete-btn btn-danger">Delete</button>
+            </a> {% endcomment %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+<div>
+  <button id="but">
+    click
+  </button>
+</div>
+
+{% comment %} <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js" integrity="sha512-pumBsjNRGGqkPzKHndZMaAG+bir374sORyzM3uulLV14lN5LyykqNk8eEeUlUkB3U0M4FApyaHraT65ihJhDpQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script>
+
+  $(".delete-btn").click(function() {
+    var categoryId = $(this).data("category-id");
+    if (confirm("Are you sure you want to block this category?")) {
+        
+        $.ajax({
+            url: "/storeadmin/deletecategories/" + categoryId + "/",
+            type: "DELETE",
+            beforeSend: function(xhr) {
+              xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
+            },
+            success: function(response) {
+                alert(response.message);
+                location.reload();
+            },
+            error: function(xhr, status, error) {
+                alert("Error: " + error);
+            }
+        });
+    }
+});   {% endcomment %}
+  
+ 
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js" integrity="sha512-pumBsjNRGGqkPzKHndZMaAG+bir374sORyzM3uulLV14lN5LyykqNk8eEeUlUkB3U0M4FApyaHraT65ihJhDpQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+ <script>
+  $(document).ready(function() {
+      $(".delete-btn").click(function() {
+        var offerid = $(this).data("category-id");
+          // Get the selected offer value
+        
+        // Send an AJAX request to update the offer price
+        $.ajax({
+          url: "../deletecategoryoffer/" + offerid, // Replace with the URL of your Django view
+          type: "GET",
+          data: { offer: offerid,
+                  
+                  
+              },
+          success: function(response) {
+            $("#offer" + offerid).remove();
+            // Update the offer price on the page
+            var newOfferPrice = response.message;  // Assuming the response contains the updated offer price
+            // Update the appropriate HTML element with the new offer price
+            //$("#offer_price").text(newOfferPrice);
+            alert(response.message);
+          },
+          error: function(xhr, errmsg, err) {
+            // Handle any errors that occur during the AJAX request
+            console.log(xhr.status + ": " + xhr.responseText);
+          }
+        });
+      });
+    });
+  </script>
+  
+  
+  
+  
+  
+  
+  
+  {% comment %} $(".delete-btn").click(function() {
+    var categoryId = $(this).data("category-id");
+    if (confirm("Are you sure you want to delete this category?")) {
+        
+        $.ajax({
+            url: "/storeadmin/deletecategories/" + categoryId + "/",
+            type: "GET",
+            success: function(response) {
+                alert(response.message);
+                location.reload();
+            },
+            error: function(xhr, status, error) {
+                alert("Error: " + error);
+            }
+        });
+    }
+});  {% endcomment %}
+
+
+
+{% comment %} $(".delete-btn").click(function() {
+  var categoryId = $(this).data("category-id");
+  if (confirm("Are you sure you want to delete this category?")) {
+      var csrfToken = $("meta[name='csrf-token']").attr("content");
+      $.ajax({
+          url: "deletecategories/" + categoryId + "/",
+          type: "POST",
+          data: { csrfmiddlewaretoken: csrfToken },
+          success: function(response) {
+              alert(response.message);
+              location.reload();
+          },
+          error: function(xhr, status, error) {
+              alert("Error: " + error);
+          }
+      });
+  }
+});   {% endcomment %}
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+  {% comment %} $(".delete-btn").click(function() {
+    var categoryId = $(this).data("category-id");
+    if (confirm("Are you sure you want to delete this category?")) {
+        $.ajax({
+            url: "/deletecategories/" + categoryId + "/",
+            type: "POST",
+            data: { csrfmiddlewaretoken: "{{ csrf_token }}" },
+            success: function(response) {
+                alert(response.message);
+                location.reload();
+            },
+            error: function(xhr, status, error) {
+                alert("Error: " + error);
+            }
+        });
+    }
+}); {% endcomment %}
+
+
+</script>
+{% comment %} <div>
+  <div class="row  justify-content-end">
+    <a href={% url 'admin_addcategories' %}><button>Add Category</button></a>
+  </div>
+  <div class="row">
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>
+            Category
+          </th>
+
+        <th>
+          Edit
+        </th>
+        <th>
+          Delete
+        </th>
+      
+      </tr>
+    </thead>
+    <tbody>
+      {% for item in datas  %}
+      <tr>
+        <td class="py-1">
+          {{item.name}}
+        </td>
+        <td class="py-1">
+          <a href={% url 'admin_editcategories' item.id %}>Edit</a>
+        </td>
+        <td class="py-1">
+          <a href={% url 'admin_deletecategories' item.id %}>Delete</a>
+        </td>
+   
+      </tr>
+      
+      
+      {% endfor %}
+      
+      </tbody>
+    </table>
+</div> {% endcomment %}
+
+
+
+
+
+
+
+{% endblock content %}

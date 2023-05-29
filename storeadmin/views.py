@@ -612,3 +612,80 @@ def addcoupon(request):
         coup.save()
         return redirect(coupon)
     return render(request,"storeadmin/coupons/addcoupons.html")
+
+
+def categoryoffer(request):
+    catofferobjs=Categoryoffer.objects.all()
+
+    context={"catofferobjs":catofferobjs}
+    return render(request,"storeadmin/categoryoffer/categoryoffer.html",context)
+
+def editcategoryoffer(request,offerid):
+    catofferobj=Categoryoffer.objects.get(id=offerid)
+    categoryobjs=Category.objects.all()
+    if request.method=="POST":
+
+        
+        categoryname=request.POST["categoryname"]
+        offer_description=request.POST["offer_description"]
+        discount=request.POST["discount"]
+        categoryobj=Category.objects.get(name=categoryname)
+
+        catofferobj.category=categoryobj
+        catofferobj.offer_description=offer_description
+        catofferobj.discount=discount
+        catofferobj.save()
+
+
+
+        return redirect(categoryoffer)
+    context={"catofferobj":catofferobj,"categoryobjs":categoryobjs}
+    return render(request,"storeadmin/categoryoffer/editcategoryoffer.html",context)
+
+
+
+def deletecategoryoffer(request,offerid):
+    catofferobj=Categoryoffer.objects.get(id=offerid)
+    catofferobj.delete()
+
+    return JsonResponse({"message":"Deleted"})
+
+
+
+
+
+def productoffer(request):
+    pdtofferobjs=Productoffer.objects.all()
+
+    context={"pdtofferobjs":pdtofferobjs}
+    return render(request,"storeadmin/productoffer/productoffer.html",context)
+
+
+def editproductoffer(request,offerid):
+    pdtofferobj=Productoffer.objects.get(id=offerid)
+    productobjs=Products.objects.all()
+    if request.method=="POST":
+
+        
+        productname=request.POST["productname"]
+        offer_description=request.POST["offer_description"]
+        discount=request.POST["discount"]
+        productobj=Products.objects.get(name=productname)
+
+        pdtofferobj.product=productobj
+        pdtofferobj.offer_description=offer_description
+        pdtofferobj.discount=discount
+        pdtofferobj.save()
+
+
+
+        return redirect(productoffer)
+    context={"pdtofferobj":pdtofferobj,"productobjs":productobjs}
+    return render(request,"storeadmin/productoffer/editproductoffer.html",context)
+
+
+def deleteproductoffer(request,offerid):
+    pdtofferobj=Productoffer.objects.get(id=offerid)
+    pdtofferobj.delete()
+
+    return JsonResponse({"message":"Deleted"})
