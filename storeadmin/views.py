@@ -520,18 +520,12 @@ def orders(request):
 def editorderstatus(request,someid):
 
     if request.method=="POST":
-        orderstatus=request.POST.get("orderstatus")
-
         orderobj=Orders.objects.get(id=someid)
-        quantity=orderobj.quantity
-        address=orderobj.address
-        orderdate=orderobj.orderdate
-        product=orderobj.product
-        user=orderobj.user
-        ordertype=orderobj.ordertype
+        orderstatus=request.POST.get("orderstatus")
+        orderobj.orderstatus=orderstatus
+
         
-        orderupdates=Orders(id=someid,orderstatus=orderstatus,ordertype=ordertype,quantity=quantity,address=address,orderdate=orderdate,product=product,user=user)
-        orderupdates.save()
+        orderobj.save()
         return redirect(orders)
 
     return render(request,"storeadmin/orders/editorderstatus.html")

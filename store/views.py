@@ -738,3 +738,14 @@ def edituseraddress(request,someid):
     addressobj.save()
     return redirect(userprofile)
 
+def deliveredproducts(request):
+    orderobjs=Orders.objects.all()
+    context={"orderobjs":orderobjs}
+    return render(request,"store/userdashboard/deliveredproducts.html",context)
+
+
+def returnorder(request,orderid):
+    orderobj=Orders.objects.get(id=orderid)
+    orderobj.orderstatus="ReturnRequested"
+    orderobj.save()
+    return JsonResponse({"message":"Return Initiated"})

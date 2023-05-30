@@ -14,6 +14,7 @@ urlpatterns = [
     path("verifyotp/",views.verifyotp,name="verifyotp"),
     # path("buynow/<int:someid>",views.buynow,name="buynow"),
     path("cancelorder/<int:someid>",views.cancelorder,name="cancelorder"),
+    path("returnorder/<int:orderid>",views.returnorder,name="returnorder"),
 
 
 
@@ -21,6 +22,7 @@ urlpatterns = [
     path("userprofile/",views.userprofile,name="userprofile"),
     path("edituserdetails/",views.edituserdetails,name="edituserdetails"),
     path("edituseraddress/<int:someid>",views.edituseraddress,name="edituseraddress"),
+    path("deliveredproducts/",views.deliveredproducts,name="deliveredproducts"),
 
 
 

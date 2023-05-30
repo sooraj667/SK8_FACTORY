@@ -1,0 +1,111 @@
+{% extends 'store/userdashboard/loggedin.html' %}
+{% block content %}
+
+
+
+<br><br><br><br><br>
+<div class="container-fluid">
+    <div class="row mt-5">
+        <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>Product</th>
+                <th>Price</th>
+                <th>Quantity</th>
+                <th>Date</th>
+                <th>Status Of Order</th>
+                <th>Image</th>
+                <th>Cancel</th>
+                
+              </tr>
+            </thead>
+            <tbody>
+                
+              {% for item in orderobjs %}
+              {% if item.orderstatus == "Delivered" or item.orderstatus == "ReturnRequested" %}
+              <tr>
+                <td>{{ item.product.name }}</td>
+                <td>{{ item.finalprice }}</td>
+                <td>{{ item.quantity }}</td>
+                <td>{{ item.orderdate }}</td>
+                <td>{{ item.orderstatus }}</td>
+                <td><img class="img-fluid img-thumbnail" src="{{ item.product.image1.url }}" alt="" width="50" height="50"></td>
+        
+                {% if item.orderstatus == "Delivered" %}
+                <td id="order{{item.id}}"><button class="btn delete-btn btn-danger" data-category-id="{{ item.id }}">Return</button> </td>
+                {% elif item.orderstatus == "ReturnRequested"  %}
+                <td><span class="text-warning"> Return Initiated</span></td>
+                {% endif %}
+                {% comment %} {% elif item.orderstatus == "ReturnRequested" %}
+        
+                <td><span class="text-danger">Order <div>Return Initiated</div> </span></td> {% endcomment %}
+        
+                
+                {% endif %}
+        
+                {% comment %} <td>
+                  <a href="{% url 'admin_editproducts' item.id %}">
+                    <button class="btn edit-btn btn-warning">Edit</button>
+                  </a>
+                </td>
+                <td>
+                  <a href="{% url 'admin_deleteproducts' item.id %}">
+                    <button class="btn delete-btn btn-danger">Delete</button>
+                  </a>
+                </td> {% endcomment %}
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+    
+    </div>
+
+</div>
+
+
+<br><br><br><br><br><br><br><br><br><br>
+
+
+
+
+
+
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js" integrity="sha512-pumBsjNRGGqkPzKHndZMaAG+bir374sORyzM3uulLV14lN5LyykqNk8eEeUlUkB3U0M4FApyaHraT65ihJhDpQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+ <script>
+  $(document).ready(function() {
+      $(".delete-btn").click(function() {
+        var orderid = $(this).data("category-id");
+          // Get the selected offer value
+        
+        // Send an AJAX request to update the offer price
+        $.ajax({
+          url: "../returnorder/" + orderid, // Replace with the URL of your Django view
+          type: "GET",
+          data: { offer: orderid,
+                  
+                  
+              },
+          success: function(response) {
+            $("#order" + orderid).text("Return Initiated").addClass("text-warning");;
+            // Update the offer price on the page
+            var newOfferPrice = response.message;  // Assuming the response contains the updated offer price
+            // Update the appropriate HTML element with the new offer price
+            //$("#offer_price").text(newOfferPrice);
+            alert(response.message);
+          },
+          error: function(xhr, errmsg, err) {
+            // Handle any errors that occur during the AJAX request
+            console.log(xhr.status + ": " + xhr.responseText);
+          }
+        });
+      });
+    });
+  </script>
+
+{% endblock content %}
+
+
+
+

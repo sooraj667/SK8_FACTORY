@@ -70,7 +70,7 @@ class Orders(models.Model):
     ordertype=models.CharField(max_length=200)
     quantity=models.PositiveIntegerField()
     finalprice=models.DecimalField(max_digits=10, decimal_places=2)
-    # returnstatus=models.BooleanField(defalut=False)
+    
 
 
 class Coupon(models.Model):
