@@ -264,22 +264,38 @@ def preview(request,someid):
             if "addoffer" in request.POST:
 
                 
-
+                catoffer=None
+                pdtoffer=None
                 try:
                     catoffer=request.POST["catofferselect"]
+                except:
+                    pass
+                try:
                     pdtoffer=request.POST["pdtofferselect"]
-                    
+                except:
+                    pass
+                if catoffer:
                     catofferobj=Categoryoffer.objects.get(category=pdtobj.category,offer_description=catoffer)
+                    category_discount=catofferobj.discount
+                if pdtoffer:
                     pdtofferobj=Productoffer.objects.get(product=pdtobj,offer_description=pdtoffer)
                     product_discount=pdtofferobj.discount
-                    category_discount=catofferobj.discount
+                    
+                if catoffer and pdtoffer:
+
                     if category_discount>=product_discount:
                         discount=category_discount
                         offer=catoffer
                     else:
                         discount=product_discount
                         offer=pdtoffer
-
+                if catoffer and not pdtoffer:
+                    discount=category_discount
+                    offer=catoffer
+                if not catoffer and pdtoffer:
+                    discount=product_discount
+                    offer=pdtoffer
+                try:
                     price_after_discount=pdtobj.price-(Decimal(discount/100)*pdtobj.price)
                     price_after_discount=float(price_after_discount)
                     print(price_after_discount,"ADDOFFERRRR")
@@ -296,7 +312,7 @@ def preview(request,someid):
                 pdtobj=Products.objects.get(id=someid)
                 cartobjs=Cart.objects.all()
 
-                
+             
 
             
 
@@ -335,6 +351,15 @@ def preview(request,someid):
                             return redirect(preview,someid)
                     except:
                         pass
+
+                for cartitem in cartobjs:
+                    if cartitem.product==pdtobj:
+                        cartitem.quantity+= int(quantity)
+                        cartitem.save()
+                        return redirect(loggedincart)
+
+                
+
 
         
 
