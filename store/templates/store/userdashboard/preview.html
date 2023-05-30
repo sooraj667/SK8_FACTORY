@@ -1,8 +1,10 @@
 {% extends 'store/userdashboard/loggedin.html' %}
 {% load static %}
 {% block head %}	
+<link rel="stylesheet" href="{% static 'store/magiczoom/magiczoom.css' %}">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/elevatezoom/2.2.3/jquery.elevatezoom.min.js"></script>
+{% comment %} <script src="https://cdnjs.cloudflare.com/ajax/libs/elevatezoom/2.2.3/jquery.elevatezoom.min.js"></script> {% endcomment %}
+
 {% comment %} <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> {% endcomment %}
 {% endblock head %}
 
@@ -37,8 +39,9 @@
                                 <div class="slick3 gallery-lb">
                                     <div class="item-slick3" data-thumb="{{pdtobj.image1.url}}" >
                                         <div class="wrap-pic-w pos-relative">
-                                            <img src="{{pdtobj.image1.url}}" alt="IMG-PRODUCT" data-zoom-image="{{pdtobj.image1.url}}" id="zoom1">
-
+                                            <a href="{{pdtobj.image1.url}}" class="MagicZoom">
+                                            <img src="{{pdtobj.image1.url}}" alt="IMG-PRODUCT"  >
+                                            </a>
                                             <a class="flex-c-m size-108 how-pos1 bor0 fs-16 cl10 bg0 hov-btn3 trans-04" href="{% static 'store/images/product-detail-01.jpg' %}">
                                                 <i class="fa fa-expand"></i>
                                             </a>
@@ -51,7 +54,9 @@
                                     {% if pdtobj.image2 %}
                                     <div class="item-slick3" data-thumb="{{pdtobj.image2.url}}">
                                         <div class="wrap-pic-w pos-relative">
-                                            <img src="{{pdtobj.image2.url}}" alt="IMG-PRODUCT" >
+                                            <a href="{{pdtobj.image2.url}}" class="MagicZoom">
+                                                <img src="{{pdtobj.image2.url}}" alt="IMG-PRODUCT"  >
+                                            </a>
 
                                             <a class="flex-c-m size-108 how-pos1 bor0 fs-16 cl10 bg0 hov-btn3 trans-04" href="images/product-detail-02.jpg">
                                                 <i class="fa fa-expand"></i>
@@ -65,7 +70,9 @@
                                     {% if pdtobj.image3 %}
                                     <div class="item-slick3" data-thumb="{{pdtobj.image3.url}}">
                                         <div class="wrap-pic-w pos-relative">
-                                            <img src="{{pdtobj.image3.url}}" alt="IMG-PRODUCT" >
+                                            <a href="{{pdtobj.image3.url}}" class="MagicZoom">
+                                                <img src="{{pdtobj.image3.url}}" alt="IMG-PRODUCT"  >
+                                            </a>
 
                                             <a class="flex-c-m size-108 how-pos1 bor0 fs-16 cl10 bg0 hov-btn3 trans-04" href="images/product-detail-03.jpg">
                                                 <i class="fa fa-expand"></i>
@@ -358,13 +365,13 @@
 
 </div>
 
+<script src="{% static 'store/magiczoom/magiczoom.js' %}"></script>
 
 
 
-
-<script>
+{% comment %} <script>
     $("#zoom1").elevateZoom();
-</script>
+</script> {% endcomment %}
 
 
 
