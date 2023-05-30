@@ -27,10 +27,12 @@ urlpatterns = [
 
     path("coupon/",views.coupon,name="coupon"),
     path("addcoupon/",views.addcoupon,name="addcoupon"),
+    path("editcoupon/<int:couponid>",views.editcoupon,name="editcoupon"),
+    path("deletecoupon/<int:couponid>",views.deletecoupon,name="deletecoupon"),
 
 
     path("categoryoffer/",views.categoryoffer,name="categoryoffer"),
-    path("editcategoryoffer/<int:offerid>",views.editcategoryoffer,name="editcategoryoffer"),
+    path("editcategoryoffer/<int:couponid>",views.editcategoryoffer,name="editcategoryoffer"),
     path("deletecategoryoffer/<int:offerid>",views.deletecategoryoffer,name="deletecategoryoffer"),
 
 

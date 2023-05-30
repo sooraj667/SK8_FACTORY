@@ -613,6 +613,42 @@ def addcoupon(request):
         return redirect(coupon)
     return render(request,"storeadmin/coupons/addcoupons.html")
 
+def editcoupon(request,couponid):
+    couponobj=Coupon.objects.get(id=couponid)
+    
+    if request.method=="POST":
+
+        
+        code=request.POST["code"]
+        discount_percentage=request.POST["discount_percentage"]
+        minprice=request.POST["minprice"]
+        maxprice=request.POST["maxprice"]
+        isavailable=request.POST["isavailable"]
+        if isavailable=="Yes":
+            isavailable=True
+        else:
+            isavailable=False
+        
+
+        couponobj.code=code
+        couponobj.discount_percentage=discount_percentage
+        couponobj.minprice=minprice
+        couponobj.maxprice=maxprice
+        couponobj.isavailable=isavailable
+        couponobj.save()
+
+
+
+        return redirect(coupon)
+    context={"couponobj":couponobj}
+    return render(request,"storeadmin/coupons/editcoupon.html",context)
+
+def deletecoupon(request,couponid):
+    couponobj=Coupon.objects.get(id=couponid)
+    couponobj.delete()
+
+    return JsonResponse({"message":"Deleted"})
+
 
 def categoryoffer(request):
     catofferobjs=Categoryoffer.objects.all()

@@ -23,14 +23,14 @@
         </thead>
         <tbody>
           {% for item in couponobjs %}
-          <tr>
+          <tr id="offer{{item.id}}">
             <td>{{ item.code }}</td>
             <td>{{ item.discount_percentage }}</td>
             <td>{{ item.minprice }}</td>
             <td>{{ item.maxprice }}</td>
             <td>{{ item.isavailable }}</td>
             <td>
-              <a href="">
+              <a href={% url 'editcoupon' item.id %}>
                 <button class="btn edit-btn btn-warning">Edit</button>
               </a>
             </td>
@@ -62,29 +62,36 @@
 
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js" integrity="sha512-pumBsjNRGGqkPzKHndZMaAG+bir374sORyzM3uulLV14lN5LyykqNk8eEeUlUkB3U0M4FApyaHraT65ihJhDpQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-<script>
-
-  $(".delete-btn").click(function() {
-    var someid = $(this).data("category-id");
-    if (confirm("Are you sure you want to delete this product?")) {
+ <script>
+  $(document).ready(function() {
+      $(".delete-btn").click(function() {
+        var couponid = $(this).data("category-id");
+          // Get the selected offer value
         
+        // Send an AJAX request to update the offer price
         $.ajax({
-            url: "/storeadmin/deletecoupon/" + someid + "/",
-            type: "DELETE",
-            beforeSend: function(xhr) {
-              xhr.setRequestHeader("X-CSRFToken", "{{ csrf_token }}");
-            },
-            success: function(response) {
-                alert(response.message);
-                location.reload();
-            },
-            error: function(xhr, status, error) {
-                alert("Error: " + error);
-            }
+          url: "../deletecoupon/" + couponid, // Replace with the URL of your Django view
+          type: "GET",
+          data: { offer: couponid,
+                  
+                  
+              },
+          success: function(response) {
+            $("#offer" + couponid).remove();
+            // Update the offer price on the page
+            var newOfferPrice = response.message;  // Assuming the response contains the updated offer price
+            // Update the appropriate HTML element with the new offer price
+            //$("#offer_price").text(newOfferPrice);
+            alert(response.message);
+          },
+          error: function(xhr, errmsg, err) {
+            // Handle any errors that occur during the AJAX request
+            console.log(xhr.status + ": " + xhr.responseText);
+          }
         });
-    }
-});  
-</script>
+      });
+    });
+  </script>
 
 
 
