@@ -252,6 +252,7 @@
                         </thead>
                         <tbody>
                           {% for item in orderobjs %}
+                          {% if item.orderstatus != "ReturnRequested" %}
                           <tr>
                             <td>{{ item.product.name }}</td>
                             <td>{{ item.finalprice }}</td>
@@ -261,7 +262,7 @@
                             <td><img class="img-fluid img-thumbnail" src="{{ item.product.image1.url }}" alt="" width="50" height="50"></td>
 
                             {% if item.orderstatus != 'Cancelled' %}
-                            <td><button  type="button" class="btn delete-btn btn-danger" data-category-id="{{ item.id }}">Cancel</button></td>
+                            <td id="orderitem{{item.id}}"><button  type="button" class="btn delete-btn btn-danger" data-category-id="{{ item.id }}">Cancel</button></td>
                             
                             {% else %}
 
@@ -281,6 +282,7 @@
                               </a>
                             </td> {% endcomment %}
                           </tr>
+                          {% endif %}
                           {% endfor %}
                         </tbody>
                       </table>
@@ -409,7 +411,7 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 
-            <script>
+            {% comment %} <script>
             
               $(".delete-btn").click(function() {
                 var someid  = $(this).data("category-id");
@@ -431,7 +433,41 @@
                     });
                 }
             });  
-            </script>
+            </script> {% endcomment %}
+
+
+
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js" integrity="sha512-pumBsjNRGGqkPzKHndZMaAG+bir374sORyzM3uulLV14lN5LyykqNk8eEeUlUkB3U0M4FApyaHraT65ihJhDpQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+            <script>
+             $(document).ready(function() {
+                 $(".delete-btn").click(function() {
+                   var orderid = $(this).data("category-id");
+                     // Get the selected offer value
+                   
+                   // Send an AJAX request to update the offer price
+                   $.ajax({
+                     url: "../cancelorder/" + orderid, // Replace with the URL of your Django view
+                     type: "GET",
+                     data: { offer: orderid,
+                             
+                             
+                         },
+                     success: function(response) {
+                       //$("#offer" + orderid).remove();
+                       // Update the offer price on the page
+                       var content = response.content;  // Assuming the response contains the updated offer price
+                       // Update the appropriate HTML element with the new offer price
+                       $("#orderitem" + orderid).text("Cancelled").addClass("text-danger");;
+                       alert(response.message);
+                     },
+                     error: function(xhr, errmsg, err) {
+                       // Handle any errors that occur during the AJAX request
+                       console.log(xhr.status + ": " + xhr.responseText);
+                     }
+                   });
+                 });
+               });
+             </script>
 
 
 {% endblock content %}

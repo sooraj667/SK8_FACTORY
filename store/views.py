@@ -400,7 +400,13 @@ def updatecart(request,someid):
             cartobj.total=cartobj.product.price*Decimal(cartobj.quantity)
             cartobj.save()
             return redirect(loggedincart)
+def increasequantity(request,itemid):
+    cartobj=Cart.objects.get(id=itemid)
+    updatedquantity = request.GET.get('updatedquantity')
+    print("MWONEE",updatedquantity)
+    cartobj.quantity=updatedquantity
 
+    return JsonResponse({"message":"Updated"})
 
 # totalsum_withcoupon=request.GET.get("totalsum_withcoupon")
 
@@ -700,17 +706,14 @@ def previousorders(request):
 
 def cancelorder(request,someid):
 
-    print(someid,"SOMEID ***********")
+    
     orderobj=Orders.objects.get(id=someid)
     orderobj.orderstatus="Cancelled"
     orderobj.save()
 
-    print("******************")
-    print(orderobj.orderstatus)
-    print("******************")
+    
 
-
-    return JsonResponse({"message": "Confirm !"})
+    return JsonResponse({"message": "Confirm !","content":"Order Cancelled"})
 
 
 

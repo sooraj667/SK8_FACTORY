@@ -50,6 +50,8 @@ urlpatterns = [
 
     path("deletecart/",views.deletecart,name="deletecart"),
     path("updatecart/<int:someid>",views.updatecart,name="updatecart"),
+    path("increasequantity/<int:itemid>",views.increasequantity,name="increasequantity"),
+    
 
     # path("update_offer_price/",views.update_offer_price,name="update_offer_price")
 

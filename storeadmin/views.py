@@ -563,7 +563,7 @@ def downloadsales(request):
         slno=0
         for ord in ords:
             slno+=1
-            orderdetails=f"{slno},{ord.user.name},{ord.product.name},{ord.address.house},{ord.orderdate},{ord.orderstatus},{ord.quantity} and Thank You for your order."
+            orderdetails=f"{slno},{ord.user.name},{ord.product.name},{ord.address.house},{ord.orderdate},{ord.orderstatus},{ord.quantity} "
             lines.append(orderdetails)
     else:
         lines=["No orders"]
@@ -581,7 +581,7 @@ def downloadsales(request):
     c.showPage()
     c.save()
     buf.seek(0)
-    return FileResponse(buf,as_attachment=True,filename='venue.pdf')
+    return FileResponse(buf,as_attachment=True,filename='Orders.pdf')
     
 
 def coupon(request):  

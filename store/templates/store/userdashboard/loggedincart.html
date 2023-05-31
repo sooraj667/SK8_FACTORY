@@ -59,7 +59,8 @@
 																<i class="fs-16 zmdi zmdi-minus"></i>
 															</div>
 															
-															<input class="mtext-104 cl3 txt-center num-product" type="number" name="quantity" value={{item.quantity}}>
+															<input class="increasequantity mtext-104 cl3 txt-center num-product" type="number" name="quantity" data-category-id="{{ item.id }}" value={{item.quantity}}>
+															{% comment %} <button  class="btn delete-btn btn-danger" data-category-id="{{ item.id }}">Delete</button>  {% endcomment %}
 				
 															<div class="btn-num-product-up cl8 hov-btn3 trans-04 flex-c-m">
 																<i class="fs-16 zmdi zmdi-plus"></i>
@@ -353,13 +354,46 @@ $(".delete-btn").click(function() {
             error: function(xhr, status, error) {
                 alert("Error: " + error);
             }
-        });
+        }); 
     }
 });   {% endcomment %}
 </script>
 
+{% comment %} INCREASE QUANTITY OF ITEM IN CART {% endcomment %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js" integrity="sha512-pumBsjNRGGqkPzKHndZMaAG+bir374sORyzM3uulLV14lN5LyykqNk8eEeUlUkB3U0M4FApyaHraT65ihJhDpQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+ <script>
+  $(document).ready(function() {
+      $(".increasequantity").click(function() {
+        var itemid = $(this).data("category-id");
+		//var quantityInput = document.querySelector('input[data-category-id="' + itemid + '"]');
+          // Get the selected offer value
+        
+        // Send an AJAX request to update the offer price
+        $.ajax({
+          url: "../increasequantity/" + itemid, // Replace with the URL of your Django view
+          type: "GET",
+          data: { offer: itemid,
+			//updatedquantity:quantityInput,
 
-
+                  
+                  
+              },
+          success: function(response) {
+            $("#offer" + itemid).remove();
+            // Update the offer price on the page
+            var newOfferPrice = response.message;  // Assuming the response contains the updated offer price
+            // Update the appropriate HTML element with the new offer price
+            //$("#offer_price").text(newOfferPrice);
+            alert(response.message);
+          },
+          error: function(xhr, errmsg, err) {
+            // Handle any errors that occur during the AJAX request
+            console.log(xhr.status + ": " + xhr.responseText);
+          }
+        });
+      });
+    });
+  </script>
 
 
 
