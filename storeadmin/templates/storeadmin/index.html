@@ -380,42 +380,34 @@
         </ul>
       </nav> 
       {% block content %}
+
       <div class="container-fluid">
 
         <div class="row mt-5 ml-5">
           Top Product with Most number Of Orders - <span class="text-success font-weight-bold">{{top_product}}</span>
         </div>
-        <div class="row mt-5 ml-5">
+        <div class="row  ml-5">
           <div class="col-md-12">
             <div class="row mt-5">
               <div>
-                <canvas id="myChart" width="800" height="400"></canvas>
+                
+                
+                <canvas id="myChart" width="600" height="600"></canvas>
+
+                <br><br><br><br><br><br><br><br>
               </div>
+
+                <div>
+                  Most Returned Product- <span class="text-success font-weight-bold">{{top_returned_product}}</span>
+                  <canvas class="mt-5" id="mybarChart" width="600" height="600"></canvas>
+
+                </div>
+
+                
+
               
-              <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-              
-              <script>
-                const ctx = document.getElementById('myChart');
-              
-                new Chart(ctx, {
-                  type: 'bar',
-                  data: {
-                    labels: [{% for item in orderdict  %} '{{item}}',  {% endfor %}],
-                    datasets: [{
-                      label: '{{top_count}}  Sales for {{top_product}}',
-                      data: [{% for key,value in orderdict.items  %} {{value}},  {% endfor %}],
-                      borderWidth: 1
-                    }]
-                  },
-                  options: {
-                    scales: {
-                      y: {
-                        beginAtZero: true
-                      }
-                    }
-                  }
-                });
-              </script>
+    
+         
               </div> 
             </div>
   
@@ -425,13 +417,122 @@
         </div>
 
       </div>
+
+
+
       
-      
+              </div> 
+            </div>
+  
+          </div>
+          
+  
+        </div>
+
+      </div>
+
+
+
+
+
+
+      {% comment %} PIE CHART {% endcomment %}
+
+ 
+     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+   
+              <script>
+                var xValues = [{% for item in returndict  %} '{{item}}',  {% endfor %}];
+                var yValues = [20,30];
+                var yValues = [ {% for key, value in returndict.items %}
+                              {{ value }},
+                                {% endfor %}
+                                ]; 
+                var barColors = ["skyblue", "lightgreen","red","orange","brown"];
+                
+                new Chart("mybarChart", {
+                  type: "bar",
+                  data: {
+                    labels: xValues,
+                    datasets: [{
+                      backgroundColor: barColors,
+                      data: yValues
+                    }]
+                  },
+                  options: {
+                    legend: {display: false},
+                    title: {
+                      display: true,
+                      text: "World Wine Production 2018"
+                    }
+                  }
+                });
+                </script>
+
+
+
+              
+            <script>
+                  const ctx = document.getElementById('myChart');
+                
+                  new Chart(ctx, {
+                    type: 'pie',
+                    data: {
+                      labels: [{% for item in orderdict  %} '{{item}}',  {% endfor %}],
+                      datasets: [{
+                        //label: '{{top_count}}  Sales for {{top_product}}',
+                        data: [{% for key,value in orderdict.items  %} {{value}},  {% endfor %}],
+                        borderWidth: 1
+                      }]
+                    },
+                    options: {
+                      scales: {
+                        y: {
+                          beginAtZero: true
+                        }
+                      }
+                    }
+                  });
+                </script> 
+                
+                
       
       
       
       
       {% endblock content %}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
       <!-- partial -->
       {% comment %} <div class="main-panel">
         <div class="content-wrapper">

@@ -60,6 +60,7 @@ def loggedincategory_based_product(request,someid):
     return render(request,"store/userdashboard/loggedincategory_based_product.html",{"productobjs":productobjs})
 
 def signup(request): 
+    
     if "username" in request.session:
         return redirect(loggedin)
     if request.method=="POST":
@@ -71,12 +72,19 @@ def signup(request):
         password=request.POST.get("password")
         repassword=request.POST.get("repassword")
 
-        
+        already_presentuser=None
+        try:
+            already_presentuser=Customers.objects.get(username=username)
+        except:
+            pass
+      
 
         if len(username)<4:
             error["username"]="Username should contain minimum four characters"
         elif len(username)>10:
             error["username"]="Username can only have upto 10 characters"
+        elif already_presentuser:
+            error["username"]="Username already taken.Please choose any other"
         elif name.isalpha()=="False":
             error["name"]="Name can't have numbers" 
         elif not re.match(r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$', email):
@@ -111,12 +119,13 @@ def signup(request):
             
     return render(request,"store/signup.html")
 
-
+# request.session.get("contactno")
 def otplogin(request):
     if "username" in request.session:
         return redirect(loggedin)
     if request.method=="POST":
-        phonenum = '+91' + request.session.get("contactno")
+        pnum=request.POST["phonenumber"]
+        phonenum = '+91' + pnum
         otp = str(random.randint(100000, 999999))
         client = Client(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
         verification = client.verify.services(settings.TWILIO_VERIFY_SERVICE_SID) \
@@ -134,7 +143,7 @@ def otplogin(request):
 def verifyotp(request):
     if "username" in request.session:
         return redirect(loggedin)
-    msg="Otp sent.Enter the otp recievd in your phone here."
+    msg="Otp sent.Please enter the otp recieved in your phone."
     if request.method == 'POST':
         entered_otp = request.POST.get('otp')
         phone_number = request.session.get('phone_number')
@@ -157,43 +166,45 @@ def verifyotp(request):
     return render(request,"store/verifyotp.html",{"msg":msg})
 
 def login(request):
-    
-    if "username" in request.session and not Customers.objects.get(username=request.session["username"]).isblocked:
-        return redirect(loggedin)
+    try:
+        if "username" in request.session and not Customers.objects.get(username=request.session["username"]).isblocked:
+            return redirect(loggedin)
+    except:
+        pass
     if request.method=="POST":
-        username=request.POST.get("username")
-        password=request.POST.get("password")
-        if len(username)<4:
-            error="Username should contain minimum four characters"
-        elif len(username)>10:
-            error="Username can only have upto 10 characters"
-        elif len(password)<6:
-            error="Password must altleast contain 6 characters"
-        elif len(password)>12:
-            error="Password can only have upto 12 characters"
-        else:
-            try:
-                customer = Customers.objects.get(username=username, password=password)
-                if not customer.isblocked:
-                    request.session["username"] = username
-                    return redirect(loggedin)
-                else:
-                    context = "Account is blocked"
-            except Customers.DoesNotExist:
-                context = "Invalid Credentials"
+            username=request.POST.get("username")
+            password=request.POST.get("password")
+            if len(username)<4:
+                error="Username should contain minimum four characters"
+            elif len(username)>10:
+                error="Username can only have upto 10 characters"
+            elif len(password)<6:
+                error="Password must altleast contain 6 characters"
+            elif len(password)>12:
+                error="Password can only have upto 12 characters"
+            else:
+                try:
+                    customer = Customers.objects.get(username=username, password=password)
+                    if not customer.isblocked:
+                        request.session["username"] = username
+                        return redirect(loggedin)
+                    else:
+                        context = "Account is blocked"
+                except Customers.DoesNotExist:
+                    context = "Invalid Credentials"
 
-            return render(request, "store/login.html", {"context": context})
+                return render(request, "store/login.html", {"context": context})
 
-            
-            
+                
+                
 
 
-        if error:
-            return render(request,"store/login.html",{"error":error})
-            
-    
+            if error:
+                return render(request,"store/login.html",{"error":error})
+                
+        
 
-       
+        
 
     return render(request,"store/login.html")
 
@@ -210,9 +221,9 @@ def loggedin(request):
         products=Products.objects.all()
 
         categoryofferobjs=Categoryoffer.objects.all()
+        userobj=Customers.objects.get(username=request.session["username"])
 
-
-        cartobjs=Cart.objects.all()
+        cartobjs=Cart.objects.filter(user=userobj)
         totalsum=0
         for item in cartobjs:
             totalsum+=item.total
@@ -310,7 +321,7 @@ def preview(request,someid):
 
                 final_product_prize=request.POST.get("price_after_discount")
                 pdtobj=Products.objects.get(id=someid)
-                cartobjs=Cart.objects.all()
+                
 
              
 
@@ -320,6 +331,7 @@ def preview(request,someid):
 
                 
                 userobj=Customers.objects.get(username=currentuser)
+                cartobjs=Cart.objects.filter(user=userobj)
                 quantity=request.POST.get("quantity")
                 offer=request.POST.get("pdtoffer")
                 
@@ -377,7 +389,8 @@ def preview(request,someid):
     
 def loggedincart(request):
     if "username" in request.session and not Customers.objects.get(username=request.session["username"]).isblocked:
-        cartobjs=Cart.objects.all()
+        userobj=Customers.objects.get(username=request.session["username"])
+        cartobjs=Cart.objects.filter(user=userobj)
         totalsum=0
         for item in cartobjs:
             totalsum+=item.total
@@ -400,6 +413,16 @@ def updatecart(request,someid):
             cartobj.total=cartobj.product.price*Decimal(cartobj.quantity)
             cartobj.save()
             return redirect(loggedincart)
+        
+
+def deletecartitem(request,cartid):
+    cartobj=Cart.objects.get(id=cartid)
+    cartobj.delete()
+
+    return JsonResponse({"message":"removed"})
+
+
+
 def increasequantity(request,itemid):
     cartobj=Cart.objects.get(id=itemid)
     updatedquantity = request.GET.get('updatedquantity')
@@ -417,8 +440,9 @@ def checkout(request):
     if Customers.objects.get(username=request.session["username"]).isblocked:
         return redirect(login)
     
-    if "username" in request.session and not Customers.objects.get(username=request.session["username"]).isblocked:    
-        cartobjs=Cart.objects.all()
+    if "username" in request.session and not Customers.objects.get(username=request.session["username"]).isblocked: 
+        userobj=Customers.objects.get(username=request.session["username"])   
+        cartobjs=Cart.objects.filter(user=userobj)
         if not cartobjs:
             return redirect(loggedincart)
         totalsum=0

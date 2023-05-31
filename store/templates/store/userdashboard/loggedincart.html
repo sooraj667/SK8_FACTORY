@@ -29,7 +29,7 @@
 								<div id="cart-content">
 
 									{% for item in cartobjs  %}
-									<tr class="table_row">
+									<tr id="cartitem{{item.id}}" class="table_row">
 										<td class="column-1">
 											<div class="how-itemcart1">
 												<img src='{{item.product.image1.url}}' alt="IMG">
@@ -81,6 +81,12 @@
 						
 						
 												</form>
+												<br><br>
+												<div >
+
+													<button  class=" btn delete-btn btn-danger cartitem-delete-btn" data-category-id="{{ item.id }}">Remove Item</button>   
+
+												</div>
 
 											
 
@@ -259,12 +265,27 @@
 
 
 
-
+						{% if cartobjs %}
+						
+						
+						
 						
 						<button class="flex-c-m stext-101 cl0 size-116 bg3 bor14 hov-btn3 p-lr-15 trans-04 pointer">
 							<a class="text-info" href={% url 'checkout' %}>Proceed to Checkout</a>
 							
 						</button> 
+						{% else %}
+						<div>
+							<span class="text-success"> Explore Our Products!</span>
+							
+							<button  class=" flex-c-m stext-101 cl0 btn bg1 bor1 hov-btn1 p-lr-15 trans-04  mt-2"><a class="text-light" href={% url 'loggedinproduct' %}>Back To Shop</a></button>
+							 
+						
+
+						</div>
+						
+
+						{% endif %}
 					</div>
 				</div>
 			</div>
@@ -304,7 +325,7 @@
 
 
 
-$(".delete-btn").click(function() {
+{% comment %} $(".delete-btn").click(function() {
     //var someid = $(this).data("category-id");
     if (confirm("Are you sure you want to delete all items in cart?")) {
         
@@ -326,9 +347,43 @@ $(".delete-btn").click(function() {
             }
         });
     }
-});  
+});   {% endcomment %}
 
 
+
+
+//REMOVE SINGLE ITEM FROM CART
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js" integrity="sha512-pumBsjNRGGqkPzKHndZMaAG+bir374sORyzM3uulLV14lN5LyykqNk8eEeUlUkB3U0M4FApyaHraT65ihJhDpQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+ <script>
+  $(document).ready(function() {
+      $(".cartitem-delete-btn").click(function() {
+        var cartid = $(this).data("category-id");
+          // Get the selected offer value
+        
+        // Send an AJAX request to update the offer price
+        $.ajax({
+          url: "../deletecartitem/" + cartid, // Replace with the URL of your Django view
+          type: "GET",
+          data: { offer: cartid,
+                  
+                  
+              },
+          success: function(response) {
+            $("#cartitem" + cartid).remove();
+            // Update the offer price on the page
+            var newOfferPrice = response.message;  // Assuming the response contains the updated offer price
+            // Update the appropriate HTML element with the new offer price
+            //$("#offer_price").text(newOfferPrice);
+            alert(response.message);
+          },
+          error: function(xhr, errmsg, err) {
+            // Handle any errors that occur during the AJAX request
+            console.log(xhr.status + ": " + xhr.responseText);
+          }
+        });
+      });
+    });
+  </script>
 
 
 {% comment %} $(".update-btn").click(function() {
@@ -357,10 +412,10 @@ $(".delete-btn").click(function() {
         }); 
     }
 });   {% endcomment %}
-</script>
+{% comment %} </script> {% endcomment %}
 
 {% comment %} INCREASE QUANTITY OF ITEM IN CART {% endcomment %}
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js" integrity="sha512-pumBsjNRGGqkPzKHndZMaAG+bir374sORyzM3uulLV14lN5LyykqNk8eEeUlUkB3U0M4FApyaHraT65ihJhDpQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+{% comment %} <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js" integrity="sha512-pumBsjNRGGqkPzKHndZMaAG+bir374sORyzM3uulLV14lN5LyykqNk8eEeUlUkB3U0M4FApyaHraT65ihJhDpQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
  <script>
   $(document).ready(function() {
       $(".increasequantity").click(function() {
@@ -393,7 +448,7 @@ $(".delete-btn").click(function() {
         });
       });
     });
-  </script>
+  </script> {% endcomment %}
 
 
 

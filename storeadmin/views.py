@@ -15,6 +15,7 @@ from django.http import FileResponse
 import io
 from reportlab.pdfgen import canvas
 from reportlab.lib.units import inch
+from reportlab.platypus import Table, TableStyle
 from reportlab.lib.pagesizes import letter
 from datetime import datetime
 
@@ -42,6 +43,7 @@ def adminsignin(request):
 def index(request):
     if "adminname" in request.session:
         orderobjs=Orders.objects.all()
+        
         orderdict={}
         for item in orderobjs:
             if item.product.name not in orderdict:
@@ -54,8 +56,26 @@ def index(request):
                 top_product=key
                 break
            
-        print(orderdict,"$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")    
-        return render(request,"storeadmin/index.html",{"orderdict":orderdict,"top_product":top_product,"top_count":top_count})
+        #Most Returned Products Graph logic
+        returninitiatedobjs=Orders.objects.filter(orderstatus="ReturnRequested")
+        returndict={}
+        for i in returninitiatedobjs:
+            if i.product.name not in returndict:
+                returndict[i.product.name]=1
+            else:
+                returndict[i.product.name]+=1
+
+        top_returned_count=max(returndict.values())
+
+        for key,value in returndict.items():
+            if value==top_returned_count:
+                top_returned_product=key
+
+
+        
+
+
+        return render(request,"storeadmin/index.html",{"orderdict":orderdict,"returndict":returndict,      "top_product":top_product,"top_count":top_count,"top_returned_count":top_returned_count,"top_returned_product":top_returned_product})
     else:
         return redirect(adminsignin)
 @never_cache  
@@ -533,10 +553,11 @@ def editorderstatus(request,someid):
 
 
 def salesreport(request):
+    orderobjs=Orders.objects.all()
     
 
-
-    return render(request,"storeadmin/salesreport.html")
+    context={"orderobjs":orderobjs}
+    return render(request,"storeadmin/salesreport.html",context)
 
 
 def downloadsales(request):
@@ -555,7 +576,7 @@ def downloadsales(request):
     textobj.setFont("Helvetica",14)
 
     ords = Orders.objects.filter(orderdate__range=[start_date, end_date])
-    customer=Customers.objects.get(username=request.session["username"])
+    # customer=Customers.objects.get(username=request.session["username"])
 
 
     if ords:
@@ -568,7 +589,7 @@ def downloadsales(request):
     else:
         lines=["No orders"]
 
-
+    
 
 
 
