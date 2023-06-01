@@ -32,15 +32,16 @@ urlpatterns = [
 
 
     path("categoryoffer/",views.categoryoffer,name="categoryoffer"),
-    path("editcategoryoffer/<int:couponid>",views.editcategoryoffer,name="editcategoryoffer"),
+    path("editcategoryoffer/<int:offerid>",views.editcategoryoffer,name="editcategoryoffer"),
     path("deletecategoryoffer/<int:offerid>",views.deletecategoryoffer,name="deletecategoryoffer"),
-
+    path("addcategoryoffer/",views.addcategoryoffer,name="addcategoryoffer"),
 
 
 
     path("productoffer/",views.productoffer,name="productoffer"),
     path("editproductoffer/<int:offerid>",views.editproductoffer,name="editproductoffer"),
     path("deleteproductoffer/<int:offerid>",views.deleteproductoffer,name="deleteproductoffer"),
+    path("addproductoffer/",views.addproductoffer,name="addproductoffer"),
 
     
     

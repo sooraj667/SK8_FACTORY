@@ -93,6 +93,8 @@ def signup(request):
             error["email"]="Email already exists! Please Use a different email"
         elif phonenumber.isalpha()==True:
             error["phonenumber"]="Phonenumber can't have letters"
+        elif not re.match(r"^\d{10}$",phonenumber):
+            error["phonenumber"]="Invalid Phone number"
         elif len(phonenumber)!=10:
             error["phonenumber"]="Invalid Phonennumber"
         elif phonenumber[0]==0:
@@ -125,6 +127,10 @@ def otplogin(request):
         return redirect(loggedin)
     if request.method=="POST":
         pnum=request.POST["phonenumber"]
+        cust=Customers.objects.filter(phonenumber=pnum).count()
+        if cust==0:
+            error="Phonenumber not registered"
+            return render(request,"store/otplogin.html",{"error":error})
         phonenum = '+91' + pnum
         otp = str(random.randint(100000, 999999))
         client = Client(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
@@ -567,7 +573,7 @@ def checkout(request):
 def cashondelivery(request):
     if request.method=="POST":
         action=request.POST.get("action")
-        if action=="cashondelivery":
+        if "cashondeliverybutton" in request.POST or "razorpaybutton" in request.POST :
 
 
             cartobjs=Cart.objects.all()
@@ -579,7 +585,10 @@ def cashondelivery(request):
                 quantityobj=item.quantity
                 addressobj=Address.objects.get(house=housename)
                 orderstatusobj="Ordered"
-                ordertypeobj="Cash On Delivery"
+                if "cashondeliverybutton" in request.POST:
+                    ordertypeobj="Cash On Delivery"
+                elif "razorpaybutton" in request.POST:
+                    ordertypeobj="Razor Pay"
                 orderdateobj=date.today() 
                 finalprice=item.total
                 orderdata=Orders(user=userobj,product=pdtobj,quantity=quantityobj,address=addressobj,orderstatus=orderstatusobj,orderdate=orderdateobj,ordertype=ordertypeobj,finalprice=finalprice)
@@ -591,7 +600,7 @@ def cashondelivery(request):
 
             return render(request,"store/userdashboard/orderplaced.html",{"totalsum":totalsum,"cartobjs":cartobjs})
         
-        # elif action=="razorpay":
+        #  elif "razorpay" in request.POST:
         #     client = razorpay.Client(
         #     auth=(RAZORPAY_API_KEY, RAZORPAY_API_SECRET_KEY))
         #     amount=2000

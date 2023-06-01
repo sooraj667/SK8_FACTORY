@@ -259,7 +259,7 @@
                                     {% if offer %}
 
                                     <span class="text-info">{{offer}} </span> <span class="text-success">applied &#10003;</span>
-                                    <span class="mtext-106 cl2 ml-4"> Rs.{{price_after_discount}}</span>
+                                    <span class="mtext-106 cl2 ml-4"> Rs.{{price_after_discount|floatformat:2}}</span>
                                     
                                     {% endif %}
                                     <form action="" method="POST">

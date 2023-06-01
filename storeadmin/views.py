@@ -42,40 +42,47 @@ def adminsignin(request):
 @never_cache
 def index(request):
     if "adminname" in request.session:
-        orderobjs=Orders.objects.all()
-        
-        orderdict={}
-        for item in orderobjs:
-            if item.product.name not in orderdict:
-                orderdict[item.product.name]=item.quantity
-            else:
-                orderdict[item.product.name]+=item.quantity
-        top_count = max(orderdict.values())
-        for key,value in orderdict.items():
-            if value==top_count:
-                top_product=key
-                break
-           
-        #Most Returned Products Graph logic
-        returninitiatedobjs=Orders.objects.filter(orderstatus="ReturnRequested")
-        returndict={}
-        for i in returninitiatedobjs:
-            if i.product.name not in returndict:
-                returndict[i.product.name]=1
-            else:
-                returndict[i.product.name]+=1
+            orderobjs=Orders.objects.all()
+            top_returned_product=None
+            top_product=None
 
-        top_returned_count=max(returndict.values())
+            orderdict={}
+            for item in orderobjs:
+                if item.product.name not in orderdict:
+                    orderdict[item.product.name]=item.quantity
+                else:
+                    orderdict[item.product.name]+=item.quantity
+            try:
+                top_count = max(orderdict.values())
+            except:
+                pass
+            for key,value in orderdict.items():
+                if value==top_count:
+                    top_product=key
+                    break
+            
+            #Most Returned Products Graph logic
+            returninitiatedobjs=Orders.objects.filter(orderstatus="ReturnRequested")
+            returndict={}
+            for i in returninitiatedobjs:
+                if i.product.name not in returndict:
+                    returndict[i.product.name]=1
+                else:
+                    returndict[i.product.name]+=1
+            try:
+                top_returned_count=max(returndict.values())
+            except:
+                pass
 
-        for key,value in returndict.items():
-            if value==top_returned_count:
-                top_returned_product=key
+            for key,value in returndict.items():
+                if value==top_returned_count:
+                    top_returned_product=key
 
 
-        
+            
 
 
-        return render(request,"storeadmin/index.html",{"orderdict":orderdict,"returndict":returndict,      "top_product":top_product,"top_count":top_count,"top_returned_count":top_returned_count,"top_returned_product":top_returned_product})
+            return render(request,"storeadmin/index.html",{"orderdict":orderdict,"returndict":returndict,      "top_product":top_product,"top_count":top_count,"top_returned_product":top_returned_product})
     else:
         return redirect(adminsignin)
 @never_cache  
@@ -671,6 +678,23 @@ def categoryoffer(request):
     context={"catofferobjs":catofferobjs}
     return render(request,"storeadmin/categoryoffer/categoryoffer.html",context)
 
+def addcategoryoffer(request):
+    
+    categoryobjs=Category.objects.all()
+    context={"categoryobjs":categoryobjs}
+
+    if request.method=="POST":
+        categoryname=request.POST["categoryname"]
+        offer=request.POST["offer"]
+        discount=request.POST["discount"]
+       
+  
+        categoryobj=Category.objects.get(name=categoryname)
+        catofferobj=Categoryoffer(category=categoryobj,offer_description=offer,discount=discount)
+        catofferobj.save()
+        return redirect(categoryoffer)
+    return render(request,"storeadmin/categoryoffer/addcategoryoffer.html",context)
+
 def editcategoryoffer(request,offerid):
     catofferobj=Categoryoffer.objects.get(id=offerid)
     categoryobjs=Category.objects.all()
@@ -710,6 +734,23 @@ def productoffer(request):
 
     context={"pdtofferobjs":pdtofferobjs}
     return render(request,"storeadmin/productoffer/productoffer.html",context)
+
+def addproductoffer(request):
+    
+    productobjs=Products.objects.all()
+    context={"productobjs":productobjs}
+
+    if request.method=="POST":
+        productname=request.POST["productname"]
+        offer=request.POST["offer"]
+        discount=request.POST["discount"]
+
+
+        productobj=Products.objects.get(name=productname)
+        productofferobj=Productoffer(product=productobj,offer_description=offer,discount=discount)
+        productofferobj.save()
+        return redirect(productoffer)
+    return render(request,"storeadmin/productoffer/addproductoffer.html",context)
 
 
 def editproductoffer(request,offerid):

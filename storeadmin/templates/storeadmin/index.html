@@ -396,12 +396,13 @@
 
                 <br><br><br><br><br><br><br><br>
               </div>
-
+                {% if top_returned_product %}
                 <div>
                   Most Returned Product- <span class="text-success font-weight-bold">{{top_returned_product}}</span>
                   <canvas class="mt-5" id="mybarChart" width="600" height="600"></canvas>
 
                 </div>
+                {% endif %}
 
                 
 

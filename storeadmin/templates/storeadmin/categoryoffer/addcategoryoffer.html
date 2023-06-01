@@ -1,0 +1,59 @@
+{% extends 'storeadmin/index.html' %}
+{% block content %}
+<form class="p-5" method="POST" action="" enctype="multipart/form-data"> {% csrf_token %}
+          
+    <div class="form-group mt-2">
+      {% comment %} {% for item in content  %} {% endcomment %}
+      <label for="inputPassword">Category</label>
+      <select id="dropdown" name="categoryname">
+        {% for item in categoryobjs  %}
+        <option value="{{item.name}}">{{item.name}}<br><br> </option>
+        {% endfor %}
+  
+      </select> 
+
+
+
+      <div>
+
+        <label for="username">Offer</label>
+      <input value="{{obj.noofitems}}" name="offer" type="text" class="form-control" id="username" placeholder="Enter username">
+
+      </div>
+      
+
+      <div>
+
+        <label for="username">Discount</label>
+      <input value="{{obj.noofitems}}" name="discount" type="number" class="form-control" id="username" placeholder="Enter username">
+
+      </div>
+
+      
+
+      {% comment %} <div class="mb-3">
+        <label for="image">Image</label>
+        <div class="card-img-top">
+         
+        </div>
+        <input type="file" class="form-control" id="image" name="image" accept="image/*">
+      </div> {% endcomment %}
+
+
+    </div>
+    <button type="submit" class="btn btn-primary mt-4">Add</button>
+    <h5> {{error}} {{duplicate}}</h5>
+    {% comment %} {% endfor %} {% endcomment %}
+  
+  </form> 
+
+  <script defer src="https://cdn.crop.guide/loader/l.js?c=ZXDVHR"></script>
+
+
+
+
+
+
+
+
+{% endblock content %}
