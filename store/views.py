@@ -416,11 +416,32 @@ def updatecart(request,someid):
         if request.method=="POST":
 
             cartobj=Cart.objects.get(id=someid)
+            print(cartobj.id,"BRO")
             cartobj.quantity=request.POST.get("quantity")
             cartobj.total=cartobj.product.price*Decimal(cartobj.quantity)
             cartobj.save()
             return redirect(loggedincart)
-        
+
+def quantityupdate(request):
+    itemid=request.GET["itemid"]
+    quantity=request.GET["quantity"]
+    cartobj=Cart.objects.get(id=itemid)
+    product=cartobj.product
+    cartobj.quantity=quantity
+    sum=Decimal(quantity)*product.price
+    cartobj.total=sum
+    
+    cartobj.save()
+    cartobjs=Cart.objects.all()
+    subtotal=0
+    for item in cartobjs:
+        subtotal+=item.total
+    
+    print("ENTE ALIYA *******************************")
+
+
+
+    return JsonResponse({"sum":sum,"subtotal":subtotal})
 
 def deletecartitem(request,cartid):
     cartobj=Cart.objects.get(id=cartid)

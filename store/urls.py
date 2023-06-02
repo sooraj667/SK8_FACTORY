@@ -34,6 +34,10 @@ urlpatterns = [
     path("preview/<int:someid>",views.preview,name="preview"),
     path("loggedincart/",views.loggedincart,name="loggedincart"),
     path("deletecartitem/<int:cartid>",views.deletecartitem,name="deletecartitem"),
+    path("quantityupdate/",views.quantityupdate,name="quantityupdate"),
+
+
+
     path("checkout/",views.checkout,name="checkout"),
     path("cashondelivery/",views.cashondelivery,name="cashondelivery"),
     path("previousorders/",views.previousorders,name="previousorders"),
