@@ -1,52 +1,62 @@
 {% extends 'storeadmin/index.html' %}
 
 {% block content %}
-<div class="container-fluid">
-    <div class="row">
-        <table class="table table-striped">
-          <thead>
-            <tr>
-              <th>Product</th>
-              <th>Ordered By</th>
-              <th>Payment Type</th>
-              <th>Quantity</th>
-              <th>Date</th>
-              <th>Status</th>
-              <th>Address</th>
-              <th>Edit</th>
-          
-            </tr>
-          </thead>
-          <tbody>
-            {% for item in orderobjs %}
-            <tr>
-              <td>{{ item.product.name }}</td>
-              <td>{{ item.user.name }}</td>
-              <td>{{ item.ordertype }}</td>
-              <td>{{ item.quantity }}</td>
-              <td>{{ item.orderdate }}</td>
-              <td>{{ item.orderstatus }}</td>
-              <td>{{ item.address.house }} ,{{ item.address.locality }}</td>
-              <td><a href={% url 'admin_editorderstatus' item.id %}><button class="btn edit-btn btn-warning">Edit</button></a></td>
 
-              
-              {% comment %} <td>
-                <a href="{% url 'admin_editproducts' item.id %}">
-                  <button class="btn edit-btn btn-warning">Edit</button>
-                </a>
-              </td>
-              <td>
-                <a href="{% url 'admin_deleteproducts' item.id %}">
-                  <button class="btn delete-btn btn-danger">Delete</button>
-                </a>
-              </td> {% endcomment %}
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-    </div>
+<div class="container">
+  <div class="row">
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Product</th>
+          <th>Ordered By</th>
+          <th>Payment Type</th>
+          <th>Quantity</th>
+          <th>Date</th>
+          <th>Status</th>
+          <th>Address</th>
+          <th>Edit</th>
+      
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in orderobjs %}
+        <tr>
+          <td>{{ item.product.name }}</td>
+          <td>{{ item.user.name }}</td>
+          <td>{{ item.ordertype }}</td>
+          <td>{{ item.quantity }}</td>
+          <td>{{ item.orderdate }}</td>
+          <td>{{ item.orderstatus }}</td>
+          <td>{{ item.address.house }} ,{{ item.address.locality }}</td>
+          <td><a href={% url 'admin_editorderstatus' item.id %}><button class="btn edit-btn btn-warning">Edit</button></a></td>
+  
+          
+          {% comment %} <td>
+            <a href="{% url 'admin_editproducts' item.id %}">
+              <button class="btn edit-btn btn-warning">Edit</button>
+            </a>
+          </td>
+          <td>
+            <a href="{% url 'admin_deleteproducts' item.id %}">
+              <button class="btn delete-btn btn-danger">Delete</button>
+            </a>
+          </td> {% endcomment %}
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+  </div>
+  
+
 
 </div>
+      
+
+
+
+
+
 
 
 

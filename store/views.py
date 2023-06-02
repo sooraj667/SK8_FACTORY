@@ -230,10 +230,11 @@ def loggedin(request):
         userobj=Customers.objects.get(username=request.session["username"])
 
         cartobjs=Cart.objects.filter(user=userobj)
+        no_of_cart_items=cartobjs.count()
         totalsum=0
         for item in cartobjs:
             totalsum+=item.total
-        return render(request,"store/userdashboard/loggedin.html",{"category":category,"products":products,"cartobjs":cartobjs,"totalsum":totalsum,       "categoryofferobjs":categoryofferobjs})
+        return render(request,"store/userdashboard/loggedin.html",{"category":category,"products":products,"cartobjs":cartobjs,"totalsum":totalsum,       "categoryofferobjs":categoryofferobjs,"no_of_cart_items":no_of_cart_items})
     else:
         return redirect(login)
 

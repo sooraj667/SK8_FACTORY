@@ -18,6 +18,11 @@ from reportlab.lib.units import inch
 from reportlab.platypus import Table, TableStyle
 from reportlab.lib.pagesizes import letter
 from datetime import datetime
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
+from reportlab.lib.pagesizes import letter
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
+from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.lib import colors
 
 
 
@@ -355,6 +360,7 @@ def deleteproducts(request, someid):
 
 def addproducts(request):
     categoryobjs=Category.objects.all()
+    error={}
     if request.method=="POST":
         name=request.POST.get("name")
         price=request.POST.get("price")
@@ -366,21 +372,21 @@ def addproducts(request):
         image3=request.FILES.get("image3")
         image4=request.FILES.get("image4")
         if len(name)<4:
-            error="Productname should contain minimum four characters"
+            error["name"]="Productname should contain minimum four characters"
         elif len(name)>20:
-            error="Username can only have upto 20 characters"
+            error["name"]="Username can only have upto 20 characters"
         elif name.isalpha()==False:
-            error="Productname can't have numbers" 
+            error["name"]="Productname can't have numbers" 
         elif price.isalpha()==True:
-            error="Price can't have letters"
+            error["price"]="Price can't have letters"
         elif quantity.isalpha()==True:
-            error="Quantity can't have letters"
+            error["quantity"]="Quantity can't have letters"
         elif category_name.isalpha==False:
-            error="Category field can't have numbers"
+            error["category"]="Category field can't have numbers"
         elif category_name not in Category.objects.filter(name=category_name).values_list('name', flat=True):
-            error="Invalid category"
+            error["category"]="Invalid category"
         elif len(description)<4:
-            error="Description should contain minimum four characters"
+            error["description"]="Description should contain minimum four characters"
         else:
             categoryobject=Category.objects.get(name=category_name)
             product = Products.objects.create(
@@ -397,7 +403,7 @@ def addproducts(request):
             # newproduct.save()
             return redirect(products)
         if error:
-            return render(request,"storeadmin/products/addproducts.html",{"error":error,"categoryobjs":categoryobjs})
+            return render(request,"storeadmin/products/addproducts.html",{"error":error,"categoryobjs":categoryobjs,     "name":name,"price":price,"quantity":quantity,"description":description})
 
     return render(request,"storeadmin/products/addproducts.html",{"categoryobjs":categoryobjs})
 @never_cache
@@ -567,34 +573,39 @@ def salesreport(request):
     return render(request,"storeadmin/salesreport.html",context)
 
 
-def downloadsales(request):
-    start_date_str = request.GET.get('start_date')
-    end_date_str = request.GET.get('end_date')
+# def downloadsales(request):
+#     start_date_str = request.GET.get('start_date')
+#     end_date_str = request.GET.get('end_date')
 
-    start_date = datetime.strptime(start_date_str, "%Y-%m-%d")
-    end_date = datetime.strptime(end_date_str, "%Y-%m-%d")
-
-
-
-    buf=io.BytesIO()
-    c=canvas.Canvas(buf,pagesize=letter,bottomup=0)
-    textobj=c.beginText()
-    textobj.setTextOrigin(inch,inch)
-    textobj.setFont("Helvetica",14)
-
-    ords = Orders.objects.filter(orderdate__range=[start_date, end_date])
-    # customer=Customers.objects.get(username=request.session["username"])
+#     start_date = datetime.strptime(start_date_str, "%Y-%m-%d")
+#     end_date = datetime.strptime(end_date_str, "%Y-%m-%d")
 
 
-    if ords:
-        lines=[]
-        slno=0
-        for ord in ords:
-            slno+=1
-            orderdetails=f"{slno},{ord.user.name},{ord.product.name},{ord.address.house},{ord.orderdate},{ord.orderstatus},{ord.quantity} "
-            lines.append(orderdetails)
-    else:
-        lines=["No orders"]
+
+#     buf=io.BytesIO()
+#     c=canvas.Canvas(buf,pagesize=letter,bottomup=0)
+#     textobj=c.beginText()
+#     textobj.setTextOrigin(inch,inch)
+#     textobj.setFont("Helvetica",14)
+
+
+#     heading = "Sales Report"
+#     textobj.textLine(heading)
+#     textobj.textLine("-" * len(heading))
+
+#     ords = Orders.objects.filter(orderdate__range=[start_date, end_date])
+#     # customer=Customers.objects.get(username=request.session["username"])
+
+
+#     if ords:
+#         lines=[]
+#         slno=0
+#         for ord in ords:
+#             slno+=1
+#             orderdetails=f"{slno}.{ord.user.name},{ord.product.name},{ord.address.house},{ord.orderdate},{ord.orderstatus},{ord.quantity} "
+#             lines.append(orderdetails)
+#     else:
+#         lines=["No orders"]
 
     
 
@@ -602,14 +613,67 @@ def downloadsales(request):
 
 
    
-    for line in lines:
-        textobj.textLine(line)
+#     for line in lines:
+#         textobj.textLine(line)
 
-    c.drawText(textobj)
-    c.showPage()
-    c.save()
+#     c.drawText(textobj)
+#     c.showPage()
+#     c.save()
+#     buf.seek(0)
+#     return FileResponse(buf,as_attachment=True,filename='Orders.pdf')
+
+
+def downloadsales(request):
+    start_date_str = request.GET.get('start_date')
+    end_date_str = request.GET.get('end_date')
+
+    start_date = datetime.strptime(start_date_str, "%Y-%m-%d")
+    end_date = datetime.strptime(end_date_str, "%Y-%m-%d")
+
+    buf = io.BytesIO()
+    doc = SimpleDocTemplate(buf, pagesize=letter)
+    elements = []
+
+    # Add heading
+    styles = getSampleStyleSheet()
+    heading_style = styles['Heading1']
+    heading = "Sales Report"
+    heading_paragraph = Paragraph(heading, heading_style)
+    elements.append(heading_paragraph)
+    elements.append(Spacer(1, 12))  # Add space after heading
+
+    ords = Orders.objects.filter(orderdate__range=[start_date, end_date])
+
+    if ords:
+        data = [['Sl.No.', 'Name', 'Product', 'House', 'Order Date', 'Order Status', 'Quantity']]
+        slno = 0
+        for ord in ords:
+            slno += 1
+            row = [slno, ord.user.name, ord.product.name, ord.address.house, ord.orderdate, ord.orderstatus, ord.quantity]
+            data.append(row)
+
+        table = Table(data)
+        table.setStyle(TableStyle([
+            ('BACKGROUND', (0, 0), (-1, 0), colors.gray),
+            ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
+            ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+            ('FONTSIZE', (0, 0), (-1, 0), 12),
+            ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+            ('BACKGROUND', (0, 1), (-1, -1), colors.lightgrey),
+            ('TEXTCOLOR', (0, 1), (-1, -1), colors.black),
+            ('FONTNAME', (0, 1), (-1, -1), 'Helvetica'),
+            ('FONTSIZE', (0, 1), (-1, -1), 10),
+            ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+        ]))
+
+        elements.append(table)
+    else:
+        elements.append("No orders")
+
+    doc.build(elements)
     buf.seek(0)
-    return FileResponse(buf,as_attachment=True,filename='Orders.pdf')
+    return FileResponse(buf, as_attachment=True, filename='Orders.pdf')
     
 
 def coupon(request):  
