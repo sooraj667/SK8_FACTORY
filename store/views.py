@@ -536,7 +536,7 @@ def checkout(request):
 
                     return redirect(checkout)
                 
-                datas={"error":error,"country":country,"state":state,"district":district,"locality":locality,"pincode":pincode}
+                datas={"error":error,"country":country,"state":state,"district":district,"locality":locality,"pincode":pincode,"house":house}
                 return render(request,"store/userdashboard/checkout.html",datas)
             
             # elif "couponform" in request.POST:
@@ -601,6 +601,7 @@ def applycouponajax(request):
         
     else:
         discounted_amount=total-((couponobj.discount_percentage/100)*total)
+
         message_success=f"{couponid} - Coupon applied"
         return JsonResponse({"amount":discounted_amount,"message_success":message_success})
 
