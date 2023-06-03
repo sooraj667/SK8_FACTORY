@@ -58,6 +58,8 @@ urlpatterns = [
     path("increasequantity/<int:itemid>",views.increasequantity,name="increasequantity"),
     
 
+    path("applycouponajax/",views.applycouponajax,name="applycouponajax")
+
     # path("update_offer_price/",views.update_offer_price,name="update_offer_price")
 
     

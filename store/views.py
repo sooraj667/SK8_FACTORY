@@ -539,17 +539,17 @@ def checkout(request):
                 datas={"error":error,"country":country,"state":state,"district":district,"locality":locality,"pincode":pincode}
                 return render(request,"store/userdashboard/checkout.html",datas)
             
-            elif "couponform" in request.POST:
-                coup=request.POST["coupon_select"]
-                couponobj=Coupon.objects.get(code=coup)
-                cartobjs=Cart.objects.all()
+            # elif "couponform" in request.POST:
+            #     coup=request.POST["coupon_select"]
+            #     couponobj=Coupon.objects.get(code=coup)
+            #     cartobjs=Cart.objects.all()
 
-                discount_percentage=couponobj.discount_percentage
-                totalsum=0
-                for item in cartobjs:
-                    totalsum+=item.total
+            #     discount_percentage=couponobj.discount_percentage
+            #     totalsum=0
+            #     for item in cartobjs:
+            #         totalsum+=item.total
 
-                totalsum_withcoupon=(totalsum)-(Decimal(discount_percentage/100)*(totalsum))
+            #     totalsum_withcoupon=(totalsum)-(Decimal(discount_percentage/100)*(totalsum))
                 
 
             
@@ -588,7 +588,26 @@ def checkout(request):
 #         return redirect (checkout,totalsum_withcoupon=totalsum_withcoupon) 
 
   
+def applycouponajax(request):
+    print("#############VIEW REACHED")
+    couponid=request.GET["couponid"]
+    total=float(request.GET["totalamount"])
+    couponobj=Coupon.objects.get(code=couponid)
+    if total<couponobj.minprice:
+        reqamount=couponobj.minprice-total
+        discounted_amount=total
+        message=f"Sorry add {reqamount} to apply for this coupon"
+        return JsonResponse({"amount":discounted_amount,"message":message})
+        
+    else:
+        discounted_amount=total-((couponobj.discount_percentage/100)*total)
+        message_success=f"{couponid} - Coupon applied"
+        return JsonResponse({"amount":discounted_amount,"message_success":message_success})
 
+
+
+
+    
 
 
 

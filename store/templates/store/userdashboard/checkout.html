@@ -2,6 +2,7 @@
 {% load static %}
 
 {% block content %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <div class="row mt-5"></div>
 <div class="row mt-5"></div>
 <div class="row mt-5"></div>
@@ -163,73 +164,95 @@
 	
 				</div>
 				<div class="col-md-8">
-					<span class="font-weight-bold display-4">Rs. {{totalsum}}/-</span>
+					<span id="totalamount" class="font-weight-bold display-4">{{totalsum}}</span>
 	
 				</div>
 
 			</div>
+			<hr>
+			<br><br><br>
 			<div class="row">
-				<div class="col-md-4">
+				<div class="col-md-4 pt-2">
 					<span class="block1-name ltext-100 trans-04 p-b-8 font-weight-bold">
-						Coupon
+						Choose Coupon
 					</span>
 
 				</div>
-				<form method="POST" action=""> 
+				<br><br>
+				
 					{% csrf_token %}
 					 <div class="col-md-8">
-						<select name="coupon_select" id="coupon_select">
+						<select name="coupon_select" id="coupon_select" class="form-control">
 							{% for coupon in couponobjs  %}						
 							<option id="couponid" data-category-id="{{coupon.id}}" value="{{coupon.code}}">{{coupon.code}}</option>
 							{% endfor %}				
 						</select>	
 					</div> 
-					 <button type="submit" name="couponform" class="btn btn-primary" id="apply_coupon">Apply Coupon</button> 
-
-
 					
 
-
-
-
-				</form>
-				
-				
+	
 				
 			</div>
+			<div class="row justify-content-end">
+				<button id="applycoupon" name="couponform" class="btn btn-dark" id="apply_coupon">Apply Coupon</button> 
+
+
+			</div>
+			<br>
+			<div class="text-success" id="couponmessage">
+				
+
+			</div>
+			<hr>
 
 			<div class="row">
 
 			</div>
-
-			<div class="col-md-4 mt-5">
-				<span class="block1-name ltext-100 trans-04 p-b-8 font-weight-bold">
-					Choose Shipping Address 
-				</span>
+			<div class="row">
+				<div class="col-md-4 pt-4">
+					<span class="block1-name ltext-100 trans-04 p-b-8 font-weight-bold">
+						Shipping Address 
+					</span>
+	
+				</div>
+				<div class="col-md-8">
+	
+					<form class="card-body" method="POST" action="{% url 'cashondelivery' %}">
+						{% csrf_token %}
+						<select id="dropdown" name="address" class="form-control">
+							{% for item in addressobjs  %}
+							<option value="{{item.house}}">{{item.house}} -  {{item.district}} - {{item.state}} - {{item.country}} <br><br> </option>
+							{% endfor %}
+				
+						</select> 
+						
+	
+				</div>
 
 			</div>
-			<form class="card-body" method="POST" action="{% url 'cashondelivery' %}">
-				{% csrf_token %}
-				<select id="dropdown" name="address">
-					{% for item in addressobjs  %}
-					<option value="{{item.house}}">{{item.house}} -  {{item.district}} - {{item.state}} - {{item.country}} <br><br> </option>
-					{% endfor %}
-		
-				</select> 
-				<div class="row mt-5">
+			<hr>
+			<div class="row mt-5">
+				<div class="col-md-6">
 					<button type="submit" name="cashondeliverybutton" value="cashondelivery" class="btn btn-primary">Cash On Delivery</button>
-					{% comment %} <button type="submit" name="action" value="razorpay"  class="btn btn-success" id="rzp-button1">Pay with Razorpay</button> {% endcomment %}
+
 				</div>
-				<div>
+				
+				{% comment %} <button type="submit" name="action" value="razorpay"  class="btn btn-success" id="rzp-button1">Pay with Razorpay</button> {% endcomment %}
+				<div class="col-md-6">
 					<button name="razorpaybutton" type="submit"   class="btn btn-success" id="rzp-button1">Pay with Razorpay</button>
 				</div>
+	
+			</div>
+			
+			
+			
 
-				
-				
 
 
+		</form>
 
-			</form>
+			
+			
 
 
 
@@ -266,13 +289,107 @@
 
 
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js" integrity="sha512-pumBsjNRGGqkPzKHndZMaAG+bir374sORyzM3uulLV14lN5LyykqNk8eEeUlUkB3U0M4FApyaHraT65ihJhDpQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script>
+	$("#applycoupon").click(function(){
+		
+		
+		var couponid=$("#couponid").val();
+		var totalamount=$("#totalamount").html()
+		$.ajax({
+			url:"/applycouponajax/",
+			type:"GET",
+			data:{
+
+				couponid:couponid,
+				totalamount:totalamount
+			},
+			success:function(response){
+				var discounted_amount=response.amount;
+				//var couponmessage=response.message;
+				$("#totalamount").html(discounted_amount);
+
+				if (response.message_success){
+					$("#couponmessage").html(response.message_success).addClass("text-success");
+
+				}
+				else if(response.message){
+					$("#couponmessage").html(response.message).addClass("text-danger");
+
+				}
 
 
+
+				//$("#couponmessage").html(couponmessage);
+				
+
+			},
+			error: function(xhr, status, error) {
+				
+				console.log(error);
+			  }
+
+
+
+
+
+		})
+
+
+
+	})
+	
+	
+
+
+</script>
 
 
 	
 
+<script>
+	$(".choosequantity").change(function(){
+		var itemid=$(this).data("item-id");
+		var quantity=$(this).val();
 
+
+		$.ajax({
+			url:"/quantityupdate/",
+			type:"GET",
+			data:{
+				itemid:itemid,
+				quantity:quantity
+			},
+			success:function(response){
+				var result=response.sum;
+				var subtotal=response.subtotal;
+				$("#amount"+itemid).html(result);
+				$(".subtotal").html(subtotal)
+			
+				
+
+			},
+			error: function(xhr, errmsg, err) {
+				
+				console.log(xhr.status + ": " + xhr.responseText);
+			  }
+
+
+
+
+
+		})
+
+
+
+	})
+
+
+
+
+
+
+</script>
 
 
 
@@ -288,6 +405,7 @@
 
 
 {% block script %}
+
 {% comment %} <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js" integrity="sha512-pumBsjNRGGqkPzKHndZMaAG+bir374sORyzM3uulLV14lN5LyykqNk8eEeUlUkB3U0M4FApyaHraT65ihJhDpQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script>
 	$(document).ready(function() {
@@ -317,6 +435,7 @@
 		});
 	});
 	</script> {% endcomment %}
+
 
 
 
@@ -365,6 +484,10 @@ document.getElementById('rzp-button1').onclick = function(e){
 	e.preventDefault();
 }
 </script>
+
+
+
+
 	
 {% endblock script %}
 
