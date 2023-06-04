@@ -30,6 +30,8 @@ urlpatterns = [
 
     path("loggedin/",views.loggedin,name="loggedin"),
     path("loggedinproduct/",views.loggedinproduct,name="loggedinproduct"),
+    path("loggedincontact/",views.loggedincontact,name="loggedincontact"),
+    path("loggedinabout/",views.loggedinabout,name="loggedinabout"),
     # path("addtocart/<int:someid>",views.addtocart,name="addtocart"),
     path("preview/<int:someid>",views.preview,name="preview"),
     path("loggedincart/",views.loggedincart,name="loggedincart"),

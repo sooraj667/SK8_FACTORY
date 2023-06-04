@@ -221,6 +221,17 @@ def logout(request):
         request.session.flush()
     return redirect(login)
 
+
+
+
+
+
+
+
+
+
+
+
 def loggedin(request):
     if "username" in request.session and not Customers.objects.get(username=request.session["username"]).isblocked:
         category=Category.objects.all()
@@ -237,16 +248,33 @@ def loggedin(request):
         return render(request,"store/userdashboard/loggedin.html",{"category":category,"products":products,"cartobjs":cartobjs,"totalsum":totalsum,       "categoryofferobjs":categoryofferobjs,"no_of_cart_items":no_of_cart_items})
     else:
         return redirect(login)
+    
+def loggedincontact(request):
+    userobj=Customers.objects.get(username=request.session["username"])
+    cartobjsfiltered=Cart.objects.filter(user=userobj)
+    no_of_cart_items=cartobjsfiltered.count()
+    context={"no_of_cart_items":no_of_cart_items}
+    return render(request,"store/userdashboard/loggedincontact.html",context)
+
+def loggedinabout(request):
+    userobj=Customers.objects.get(username=request.session["username"])
+    cartobjsfiltered=Cart.objects.filter(user=userobj)
+    no_of_cart_items=cartobjsfiltered.count()
+    context={"no_of_cart_items":no_of_cart_items}
+    return render(request,"store/userdashboard/loggedinabout.html",context)
 
 def loggedinproduct(request):
     if "username" in request.session and not Customers.objects.get(username=request.session["username"]).isblocked:
         products=Products.objects.all()
         cartobjs=Cart.objects.all()
+        userobj=Customers.objects.get(username=request.session["username"])
+        cartobjsfiltered=Cart.objects.filter(user=userobj)
+        no_of_cart_items=cartobjsfiltered.count()
         totalsum=0
         for item in cartobjs:
             totalsum+=item.total
 
-        return render(request,"store/userdashboard/loggedinproduct.html",{"products":products,"cartobjs":cartobjs,"totalsum":totalsum})
+        return render(request,"store/userdashboard/loggedinproduct.html",{"products":products,"cartobjs":cartobjs,"totalsum":totalsum,"no_of_cart_items":no_of_cart_items})
     else:
         return redirect(login)
 
@@ -270,8 +298,11 @@ def preview(request,someid):
 
 
 
+        user=Customers.objects.get(username=request.session.get("username"))
+        cartobjs=Cart.objects.filter(user=user)
+        no_of_cart_items=cartobjs.count()
 
-        cartobjs=Cart.objects.all()
+
         totalsum=0
         for item in cartobjs:
             totalsum+=item.total
@@ -317,7 +348,7 @@ def preview(request,someid):
                     price_after_discount=pdtobj.price-(Decimal(discount/100)*pdtobj.price)
                     price_after_discount=float(price_after_discount)
                     print(price_after_discount,"ADDOFFERRRR")
-                    return render(request,"store/userdashboard/preview.html",{"pdtobj":pdtobj,"totalsum":totalsum,"price_after_discount":price_after_discount,"offer":offer,     "offers":offers,"categoryfound":categoryfound,"productfound":productfound,"categoryofferobjs":categoryofferobjs})
+                    return render(request,"store/userdashboard/preview.html",{"pdtobj":pdtobj,"totalsum":totalsum,"price_after_discount":price_after_discount,"offer":offer,     "offers":offers,"categoryfound":categoryfound,"productfound":productfound,"categoryofferobjs":categoryofferobjs,"no_of_cart_items":no_of_cart_items})
                 except:
                     pass
                 
@@ -389,7 +420,7 @@ def preview(request,someid):
 
          
 
-        return render(request,"store/userdashboard/preview.html",{"pdtobj":pdtobj,"totalsum":totalsum,     "offers":offers,"categoryofferobjs":categoryofferobjs,"categoryfound":categoryfound,"productfound":productfound})
+        return render(request,"store/userdashboard/preview.html",{"pdtobj":pdtobj,"totalsum":totalsum,     "offers":offers,"categoryofferobjs":categoryofferobjs,"categoryfound":categoryfound,"productfound":productfound,"no_of_cart_items":no_of_cart_items})
     else:
         return redirect(login)
     
@@ -401,7 +432,9 @@ def loggedincart(request):
         totalsum=0
         for item in cartobjs:
             totalsum+=item.total
-        return render(request,"store/userdashboard/loggedincart.html",{"cartobjs":cartobjs,"totalsum":totalsum})
+
+        no_of_cart_items=cartobjs.count()
+        return render(request,"store/userdashboard/loggedincart.html",{"cartobjs":cartobjs,"totalsum":totalsum,"no_of_cart_items":no_of_cart_items})
     else:
         return redirect(login)
     
@@ -575,7 +608,10 @@ def checkout(request):
         if totalsum_withcoupon:
             totalsum=totalsum_withcoupon
         couponobjs=Coupon.objects.all()
-        return render(request,"store/userdashboard/checkout.html",{"addressobjs":addressobjs,"cartobjs":cartobjs,"totalsum":totalsum,"couponobjs":couponobjs,     "amount":300,"order_id":payment_order_id,"api_key":RAZORPAY_API_KEY})
+
+        cartobjsfiltered=Cart.objects.filter(user=cust)
+        no_of_cart_items=cartobjsfiltered.count()
+        return render(request,"store/userdashboard/checkout.html",{"addressobjs":addressobjs,"cartobjs":cartobjs,"totalsum":totalsum,"couponobjs":couponobjs,"no_of_cart_items":no_of_cart_items,     "amount":300,"order_id":payment_order_id,"api_key":RAZORPAY_API_KEY})
 
 
 # def applycoupon(request):
@@ -622,8 +658,9 @@ def cashondelivery(request):
         action=request.POST.get("action")
         if "cashondeliverybutton" in request.POST or "razorpaybutton" in request.POST :
 
-
-            cartobjs=Cart.objects.all()
+            username=request.session["username"]
+            user=Customers.objects.get(username=username)
+            cartobjs=Cart.objects.filter(user=user)
             housename=request.POST.get("address")
             print("$$$$$$$$$$$$",housename)
             for item in cartobjs:
@@ -647,8 +684,13 @@ def cashondelivery(request):
             totalsum=0
             for item in cartobjs:
                 totalsum+=item.total
+            
 
-            return render(request,"store/userdashboard/orderplaced.html",{"totalsum":totalsum,"cartobjs":cartobjs})
+            no_of_cart_items=cartobjs.count()
+
+            
+
+            return render(request,"store/userdashboard/orderplaced.html",{"totalsum":totalsum,"cartobjs":cartobjs,"no_of_cart_items":no_of_cart_items})
         
         #  elif "razorpay" in request.POST:
         #     client = razorpay.Client(
