@@ -33,7 +33,7 @@
             <tbody>
                 
               {% for item in orderobjs %}
-              {% if item.orderstatus == "Delivered" or item.orderstatus == "ReturnRequested" %}
+              {% if item.orderstatus == "Delivered" or item.orderstatus == "ReturnRequested" or item.orderstatus == "Returned"  %}
               <tr>
                 <td>{{ item.product.name }}</td>
                 <td>{{ item.finalprice }}</td>
@@ -46,6 +46,9 @@
                 <td id="order{{item.id}}"><button class="btn delete-btn btn-danger" data-category-id="{{ item.id }}">Return</button> </td>
                 {% elif item.orderstatus == "ReturnRequested"  %}
                 <td><span class="text-warning"> Return Initiated</span></td>
+                {% elif item.orderstatus == "Returned" %}
+                <td><span class="text-success"> Returned</span></td>
+
                 {% endif %}
                 {% comment %} {% elif item.orderstatus == "ReturnRequested" %}
         

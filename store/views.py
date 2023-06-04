@@ -445,10 +445,14 @@ def quantityupdate(request):
 
 def deletecartitem(request):
     cartid=request.GET["cartid"]
+    subtotal=float(request.GET["subtotal"])
     cartobj=Cart.objects.get(id=cartid)
+    amount=cartobj.total
+    totalsum=Decimal(subtotal)-amount
+
     cartobj.delete()
 
-    return JsonResponse({"message":"removed"})
+    return JsonResponse({"message":"removed","totalsum":totalsum})
 
 
 
@@ -636,6 +640,9 @@ def cashondelivery(request):
                 finalprice=item.total
                 orderdata=Orders(user=userobj,product=pdtobj,quantity=quantityobj,address=addressobj,orderstatus=orderstatusobj,orderdate=orderdateobj,ordertype=ordertypeobj,finalprice=finalprice)
                 orderdata.save()
+
+                pdtobj.quantity=pdtobj.quantity-item.quantity
+                pdtobj.save()
             cartobjs.delete()
             totalsum=0
             for item in cartobjs:
@@ -784,6 +791,9 @@ def cancelorder(request,someid):
 
     
     orderobj=Orders.objects.get(id=someid)
+    product=orderobj.product
+    product.quantity+=orderobj.quantity
+    product.save()
     orderobj.orderstatus="Cancelled"
     orderobj.save()
 

@@ -10,10 +10,12 @@
 <div class="row mt-5"></div>
 <div class="row mt-5"></div>
 
+
+
 <div class="container-fluid">
     <div class="row">
         <!-- Shoping Cart -->
-	<form class="bg0 p-t-75 p-b-85">
+	
 		<div class="container">
 			<div class="row">
 				<div class="col-lg-10 col-xl-7 m-lr-auto m-b-50">
@@ -155,9 +157,11 @@
 				</div>
 			</div>
 		</div>
-	</form>
+
     </div>
 </div>
+
+
 
 
 
@@ -225,6 +229,7 @@
       $(".remove_cart_item").click(function(event) {
 		event.preventDefault();
         var cartid = $(this).data("cart-item");
+		var subtotal=$(".subtotal").html();
           // Get the selected offer value
         
         // Send an AJAX request to update the offer price
@@ -232,11 +237,13 @@
           url: "/deletecartitem/", // Replace with the URL of your Django view
           type: "GET",
           data: { cartid: cartid,
+				subtotal:subtotal,
                   
                   
               },
           success: function(response) {
             $("#cartitem" + cartid).remove();
+			$(".subtotal").html(response.totalsum)
             // Update the offer price on the page
         	//var newOfferPrice = response.message;  // Assuming the response contains the updated offer price
             // Update the appropriate HTML element with the new offer price

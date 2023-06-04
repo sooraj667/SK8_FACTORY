@@ -555,7 +555,13 @@ def editorderstatus(request,someid):
     if request.method=="POST":
         orderobj=Orders.objects.get(id=someid)
         orderstatus=request.POST.get("orderstatus")
+        if orderstatus=="Returned":
+            pdtobj=orderobj.product
+            pdtobj.quantity+=orderobj.quantity
+            pdtobj.save()
+        
         orderobj.orderstatus=orderstatus
+
 
         
         orderobj.save()
