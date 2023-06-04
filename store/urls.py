@@ -33,7 +33,7 @@ urlpatterns = [
     # path("addtocart/<int:someid>",views.addtocart,name="addtocart"),
     path("preview/<int:someid>",views.preview,name="preview"),
     path("loggedincart/",views.loggedincart,name="loggedincart"),
-    path("deletecartitem/<int:cartid>",views.deletecartitem,name="deletecartitem"),
+    path("deletecartitem/",views.deletecartitem,name="deletecartitem"),
     path("quantityupdate/",views.quantityupdate,name="quantityupdate"),
 
 

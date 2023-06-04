@@ -4,9 +4,20 @@
 
 
 <br><br><br><br><br>
+
+<div class="row">
+
+  <h3 class="ltext-103 cl5 mt-5 ml-5">Delivered Products</h3>
+
+
+
+</div>
+
 <div class="container-fluid">
+
+  <div class="container-fluid">
     <div class="row mt-5">
-        <table class="table table-striped">
+        <table class="table">
             <thead>
               <tr>
                 <th>Product</th>
@@ -63,8 +74,36 @@
 </div>
 
 
+
+
+
+</div>
+
+
+
 <br><br><br><br><br><br><br><br><br><br>
 
+
+<div style="margin-top:100px;" class="modal fade" id="returnModal" tabindex="-1" role="dialog" aria-labelledby="cancelModalLabel" aria-hidden="true">
+ 
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="cancelModalLabel">Confirm Order Cancellation</h5>
+        <button type="button" class="close closeit" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>Are you sure you want to return this product?</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary closeit" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-danger closeit" data-dismiss="modal" id="returnbutton">Confirm Return</button>
+      </div>
+    </div>
+  </div>
+</div>
 
 
 
@@ -78,29 +117,48 @@
       $(".delete-btn").click(function() {
         var orderid = $(this).data("category-id");
           // Get the selected offer value
+
+        $("#returnModal").modal("show");
+
+        $("#returnbutton").click(function(){
+          $.ajax({
+            url: "../returnorder/" + orderid, // Replace with the URL of your Django view
+            type: "GET",
+            data: { offer: orderid,
+                    
+                    
+                },
+            success: function(response) {
+              $("#order" + orderid).text("Return Initiated").addClass("text-warning");;
+              // Update the offer price on the page
+              var newOfferPrice = response.message;  // Assuming the response contains the updated offer price
+              // Update the appropriate HTML element with the new offer price
+              //$("#offer_price").text(newOfferPrice);
+            
+            },
+            error: function(xhr, errmsg, err) {
+              // Handle any errors that occur during the AJAX request
+              console.log(xhr.status + ": " + xhr.responseText);
+            }
+          });
+
+
+
+
+
+
+        })
         
         // Send an AJAX request to update the offer price
-        $.ajax({
-          url: "../returnorder/" + orderid, // Replace with the URL of your Django view
-          type: "GET",
-          data: { offer: orderid,
-                  
-                  
-              },
-          success: function(response) {
-            $("#order" + orderid).text("Return Initiated").addClass("text-warning");;
-            // Update the offer price on the page
-            var newOfferPrice = response.message;  // Assuming the response contains the updated offer price
-            // Update the appropriate HTML element with the new offer price
-            //$("#offer_price").text(newOfferPrice);
-            alert(response.message);
-          },
-          error: function(xhr, errmsg, err) {
-            // Handle any errors that occur during the AJAX request
-            console.log(xhr.status + ": " + xhr.responseText);
-          }
-        });
+
       });
+
+      $(".closeit").click(function(){
+        $("#returnModal").modal("hide");
+      })
+
+     
+      
     });
   </script>
 

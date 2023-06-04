@@ -443,7 +443,8 @@ def quantityupdate(request):
 
     return JsonResponse({"sum":sum,"subtotal":subtotal})
 
-def deletecartitem(request,cartid):
+def deletecartitem(request):
+    cartid=request.GET["cartid"]
     cartobj=Cart.objects.get(id=cartid)
     cartobj.delete()
 
