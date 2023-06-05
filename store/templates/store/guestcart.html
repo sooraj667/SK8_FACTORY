@@ -1,0 +1,298 @@
+{% extends 'store/index.html' %}
+{% load static %}
+
+
+
+{% block content %}
+{% comment %} <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> {% endcomment %}
+<div class="row mt-5"></div>
+<div class="row mt-5"></div>
+<div class="row mt-5"></div>
+<div class="row mt-5"></div>
+
+
+
+<div class="container-fluid">
+    <div class="row">
+        <!-- Shoping Cart -->
+	
+		<div class="container">
+			<div class="row">
+				<div class="col-lg-10 col-xl-7 m-lr-auto m-b-50">
+					<div class="m-l-25 m-r--38 m-lr-0-xl">
+						<div class="wrap-table-shopping-cart">
+
+
+							<table class="table ">
+								<thead>
+								  <tr>
+									<th>Product</th>
+									<th>Name</th>
+									<th>Price</th>
+									<th>Quantity</th>
+									<th>Total</th>
+								  </tr>
+								</thead>
+								<tbody>
+								  {% for item,data in cartdict.items %}
+								  <tr id="cartitem{{item}}">
+									<td>
+									  <img style="  max-width: 150px;
+									  max-height: 150px;" class="img-fluid img-responsive" src="{{ data.image }}" alt="Product Image">
+									</td>
+									<td class="pt-3">{{ data.product }}</td>
+									<td class="pt-3"><div id="productamount">{{ item.product.price }}</div></td>
+
+				
+									<td>
+									  <input class="choosequantity form-control" type="number" min="1" value="{{ data.quantity }}" name="quantity" data-item-id="{{ item }}">
+									</td>
+									<td class="pt-3"><div id="amount{{item}}">{{ data.total }}</div></td>
+
+									<td><button class="remove_cart_item  btn btn-danger" data-cart-item={{ item }}>Remove Item</button> </td>
+
+
+
+								  </tr>
+								  {% endfor %}
+								</tbody>
+							  </table>
+						</div>
+
+						
+						{% if cartobjs %}
+
+						{% comment %} <div class="mt-5">
+							
+							<button  type="button" class="btn delete-btn btn-danger" >Remove All Items</button>
+						
+						
+						</div> {% endcomment %}
+
+
+
+						
+						{% endif %}
+
+						{% if not cartdict %}
+						<div>
+
+							<h5 class=" text-danger  ml-5 mt-5">No items in Cart!</h5>
+
+
+						</div>
+						
+						
+						
+						{% endif %}
+						
+
+
+
+
+
+					</div>
+				</div>
+
+				<div class="col-sm-10 col-lg-7 col-xl-5 m-lr-auto m-b-50">
+					<div class="bor10 p-lr-40 p-t-30 p-b-40 m-l-63 m-r-40 m-lr-0-xl p-lr-15-sm">
+						<h4 class="mtext-109 cl2 p-b-30">
+							Cart Totals
+						</h4>
+
+						<div class="flex-w flex-t bor12 p-b-13">
+							<div class="size-208">
+								<span class="stext-110 cl2">
+									Subtotal
+								</span>
+							</div>
+
+							<div class="size-209">
+								<span class="subtotal mtext-110 cl2">
+									{{subtotal}}
+								</span>
+							</div>
+						</div>
+
+						
+
+						<div class="flex-w flex-t p-t-27 p-b-33">
+							<div class="size-208">
+								<span class="mtext-101 cl2">
+									Total:
+								</span>
+							</div>
+
+							<div class="size-209 p-t-1">
+								<span class="subtotal mtext-110 cl2">
+									RS.{{subtotal}}
+								</span>
+							</div>
+						</div>
+
+
+
+						{% if cartdict %}
+						
+						
+						
+						
+						<button id="proceedtocheckout" class="flex-c-m stext-101 cl0 size-116 bg3 bor14 hov-btn3 p-lr-15 trans-04 pointer">
+							Proceed to Checkout
+						</button> 
+						{% else %}
+						<div>
+							<span class="text-success"> Explore Our Products!</span>
+							
+							<button  class=" flex-c-m stext-101 cl0 btn bg1 bor1 hov-btn1 p-lr-15 trans-04  mt-2"><a class="text-light" href={% url 'loggedinproduct' %}>Back To Shop</a></button>
+							 
+						
+
+						</div>
+						
+
+						{% endif %}
+						
+						<div id="signupmsg">
+
+						</div>
+						<div id="signuplink" class="text-dark">
+
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js" integrity="sha512-pumBsjNRGGqkPzKHndZMaAG+bir374sORyzM3uulLV14lN5LyykqNk8eEeUlUkB3U0M4FApyaHraT65ihJhDpQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+<script>
+	$(".choosequantity").change(function(){
+		var itemid=$(this).data("item-id");
+		var quantity=$(this).val();
+
+
+		$.ajax({
+			url:"/guestquantityupdate/",
+			type:"GET",
+			data:{
+				itemid:itemid,
+				quantity:quantity
+			},
+			success:function(response){
+				var result=response.sum;
+				var subtotal=response.subtotal;
+				$("#amount"+itemid).html(result);
+				$(".subtotal").html(subtotal)
+			
+				
+
+			},
+			error: function(xhr, errmsg, err) {
+				
+				console.log(xhr.status + ": " + xhr.responseText);
+			  }
+
+
+
+
+
+		})
+
+
+
+	})
+
+
+
+
+
+
+</script>
+
+
+
+
+
+
+
+
+
+
+ <script>
+  
+      $(".remove_cart_item").click(function(event) {
+		event.preventDefault();
+        var cartid = $(this).data("cart-item");
+		var subtotal=$(".subtotal").html();
+          // Get the selected offer value
+        
+        // Send an AJAX request to update the offer price
+        $.ajax({
+          url: "/guestdeletecartitem/", // Replace with the URL of your Django view
+          type: "GET",
+          data: { cartid: cartid,
+				subtotal:subtotal,
+                  
+                  
+              },
+          success: function(response) {
+            $("#cartitem" + cartid).remove();
+			$(".subtotal").html(response.totalsum)
+            // Update the offer price on the page
+        	//var newOfferPrice = response.message;  // Assuming the response contains the updated offer price
+            // Update the appropriate HTML element with the new offer price
+            //$("#offer_price").text(newOfferPrice);
+            
+          },
+          error: function(xhr, errmsg, err) {
+            // Handle any errors that occur during the AJAX request
+            console.log(xhr.status + ": " + xhr.responseText);
+          }
+        });
+      });
+    
+  </script>
+
+
+
+
+  <script>
+	$("#proceedtocheckout").click(function(){
+		$("#signupmsg").html("You need to signup first!").addClass("text-danger");
+		$("#signuplink").html("<a href={% url 'signup' %}> <button> Sign up</button> </a>").addClass('flex-c-m stext-101 cl0 btn bg1 bor1 hov-btn1 p-lr-15 trans-04  mt-2').css({
+			'text-decoration': 'none',
+			'color': 'black'
+		  });
+		$("#signuplink").click(function(){
+			window.location.href = "/signup/";
+
+		})
+
+		// $("#signuplink").html("<a href={% url 'signup' %}> Sign Up </a>")
+
+
+
+
+	})
+
+
+
+
+  </script>
+
+   
+
+
+{% endblock content %}

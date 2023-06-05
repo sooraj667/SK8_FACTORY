@@ -48,6 +48,149 @@ def shop(request):
     return render(request,"store/product.html",{"products":products})
 
 
+def guestpreview(request,someid):
+    
+        pdtobj=Products.objects.get(id=someid)
+        if request.method=="POST":
+            
+                
+
+                
+
+            if "addtocart" in request.POST:
+
+             
+                pdtobj=Products.objects.get(id=someid)
+                pdtname=pdtobj.name                
+                quantity=int(request.POST.get("quantity"))
+                totalprice=pdtobj.price*Decimal(quantity)
+                totalprice=float(totalprice)
+              
+                
+
+                # if ("product"+str(pdtobj.id)) in request.session:
+                    # request.session["product"+str(pdtobj.id)]=pdtname
+                    # request.session["quantity"+str(pdtobj.id)]+=quantity
+                    # request.session["totalprice"+str(pdtobj.id)]+=totalprice
+                
+                
+                # else:
+
+                    # request.session["product"+str(pdtobj.id)]=pdtname
+                    # request.session["quantity"+str(pdtobj.id)]=quantity
+                    # request.session["totalprice"+str(pdtobj.id)]=totalprice
+                    # if not "cartcount" in request.session:
+                    #     request.session["cartcount"]=[str(pdtobj.id)]
+                    # else:
+                    #     request.session["cartcount"].append(str(pdtobj.id))
+
+                
+
+
+
+                if "cartdict" not in request.session:
+                    request.session["cartdict"]={}          
+                    request.session["cartdict"][str(pdtobj.id)]={}
+                    cartdict=request.session["cartdict"]
+                    cartdict[str(pdtobj.id)]["product"]=pdtname
+                    cartdict[str(pdtobj.id)]["quantity"]=quantity
+                    cartdict[str(pdtobj.id)]["total"]=totalprice
+                    cartdict[str(pdtobj.id)]["image"]=pdtobj.image1.url
+                    request.session["cartdict"]=cartdict
+
+                if str(pdtobj.id) not in request.session["cartdict"].keys():
+                    request.session["cartdict"][str(pdtobj.id)]={}
+                    cartdict=request.session["cartdict"]
+                    cartdict[str(pdtobj.id)]["product"]=pdtname
+                    cartdict[str(pdtobj.id)]["quantity"]=quantity
+                    cartdict[str(pdtobj.id)]["total"]=totalprice
+                    cartdict[str(pdtobj.id)]["image"]=pdtobj.image1.url
+                    request.session["cartdict"]=cartdict
+
+                else:
+                    cartdict=request.session["cartdict"]
+                    cartdict[str(pdtobj.id)]["product"]=pdtname
+                    cartdict[str(pdtobj.id)]["quantity"]+=quantity
+                    cartdict[str(pdtobj.id)]["total"]+=totalprice
+                    cartdict[str(pdtobj.id)]["image"]=pdtobj.image1.url
+                    request.session["cartdict"]=cartdict
+
+                    
+
+                
+
+                
+
+
+        
+
+               
+                return redirect(guestcart)
+
+
+         
+
+       
+   
+        return render(request,"store/guestpreview.html",{"pdtobj":pdtobj})
+
+
+def guestcart(request):
+    # if "cartcount" not in request.session:
+    #     return render(request,"store/guestcart.html",{"message":"Cart is empty"} )
+
+    if "cartdict" not in request.session:
+        return render(request,"store/guestcart.html",{"message":"Cart is empty"} )
+    
+    cartdict=request.session["cartdict"]
+    subtotal=0
+    for key,value in cartdict.items():
+        subtotal+=value["total"]
+    request.session["subtotal"]=subtotal
+    context={"cartdict":cartdict,"subtotal":subtotal}
+    return render(request,"store/guestcart.html",context)
+    
+
+
+
+
+
+
+
+    # cartlist=request.session.get("cartcount")
+    # if "cartdict" not in request.session:
+    #     cartdict={}
+    # else:
+    #     cartdict=request.session["cartdict"]
+    # for item in cartlist:
+    #     product=request.session["product"+item]
+    #     quantity=request.session["quantity"+item]
+    #     total=request.session["totalprice"+item]
+    #     productobj=Products.objects.get(name=product)
+    #     pdtimage=productobj.image1
+    #     print("MYRRR",pdtimage)
+    #     if item not in cartdict:
+    #         cartdict[item]={}
+    #         cartdict[item]["product"]=product
+    #         cartdict[item]["quantity"]=quantity
+    #         cartdict[item]["total"]=total
+    #         cartdict[item]["image"]=pdtimage.url
+    #     else:
+    #         cartdict[item]["product"]=product
+    #         cartdict[item]["quantity"]+=quantity
+    #         cartdict[item]["total"]+=total
+    #         cartdict[item]["image"]=pdtimage.url
+    #     request.session["cartdict"]=cartdict
+
+    # subtotal=0
+    # for k,v in cartdict.items():
+    #     subtotal+=v["total"]
+    # request.session["subtotal"]=subtotal
+    # print("BROOOOOOOOO",cartdict)
+    # context={"cartdict":cartdict,"subtotal":subtotal}
+    # return render(request,"store/guestcart.html",context)
+
+
 
 def category_based_product(request,someid):
     categoryobj=Category.objects.get(id=someid)
@@ -113,6 +256,7 @@ def signup(request):
             request.session["contactno"]=phonenumber
             fieldvalues=Customers(username=username,name=name,email=email,phonenumber=phonenumber,password=password,repassword=repassword)
             fieldvalues.save()
+            request.session["guestuser"]="guestuser"
             messages.success(request, 'Signup successful!')
             return redirect(otplogin)
         
@@ -234,6 +378,20 @@ def logout(request):
 
 def loggedin(request):
     if "username" in request.session and not Customers.objects.get(username=request.session["username"]).isblocked:
+        if "cartdict" in request.session and "guestuser" in request.session:
+            cartdict=request.session["cartdict"]
+            for item,data in cartdict.items():
+                user=Customers.objects.get(username=request.session["username"])
+                product=Products.objects.get(id=int(item))
+                quantity=data["quantity"]
+                total=data["total"]
+                cartobj=Cart(user=user,product=product,quantity=quantity,total=total)
+                cartobj.save()
+            del request.session["cartdict"]
+            del request.session["guestuser"]
+
+
+
         category=Category.objects.all()
         products=Products.objects.all()
 
@@ -266,9 +424,10 @@ def loggedinabout(request):
 def loggedinproduct(request):
     if "username" in request.session and not Customers.objects.get(username=request.session["username"]).isblocked:
         products=Products.objects.all()
-        cartobjs=Cart.objects.all()
+        
         userobj=Customers.objects.get(username=request.session["username"])
         cartobjsfiltered=Cart.objects.filter(user=userobj)
+        cartobjs=Cart.objects.filter(user=userobj)
         no_of_cart_items=cartobjsfiltered.count()
         totalsum=0
         for item in cartobjs:
@@ -465,16 +624,92 @@ def quantityupdate(request):
     cartobj.total=sum
     
     cartobj.save()
-    cartobjs=Cart.objects.all()
+    username=request.session["username"]
+    userobj=Customers.objects.get(username=username)
+    cartobjs=Cart.objects.filter(user=userobj)
     subtotal=0
     for item in cartobjs:
         subtotal+=item.total
     
     print("ENTE ALIYA *******************************")
+    return JsonResponse({"sum":sum,"subtotal":subtotal})
+
+def guestquantityupdate(request):
+    itemid=request.GET["itemid"]
+    quantity=int(request.GET["quantity"])
+   
+    product=Products.objects.get(id=int(itemid))
+    sum=Decimal(quantity)*product.price
+    
+    cartdict=request.session["cartdict"]
+
+    
+
+    cartdict[str(itemid)]["quantity"]=quantity
+    cartdict[str(itemid)]["total"]=float(sum)
+
+    
+    request.session["cartdict"]=cartdict
+    
+
+
+    
+
+    cartdict=request.session["cartdict"]
+    subtotal=0
+    for k,v in cartdict.items():
+        subtotal+=v["total"]
+    
+    
+    request.session["subtotal"]=float(subtotal)
+    
+ 
 
 
 
     return JsonResponse({"sum":sum,"subtotal":subtotal})
+
+
+def guestdeletecartitem(request):
+    cartid=request.GET["cartid"]
+    # subtotal=float(request.GET["subtotal"])
+    # cartdict=request.session["cartdict"]
+    # amount=cartdict[str(cartid)]["total"]
+    
+    # cartlist=request.session.get("cartcount")
+    # if str(cartid) in cartlist:
+    #     cartlist.remove(str(cartid))
+    
+    # strcartid=str(cartid)
+    # del request.session["cartdict"][strcartid]
+    # request.session["cartcount"].remove(strcartid)
+    # print(request.session["cartdict"],"FLINGO")
+    # del request.session["quantity"+strcartid]
+    # del request.session["product"+strcartid]
+    # # del request.session[strcartid]
+    
+    # del request.session["totalprice"+strcartid]
+
+    
+    # print("VASUU",cartdict)
+    # subtotal=request.session["subtotal"]
+    # totalsum=float(subtotal)-float(amount)
+
+
+
+    cartdict=request.session["cartdict"]
+    amount=cartdict[str(cartid)]["total"]
+    request.session["subtotal"]-=amount
+    totalsum=request.session["subtotal"]
+    del cartdict[str(cartid)]
+    request.session["cartdict"]=cartdict
+
+    
+    return JsonResponse({"message":"removed","totalsum":totalsum})
+
+
+
+
 
 def deletecartitem(request):
     cartid=request.GET["cartid"]
@@ -599,7 +834,7 @@ def checkout(request):
         cust=Customers.objects.get(username=request.session["username"])
         addressobjs=Address.objects.filter(customer=cust)
 
-        cartobjs=Cart.objects.all()
+        cartobjs=Cart.objects.filter(user=cust)
         totalsum=0
         for item in cartobjs:
             totalsum+=item.total
@@ -846,9 +1081,12 @@ def cancelorder(request,someid):
 
 
 def userprofile(request):
-    orderobjs=Orders.objects.all()
+    # orderobjs=Orders.objects.all()
     username=request.session["username"]
     customerobj=Customers.objects.get(username=username)
+
+    orderobjs=Orders.objects.filter(user=customerobj)
+    
     addressobjs=Address.objects.filter(customer=customerobj)
     username=request.session["username"]
 
@@ -895,7 +1133,9 @@ def edituseraddress(request,someid):
     return redirect(userprofile)
 
 def deliveredproducts(request):
-    orderobjs=Orders.objects.all()
+    username=request.session["username"]
+    userobj=Customers.objects.get(username=username)
+    orderobjs=Orders.objects.filter(user=userobj)
     context={"orderobjs":orderobjs}
     return render(request,"store/userdashboard/deliveredproducts.html",context)
 

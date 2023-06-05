@@ -4,7 +4,7 @@ urlpatterns = [
     path("",views.index,name="index"),
     path("about/",views.about,name="about"),
     path("login/",views.login,name="login"),
-    path("signup",views.signup,name="signup"),
+    path("signup/",views.signup,name="signup"),
     path("cart/",views.cart,name="cart"),
     path("shop/",views.shop,name="shop"),
     path("logout/",views.logout,name="logout"),
@@ -37,6 +37,8 @@ urlpatterns = [
     path("loggedincart/",views.loggedincart,name="loggedincart"),
     path("deletecartitem/",views.deletecartitem,name="deletecartitem"),
     path("quantityupdate/",views.quantityupdate,name="quantityupdate"),
+    path("guestquantityupdate/",views.guestquantityupdate,name="guestquantityupdate"),
+    path("guestdeletecartitem/",views.guestdeletecartitem,name="guestdeletecartitem"),
 
 
 
@@ -60,13 +62,17 @@ urlpatterns = [
     path("increasequantity/<int:itemid>",views.increasequantity,name="increasequantity"),
     
 
-    path("applycouponajax/",views.applycouponajax,name="applycouponajax")
+    path("applycouponajax/",views.applycouponajax,name="applycouponajax"),
 
     # path("update_offer_price/",views.update_offer_price,name="update_offer_price")
 
     
 
     # path("applycoupon/",views.applycoupon,name="applycoupon"),
+
+    path("guestpreview/<int:someid>",views.guestpreview,name="guestpreview"),
+    path("guestcart/",views.guestcart,name="guestcart"),
+   
     
 
 ]
