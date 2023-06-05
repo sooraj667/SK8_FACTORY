@@ -72,6 +72,15 @@ urlpatterns = [
 
     path("guestpreview/<int:someid>",views.guestpreview,name="guestpreview"),
     path("guestcart/",views.guestcart,name="guestcart"),
+
+
+
+
+    path("filtercategory/<int:someid>",views.filtercategory,name="filtercategory"),
+    path("filterprice/<int:someid>",views.filterprice,name="filterprice"),
+
+    path("guestfiltercategory/<int:someid>",views.guestfiltercategory,name="guestfiltercategory"),
+    path("guestfilterprice/<int:someid>",views.guestfilterprice,name="guestfilterprice"),
    
     
 

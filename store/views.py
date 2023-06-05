@@ -43,9 +43,40 @@ def shop(request):
     if "username" in request.session:
         return redirect(loggedin)
     products=Products.objects.all()
-    # productimages=ProductImages.objects.all()
+    filterpricedict={"1":"Below Rs.1000","2":"Rs.1000.00 - Rs.4000.00","3":"Rs.4000.00 - Rs.10000.00","4":"Above Rs.10000"}
+    categoryobjs=Category.objects.all()
+    context={"filterpricedict":filterpricedict,"categoryobjs":categoryobjs,"products":products}
+    return render(request,"store/product.html",context)
 
-    return render(request,"store/product.html",{"products":products})
+def guestfilterprice(request,someid):
+    if "username" in request.session:
+        return redirect(loggedin)
+    priceid=someid
+
+    if priceid==1:
+        products=Products.objects.filter(price__lte=1000)
+    elif priceid==2:
+        products=Products.objects.filter(price__range=(1000,4000))
+    elif priceid==3:
+        products=Products.objects.filter(price__range=(4000,10000))
+    else:
+        products=Products.objects.filter(price__gte=10000)
+
+    filterpricedict={"1":"Below Rs.1000","2":"Rs.1000.00 - Rs.4000.00","3":"Rs.4000.00 - Rs.10000.00","4":"Above Rs.10000"}
+    categoryobjs=Category.objects.all()
+    context={"filterpricedict":filterpricedict,"categoryobjs":categoryobjs,"products":products}
+    return render(request,"store/product.html",context)
+
+def guestfiltercategory(request,someid):
+    if "username" in request.session:
+        return redirect(loggedin)
+    category=Category.objects.get(id=someid)
+    products=Products.objects.filter(category=category)
+    filterpricedict={"1":"Below Rs.1000","2":"Rs.1000.00 - Rs.4000.00","3":"Rs.4000.00 - Rs.10000.00","4":"Above Rs.10000"}
+    categoryobjs=Category.objects.all()
+    context={"filterpricedict":filterpricedict,"categoryobjs":categoryobjs,"products":products}
+    return render(request,"store/product.html",context)
+
 
 
 def guestpreview(request,someid):
@@ -367,6 +398,78 @@ def logout(request):
 
 
 
+def filtercategory(request,someid):
+    if "username" in request.session and not Customers.objects.get(username=request.session["username"]).isblocked:
+        category=Category.objects.get(id=someid)
+        products=Products.objects.filter(category=category)
+        
+        extracheapproducts = Products.objects.filter(price__lte=1000)
+        cheapproducts = Products.objects.filter(price__range=(1000,4000))
+        mediumproducts = Products.objects.filter(price__range=(4000,10000))
+        expensiveproducts = Products.objects.filter(price__gte=10000)
+
+
+        categoryobjs=Category.objects.all()
+        
+
+        
+
+
+
+        filterpricedict={"1":"Below Rs.1000","2":"Rs.1000.00 - Rs.4000.00","3":"Rs.4000.00 - Rs.10000.00","4":"Above Rs.10000"}
+        userobj=Customers.objects.get(username=request.session["username"])
+        cartobjsfiltered=Cart.objects.filter(user=userobj)
+        cartobjs=Cart.objects.filter(user=userobj)
+        no_of_cart_items=cartobjsfiltered.count()
+        totalsum=0
+        for item in cartobjs:
+            totalsum+=item.total
+        context={"products":products,"cartobjs":cartobjs,"totalsum":totalsum,"no_of_cart_items":no_of_cart_items,"extracheapproducts":extracheapproducts,"cheapproducts":cheapproducts,"mediumproducts":mediumproducts,"expensiveproducts":expensiveproducts,"categoryobjs":categoryobjs,"filterpricedict":filterpricedict}
+        return render(request,"store/userdashboard/loggedinproduct.html",context)
+    else:
+        return redirect(login)
+    
+def filterprice(request,someid):
+    if "username" in request.session and not Customers.objects.get(username=request.session["username"]).isblocked:
+        priceid=someid
+
+        if priceid==1:
+            products=Products.objects.filter(price__lte=1000)
+        elif priceid==2:
+            products=Products.objects.filter(price__range=(1000,4000))
+        elif priceid==3:
+            products=Products.objects.filter(price__range=(4000,10000))
+        else:
+            products=Products.objects.filter(price__gte=10000)
+
+
+
+        
+        extracheapproducts = Products.objects.filter(price__lte=1000)
+        cheapproducts = Products.objects.filter(price__range=(1000,4000))
+        mediumproducts = Products.objects.filter(price__range=(4000,10000))
+        expensiveproducts = Products.objects.filter(price__gte=10000)
+
+
+        categoryobjs=Category.objects.all()
+        
+
+        
+
+
+
+        filterpricedict={"1":"Below Rs.1000","2":"Rs.1000.00 - Rs.4000.00","3":"Rs.4000.00 - Rs.10000.00","4":"Above Rs.10000"}
+        userobj=Customers.objects.get(username=request.session["username"])
+        cartobjsfiltered=Cart.objects.filter(user=userobj)
+        cartobjs=Cart.objects.filter(user=userobj)
+        no_of_cart_items=cartobjsfiltered.count()
+        totalsum=0
+        for item in cartobjs:
+            totalsum+=item.total
+        context={"products":products,"cartobjs":cartobjs,"totalsum":totalsum,"no_of_cart_items":no_of_cart_items,"extracheapproducts":extracheapproducts,"cheapproducts":cheapproducts,"mediumproducts":mediumproducts,"expensiveproducts":expensiveproducts,"categoryobjs":categoryobjs,"filterpricedict":filterpricedict}
+        return render(request,"store/userdashboard/loggedinproduct.html",context)
+    else:
+        return redirect(login)
 
 
 
@@ -425,6 +528,20 @@ def loggedinproduct(request):
     if "username" in request.session and not Customers.objects.get(username=request.session["username"]).isblocked:
         products=Products.objects.all()
         
+        extracheapproducts = Products.objects.filter(price__lte=1000)
+        cheapproducts = Products.objects.filter(price__range=(1000,4000))
+        mediumproducts = Products.objects.filter(price__range=(4000,10000))
+        expensiveproducts = Products.objects.filter(price__gte=10000)
+        filterpricedict={"1":"Below Rs.1000","2":"Rs.1000.00 - Rs.4000.00","3":"Rs.4000.00 - Rs.10000.00","4":"Above Rs.10000"}
+
+        categoryobjs=Category.objects.all()
+        
+
+        
+
+
+
+
         userobj=Customers.objects.get(username=request.session["username"])
         cartobjsfiltered=Cart.objects.filter(user=userobj)
         cartobjs=Cart.objects.filter(user=userobj)
@@ -432,8 +549,8 @@ def loggedinproduct(request):
         totalsum=0
         for item in cartobjs:
             totalsum+=item.total
-
-        return render(request,"store/userdashboard/loggedinproduct.html",{"products":products,"cartobjs":cartobjs,"totalsum":totalsum,"no_of_cart_items":no_of_cart_items})
+        context={"products":products,"cartobjs":cartobjs,"totalsum":totalsum,"no_of_cart_items":no_of_cart_items,"extracheapproducts":extracheapproducts,"cheapproducts":cheapproducts,"mediumproducts":mediumproducts,"expensiveproducts":expensiveproducts,"categoryobjs":categoryobjs,"filterpricedict":filterpricedict}
+        return render(request,"store/userdashboard/loggedinproduct.html",context)
     else:
         return redirect(login)
 
