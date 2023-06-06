@@ -82,7 +82,10 @@ class Coupon(models.Model):
 
 
 
-
+class Wishlist(models.Model):
+    user = models.ForeignKey(Customers, on_delete=models.CASCADE)
+    product = models.ForeignKey(Products, on_delete=models.CASCADE)
+    
 
 
 

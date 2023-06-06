@@ -82,6 +82,8 @@ urlpatterns = [
     path("guestfiltercategory/<int:someid>",views.guestfiltercategory,name="guestfiltercategory"),
     path("guestfilterprice/<int:someid>",views.guestfilterprice,name="guestfilterprice"),
    
+
+    path("addtowishlist/",views.addtowishlist,name="addtowishlist"),
     
 
 ]

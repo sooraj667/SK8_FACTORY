@@ -1262,3 +1262,27 @@ def returnorder(request,orderid):
     orderobj.orderstatus="ReturnRequested"
     orderobj.save()
     return JsonResponse({"message":"Return Initiated"})
+
+
+def addtowishlist(request):
+    print("MWONEEE")
+    productid=request.GET["productid"]
+    
+    user=Customers.objects.get(username=request.session["username"])
+    try:
+        wishlistobj=Wishlist.objects.get(product=Products.objects.get(id=productid),user=user) 
+        if wishlistobj:
+            message="Item already in wishlist"
+            return JsonResponse({"alreadypresent":message})
+    except:
+        wishlistobj=Wishlist(product=Products.objects.get(id=productid),user=user)
+        wishlistobj.save()
+        message="Item added to wishlist"
+
+
+
+    
+
+
+
+        return JsonResponse({"added":message})
