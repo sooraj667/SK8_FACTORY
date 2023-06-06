@@ -7,16 +7,20 @@
 <br><br><br><br>
 <div class="container">
     <div class="row">
+        {% if itemcount != 0 %}
         <table class="wishlist-table table">
             <thead>
               <tr>
                 <th>Product</th>
                 <th>Image</th>
                 <th>Product Price</th>
-                <th></th>
+                <th>Remove Item</th>
+                <th>Add To Cart</th>
               </tr>
             </thead>
+            
             <tbody>
+                
                 {% for item in wishlistobjs  %}
                 
               <tr id="wishitem{{item.product.id}}">
@@ -31,9 +35,34 @@
                   </td>
               </tr>
               {% endfor %}
+              
+              
           
             </tbody>
+
+           
           </table>
+
+          {% else %}
+          
+          <div >
+
+            <h5 class=" text-danger  ml-5 mt-4">No items in Wishlist!</h5>
+
+
+          </div>
+          <div class="ml-3 mt-4" >
+            
+            
+            
+            <button  class=" flex-c-m stext-101 cl0 btn bg1 bor1 hov-btn1 p-lr-15 trans-04  mt-2"><a class="text-light" href={% url 'loggedinproduct' %}>Back To Shop</a></button>
+             
+        
+
+        </div>
+        
+
+          {% endif %}
           
     
     
@@ -43,6 +72,7 @@
     </div>
 
 </div>
+
 <br><br><br><br>
 
 

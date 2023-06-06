@@ -1336,6 +1336,7 @@ def wishlist(request):
     username=request.session["username"]
     user=Customers.objects.get(username=username)
     wishlistobjs=Wishlist.objects.filter(user=user)
+    itemcount=wishlistobjs.count()
 
     cartobjs=Cart.objects.filter(user=user)
     no_of_cart_items=cartobjs.count()
@@ -1348,7 +1349,7 @@ def wishlist(request):
     for item in cartobjs:
         totalsum+=item.total
 
-    context={"wishlistobjs":wishlistobjs,"no_of_cart_items":no_of_cart_items,"no_of_wishlist_items":no_of_wishlist_items,"cartobjs":cartobjs,"totalsum":totalsum}
+    context={"wishlistobjs":wishlistobjs,"no_of_cart_items":no_of_cart_items,"no_of_wishlist_items":no_of_wishlist_items,"cartobjs":cartobjs,"totalsum":totalsum,"itemcount":itemcount}
     return render(request,"store/userdashboard/wishlist.html",context)
 
 def wishlistremove(request):
