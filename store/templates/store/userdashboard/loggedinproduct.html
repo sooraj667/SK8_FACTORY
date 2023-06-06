@@ -139,15 +139,15 @@
 						<div class="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 js-show-modal-search">
 							<i class="zmdi zmdi-search"></i>
 						</div>
-						{% block cartquantity %}
+						{% comment %} {% block cartquantity %} {% endcomment %}
 						<div class="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 icon-header-noti js-show-cart" data-notify="{{no_of_cart_items}}">
 							<i class="zmdi zmdi-shopping-cart"></i>
 						</div>
 
-						<a href="#" class="dis-block icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 icon-header-noti" data-notify="3">
+						<a href={% url 'wishlist' %} class="dis-block icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 icon-header-noti" data-notify="{{no_of_wishlist_items}}">
 							<i class="zmdi zmdi-favorite-outline"></i>
 						</a>
-						{% endblock cartquantity %}
+						{% comment %} {% endblock cartquantity %} {% endcomment %}
 	
 
 						<div class="icon-header-item cl2 hov-cl1 trans-04 p-l-22 p-r-11 " >
@@ -375,7 +375,7 @@
 							View Cart
 						</a>
 
-						<a href="shoping-cart.html" class="flex-c-m stext-101 cl0 size-107 bg3 bor2 hov-btn3 p-lr-15 trans-04 m-b-10">
+						<a href={% url 'checkout' %} class="flex-c-m stext-101 cl0 size-107 bg3 bor2 hov-btn3 p-lr-15 trans-04 m-b-10">
 							Check Out
 						</a>
 					</div>

@@ -502,26 +502,40 @@ def loggedin(request):
         userobj=Customers.objects.get(username=request.session["username"])
 
         cartobjs=Cart.objects.filter(user=userobj)
+        wishlistobjs=Wishlist.objects.filter(user=userobj)
+        no_of_wishlist_items=wishlistobjs.count()
         no_of_cart_items=cartobjs.count()
         totalsum=0
         for item in cartobjs:
             totalsum+=item.total
-        return render(request,"store/userdashboard/loggedin.html",{"category":category,"products":products,"cartobjs":cartobjs,"totalsum":totalsum,       "categoryofferobjs":categoryofferobjs,"no_of_cart_items":no_of_cart_items})
+        return render(request,"store/userdashboard/loggedin.html",{"category":category,"products":products,"cartobjs":cartobjs,"totalsum":totalsum,       "categoryofferobjs":categoryofferobjs,"no_of_cart_items":no_of_cart_items,"no_of_wishlist_items":no_of_wishlist_items})
     else:
         return redirect(login)
     
 def loggedincontact(request):
     userobj=Customers.objects.get(username=request.session["username"])
-    cartobjsfiltered=Cart.objects.filter(user=userobj)
-    no_of_cart_items=cartobjsfiltered.count()
-    context={"no_of_cart_items":no_of_cart_items}
+    cartobjs=Cart.objects.filter(user=userobj)
+    subtotal=0
+    for item in cartobjs:
+        subtotal+=item.total
+
+    no_of_cart_items=cartobjs.count()
+    wishlistobjs=Wishlist.objects.filter(user=userobj)
+    no_of_wishlist_items=wishlistobjs.count()
+    context={"no_of_cart_items":no_of_cart_items,"no_of_wishlist_items":no_of_wishlist_items,"cartobjs":cartobjs,"totalsum":subtotal}
     return render(request,"store/userdashboard/loggedincontact.html",context)
 
 def loggedinabout(request):
     userobj=Customers.objects.get(username=request.session["username"])
-    cartobjsfiltered=Cart.objects.filter(user=userobj)
-    no_of_cart_items=cartobjsfiltered.count()
-    context={"no_of_cart_items":no_of_cart_items}
+    cartobjs=Cart.objects.filter(user=userobj)
+    no_of_cart_items=cartobjs.count()
+    
+    wishlistobjs=Wishlist.objects.filter(user=userobj)
+    no_of_wishlist_items=wishlistobjs.count()
+    subtotal=0
+    for item in cartobjs:
+        subtotal+=item.total
+    context={"no_of_cart_items":no_of_cart_items,"no_of_wishlist_items":no_of_wishlist_items,"cartobjs":cartobjs,"totalsum":subtotal}
     return render(request,"store/userdashboard/loggedinabout.html",context)
 
 def loggedinproduct(request):
@@ -541,15 +555,18 @@ def loggedinproduct(request):
 
 
 
-
         userobj=Customers.objects.get(username=request.session["username"])
         cartobjsfiltered=Cart.objects.filter(user=userobj)
         cartobjs=Cart.objects.filter(user=userobj)
         no_of_cart_items=cartobjsfiltered.count()
+        
+        wishlistobjs=Wishlist.objects.filter(user=userobj)
+        no_of_wishlist_items=wishlistobjs.count()
+
         totalsum=0
         for item in cartobjs:
             totalsum+=item.total
-        context={"products":products,"cartobjs":cartobjs,"totalsum":totalsum,"no_of_cart_items":no_of_cart_items,"extracheapproducts":extracheapproducts,"cheapproducts":cheapproducts,"mediumproducts":mediumproducts,"expensiveproducts":expensiveproducts,"categoryobjs":categoryobjs,"filterpricedict":filterpricedict}
+        context={"products":products,"cartobjs":cartobjs,"totalsum":totalsum,"no_of_cart_items":no_of_cart_items,"no_of_wishlist_items":no_of_wishlist_items ,"extracheapproducts":extracheapproducts,"cheapproducts":cheapproducts,"mediumproducts":mediumproducts,"expensiveproducts":expensiveproducts,"categoryobjs":categoryobjs,"filterpricedict":filterpricedict}
         return render(request,"store/userdashboard/loggedinproduct.html",context)
     else:
         return redirect(login)
@@ -710,7 +727,9 @@ def loggedincart(request):
             totalsum+=item.total
 
         no_of_cart_items=cartobjs.count()
-        return render(request,"store/userdashboard/loggedincart.html",{"cartobjs":cartobjs,"totalsum":totalsum,"no_of_cart_items":no_of_cart_items})
+        wishlistobjs=Wishlist.objects.filter(user=userobj)
+        no_of_wishlist_items=wishlistobjs.count()
+        return render(request,"store/userdashboard/loggedincart.html",{"cartobjs":cartobjs,"totalsum":totalsum,"no_of_cart_items":no_of_cart_items,"no_of_wishlist_items":no_of_wishlist_items})
     else:
         return redirect(login)
     
@@ -1205,14 +1224,27 @@ def userprofile(request):
     orderobjs=Orders.objects.filter(user=customerobj)
     
     addressobjs=Address.objects.filter(customer=customerobj)
-    username=request.session["username"]
+    
+
+    
+    
+    wishlistobjs=Wishlist.objects.filter(user=customerobj)
+
+    cartobjs=Cart.objects.filter(user=customerobj)
+    no_of_cart_items=cartobjs.count()
+    
+    no_of_wishlist_items=wishlistobjs.count()
 
 
+
+    totalsum=0
+    for item in cartobjs:
+        totalsum+=item.total
 
     
 
 
-    context={"orderobjs":orderobjs,"username":username,"addressobjs":addressobjs,"username":username,"addressobjs":addressobjs,"customerobj":customerobj}
+    context={"orderobjs":orderobjs,"username":username,"addressobjs":addressobjs,"username":username,"addressobjs":addressobjs,"customerobj":customerobj,"cartobjs":cartobjs,"totalsum":totalsum,"no_of_cart_items":no_of_cart_items,"no_of_wishlist_items":no_of_wishlist_items}
     return render(request,"store/userdashboard/userprofile.html",context)
 
 
@@ -1253,7 +1285,19 @@ def deliveredproducts(request):
     username=request.session["username"]
     userobj=Customers.objects.get(username=username)
     orderobjs=Orders.objects.filter(user=userobj)
-    context={"orderobjs":orderobjs}
+    wishlistobjs=Wishlist.objects.filter(user=userobj)
+
+    cartobjs=Cart.objects.filter(user=userobj)
+    no_of_cart_items=cartobjs.count()
+    
+    no_of_wishlist_items=wishlistobjs.count()
+
+
+
+    totalsum=0
+    for item in cartobjs:
+        totalsum+=item.total
+    context={"orderobjs":orderobjs,"totalsum":totalsum,"no_of_wishlist_items":no_of_wishlist_items,"no_of_cart_items":no_of_cart_items,"cartobjs":cartobjs}
     return render(request,"store/userdashboard/deliveredproducts.html",context)
 
 
@@ -1286,3 +1330,51 @@ def addtowishlist(request):
 
 
         return JsonResponse({"added":message})
+    
+
+def wishlist(request):
+    username=request.session["username"]
+    user=Customers.objects.get(username=username)
+    wishlistobjs=Wishlist.objects.filter(user=user)
+
+    cartobjs=Cart.objects.filter(user=user)
+    no_of_cart_items=cartobjs.count()
+    
+    no_of_wishlist_items=wishlistobjs.count()
+
+
+
+    totalsum=0
+    for item in cartobjs:
+        totalsum+=item.total
+
+    context={"wishlistobjs":wishlistobjs,"no_of_cart_items":no_of_cart_items,"no_of_wishlist_items":no_of_wishlist_items,"cartobjs":cartobjs,"totalsum":totalsum}
+    return render(request,"store/userdashboard/wishlist.html",context)
+
+def wishlistremove(request):
+    username=request.session["username"]
+    user=Customers.objects.get(username=username)
+    productid=request.GET["productid"]
+    productobj=Products.objects.get(id=productid)
+    wishlistobj=Wishlist.objects.get(product=productobj,user=user)
+    wishlistobj.delete()
+    return JsonResponse({"message":"removed"})
+
+def wishtocart(request):
+    productid=request.GET["productid"]
+    productobj=Products.objects.get(id=productid)
+    username=request.session["username"]
+    user=Customers.objects.get(username=username)
+    wishlistobj=Wishlist.objects.get(user=user,product=productobj)
+    try:
+        cartobj=Cart.objects.get(user=user,product=productobj)
+        if cartobj:
+            cartobj.quantity+=1
+            cartobj.total+=productobj.price
+            cartobj.save()
+    except:
+        cartobj=Cart(user=user,product=productobj,quantity=1,total=productobj.price)
+        cartobj.save()
+        wishlistobj.delete()
+
+    return JsonResponse({"message":"Added"})

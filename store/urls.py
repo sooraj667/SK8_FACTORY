@@ -84,6 +84,10 @@ urlpatterns = [
    
 
     path("addtowishlist/",views.addtowishlist,name="addtowishlist"),
+    path("wishlist/",views.wishlist,name="wishlist"),
+    path("wishlistremove/",views.wishlistremove,name="wishlistremove"),
+    path("wishtocart/",views.wishtocart,name="wishtocart"),
+
     
 
 ]
