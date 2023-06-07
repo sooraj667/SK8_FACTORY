@@ -17,7 +17,7 @@ urlpatterns = [
     path("adminsignin/",views.adminsignin,name="admin_signin"),
     path("adminsignout/",views.adminsignout,name="admin_signout"),
     path("salesreport/",views.salesreport,name="salesreport"),
-    path("downloadsales/",views.downloadsales,name="downloadsales"),
+    # path("downloadsales/",views.downloadsales,name="downloadsales"),
     
 
 

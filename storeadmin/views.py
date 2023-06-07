@@ -572,11 +572,79 @@ def editorderstatus(request,someid):
 
 
 def salesreport(request):
-    orderobjs=Orders.objects.all()
+    if request.method=="POST":
+        if "show" in request.POST:
+            start_date=request.POST.get("start_date")
+            end_date=request.POST.get("end_date")
+            orderobjs = Orders.objects.filter(orderdate__range=[start_date, end_date])
+            if orderobjs.count()==0:
+                message="Sorry! No orders in this particular date range"
+                context={"orderobjs":orderobjs,"message":message}
+            else:
+
+                context={"orderobjs":orderobjs}
+            return render(request,"storeadmin/salesreport.html",context)
+        elif "download" in request.POST:
+            start_date_str = request.POST.get('start_date')
+            end_date_str = request.POST.get('end_date')
+
+            start_date = datetime.strptime(start_date_str, "%Y-%m-%d")
+            end_date = datetime.strptime(end_date_str, "%Y-%m-%d")
+
+            buf = io.BytesIO()
+            doc = SimpleDocTemplate(buf, pagesize=letter)
+            elements = []
+
+            # Add heading
+            styles = getSampleStyleSheet()
+            heading_style = styles['Heading1']
+            heading = "Sales Report"
+            heading_paragraph = Paragraph(heading, heading_style)
+            elements.append(heading_paragraph)
+            elements.append(Spacer(1, 12))  # Add space after heading
+
+            ords = Orders.objects.filter(orderdate__range=[start_date, end_date])
+            
+
+            if ords:
+                data = [['Sl.No.', 'Name', 'Product', 'House', 'Order Date', 'Order Status', 'Quantity']]
+                slno = 0
+                for ord in ords:
+                    slno += 1
+                    row = [slno, ord.user.name, ord.product.name, ord.address.house, ord.orderdate, ord.orderstatus, ord.quantity]
+                    data.append(row)
+
+                table = Table(data)
+                table.setStyle(TableStyle([
+                    ('BACKGROUND', (0, 0), (-1, 0), colors.gray),
+                    ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
+                    ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+                    ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+                    ('FONTSIZE', (0, 0), (-1, 0), 12),
+                    ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+                    ('BACKGROUND', (0, 1), (-1, -1), colors.lightgrey),
+                    ('TEXTCOLOR', (0, 1), (-1, -1), colors.black),
+                    ('FONTNAME', (0, 1), (-1, -1), 'Helvetica'),
+                    ('FONTSIZE', (0, 1), (-1, -1), 10),
+                    ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+                ]))
+
+                elements.append(table)
+            else:
+                elements.append(Paragraph("No orders", styles['Normal']))
+            if elements:
+
+                doc.build(elements)
+                buf.seek(0)
+                return FileResponse(buf, as_attachment=True, filename='Orders.pdf')
+
+
+
+    
     
 
-    context={"orderobjs":orderobjs}
-    return render(request,"storeadmin/salesreport.html",context)
+    
+    return render(request,"storeadmin/salesreport.html")
 
 
 # def downloadsales(request):
@@ -629,58 +697,60 @@ def salesreport(request):
 #     return FileResponse(buf,as_attachment=True,filename='Orders.pdf')
 
 
-def downloadsales(request):
-    start_date_str = request.GET.get('start_date')
-    end_date_str = request.GET.get('end_date')
+# def downloadsales(request):
+#     start_date_str = request.GET.get('start_date')
+#     end_date_str = request.GET.get('end_date')
 
-    start_date = datetime.strptime(start_date_str, "%Y-%m-%d")
-    end_date = datetime.strptime(end_date_str, "%Y-%m-%d")
+#     start_date = datetime.strptime(start_date_str, "%Y-%m-%d")
+#     end_date = datetime.strptime(end_date_str, "%Y-%m-%d")
 
-    buf = io.BytesIO()
-    doc = SimpleDocTemplate(buf, pagesize=letter)
-    elements = []
+#     buf = io.BytesIO()
+#     doc = SimpleDocTemplate(buf, pagesize=letter)
+#     elements = []
 
-    # Add heading
-    styles = getSampleStyleSheet()
-    heading_style = styles['Heading1']
-    heading = "Sales Report"
-    heading_paragraph = Paragraph(heading, heading_style)
-    elements.append(heading_paragraph)
-    elements.append(Spacer(1, 12))  # Add space after heading
+#     # Add heading
+#     styles = getSampleStyleSheet()
+#     heading_style = styles['Heading1']
+#     heading = "Sales Report"
+#     heading_paragraph = Paragraph(heading, heading_style)
+#     elements.append(heading_paragraph)
+#     elements.append(Spacer(1, 12))  # Add space after heading
 
-    ords = Orders.objects.filter(orderdate__range=[start_date, end_date])
-
-    if ords:
-        data = [['Sl.No.', 'Name', 'Product', 'House', 'Order Date', 'Order Status', 'Quantity']]
-        slno = 0
-        for ord in ords:
-            slno += 1
-            row = [slno, ord.user.name, ord.product.name, ord.address.house, ord.orderdate, ord.orderstatus, ord.quantity]
-            data.append(row)
-
-        table = Table(data)
-        table.setStyle(TableStyle([
-            ('BACKGROUND', (0, 0), (-1, 0), colors.gray),
-            ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
-            ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
-            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
-            ('FONTSIZE', (0, 0), (-1, 0), 12),
-            ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
-            ('BACKGROUND', (0, 1), (-1, -1), colors.lightgrey),
-            ('TEXTCOLOR', (0, 1), (-1, -1), colors.black),
-            ('FONTNAME', (0, 1), (-1, -1), 'Helvetica'),
-            ('FONTSIZE', (0, 1), (-1, -1), 10),
-            ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
-        ]))
-
-        elements.append(table)
-    else:
-        elements.append("No orders")
-
-    doc.build(elements)
-    buf.seek(0)
-    return FileResponse(buf, as_attachment=True, filename='Orders.pdf')
+#     ords = Orders.objects.filter(orderdate__range=[start_date, end_date])
     
+
+#     if ords:
+#         data = [['Sl.No.', 'Name', 'Product', 'House', 'Order Date', 'Order Status', 'Quantity']]
+#         slno = 0
+#         for ord in ords:
+#             slno += 1
+#             row = [slno, ord.user.name, ord.product.name, ord.address.house, ord.orderdate, ord.orderstatus, ord.quantity]
+#             data.append(row)
+
+#         table = Table(data)
+#         table.setStyle(TableStyle([
+#             ('BACKGROUND', (0, 0), (-1, 0), colors.gray),
+#             ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
+#             ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+#             ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+#             ('FONTSIZE', (0, 0), (-1, 0), 12),
+#             ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+#             ('BACKGROUND', (0, 1), (-1, -1), colors.lightgrey),
+#             ('TEXTCOLOR', (0, 1), (-1, -1), colors.black),
+#             ('FONTNAME', (0, 1), (-1, -1), 'Helvetica'),
+#             ('FONTSIZE', (0, 1), (-1, -1), 10),
+#             ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+#         ]))
+
+#         elements.append(table)
+#     else:
+#         elements.append(Paragraph("No orders", styles['Normal']))
+#     if elements:
+
+#         doc.build(elements)
+#         buf.seek(0)
+#         return FileResponse(buf, as_attachment=True, filename='Orders.pdf')
+        
 
 def coupon(request):  
     couponobjs=Coupon.objects.all()
