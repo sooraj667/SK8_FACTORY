@@ -21,23 +21,113 @@ def index(request):
         return redirect(loggedin)
     products=Products.objects.all()
     category=Category.objects.all()
-    return render(request,"store/index.html",{"products":products,"category":category})
+    
+    if "cartdict" in request.session:
+        cartdict=request.session["cartdict"]
+        subtotal=0
+        for k,v in cartdict.items():
+            subtotal+=v["total"]
+        cartcount=len(cartdict)
+    else:
+        cartdict={}
+        subtotal=0
+        cartcount=0
+    if "wishlistdict" in request.session:
+        wishlistdict=request.session["wishlistdict"]
+        wishcount=len(wishlistdict) 
+    else:
+        wishcount=0  
+        
+    return render(request,"store/index.html",{"products":products,"category":category,"cartdict":cartdict,"totalsum":subtotal,"cartcount":cartcount,"wishcount":wishcount})
 
 def about(request):
     if "username" in request.session:
         return redirect(loggedin)
-    return render(request,"store/about.html")
+    if "cartdict" in request.session:
+        cartdict=request.session["cartdict"]
+        subtotal=0
+        for k,v in cartdict.items():
+            subtotal+=v["total"]
+        cartcount=len(cartdict)
+    else:
+        cartdict={}
+        subtotal=0
+        cartcount=0
+    if "wishlistdict" in request.session:
+        wishlistdict=request.session["wishlistdict"]
+        wishcount=len(wishlistdict) 
+    else:
+        wishcount=0  
+    context={"cartdict":cartdict,"totalsum":subtotal,"cartcount":cartcount,"wishcount":wishcount}
+    return render(request,"store/about.html",context)
+
+def guestcontact(request):
+    if "cartdict" in request.session:
+        cartdict=request.session["cartdict"]
+        subtotal=0
+        for k,v in cartdict.items():
+            subtotal+=v["total"]
+        cartcount=len(cartdict)
+    else:
+        cartdict={}
+        subtotal=0
+        cartcount=0
+    if "wishlistdict" in request.session:
+        wishlistdict=request.session["wishlistdict"]
+        wishcount=len(wishlistdict) 
+    else:
+        wishcount=0  
+    context={"cartdict":cartdict,"totalsum":subtotal,"cartcount":cartcount,"wishcount":wishcount}
+    return render(request,"store/guestcontact.html",context)
 
 def blog(request):
     if "username" in request.session:
         return redirect(loggedin)
-    return render(request,"store/blog.html")
+    if "cartdict" in request.session:
+        cartdict=request.session["cartdict"]
+        subtotal=0
+        for k,v in cartdict.items():
+            subtotal+=v["total"]
+        cartcount=len(cartdict)
+    else:
+        cartdict={}
+        subtotal=0
+        cartcount=0
+    if "wishlistdict" in request.session:
+        wishlistdict=request.session["wishlistdict"]
+        wishcount=len(wishlistdict) 
+    else:
+        wishcount=0  
+    context={"cartdict":cartdict,"totalsum":subtotal,"cartcount":cartcount,"wishcount":wishcount}
+    return render(request,"store/blog.html",context)
 
 def contact(request):
-    return render(request,"store/contact.html")
+    if "cartdict" in request.session:
+        cartdict=request.session["cartdict"]
+        subtotal=0
+        for k,v in cartdict.items():
+            subtotal+=v["total"]
+        cartcount=len(cartdict)
+    else:
+        cartdict={}
+        subtotal=0
+        cartcount=0
+    if "wishlistdict" in request.session:
+        wishlistdict=request.session["wishlistdict"]
+        wishcount=len(wishlistdict) 
+    else:
+        wishcount=0   
+    context={"cartdict":cartdict,"totalsum":subtotal,"cartcount":cartcount,"wishcount":wishcount}
+    return render(request,"store/contact.html",context)
 
-def cart(request):
-    return render(request,"store/shoping-cart.html")
+# def cart(request):
+#     if "cartdict" in request.session:
+#         cartdict=request.session["cartdict"]
+#         subtotal=0
+#         for k,v in cartdict.items():
+#             subtotal+=v["total"]
+#     context={"cartdict":cartdict,"totalsum":subtotal}
+    # return render(request,"store/shoping-cart.html",context)
 
 def shop(request):
     if "username" in request.session:
@@ -45,7 +135,23 @@ def shop(request):
     products=Products.objects.all()
     filterpricedict={"1":"Below Rs.1000","2":"Rs.1000.00 - Rs.4000.00","3":"Rs.4000.00 - Rs.10000.00","4":"Above Rs.10000"}
     categoryobjs=Category.objects.all()
-    context={"filterpricedict":filterpricedict,"categoryobjs":categoryobjs,"products":products}
+    if "cartdict" in request.session:
+        cartdict=request.session["cartdict"]
+        subtotal=0
+        for k,v in cartdict.items():
+            subtotal+=v["total"]
+        cartcount=len(cartdict)
+    else:
+        cartdict={}
+        subtotal=0
+        cartcount=0
+    if "wishlistdict" in request.session:
+        wishlistdict=request.session["wishlistdict"]
+        wishcount=len(wishlistdict) 
+    else:
+        wishcount=0  
+
+    context={"filterpricedict":filterpricedict,"categoryobjs":categoryobjs,"products":products,"cartdict":cartdict,"totalsum":subtotal,"cartcount":cartcount,"wishcount":wishcount}
     return render(request,"store/product.html",context)
 
 def guestfilterprice(request,someid):
@@ -160,12 +266,27 @@ def guestpreview(request,someid):
 
                
             
-
+        if "cartdict" in request.session:
+            cartdict=request.session["cartdict"]
+            subtotal=0
+            for k,v in cartdict.items():
+                subtotal+=v["total"]
+            cartcount=len(cartdict)
+        else:
+            cartdict={}
+            subtotal=0
+            cartcount=0
+        if "wishlistdict" in request.session:
+            wishlistdict=request.session["wishlistdict"]
+            wishcount=len(wishlistdict) 
+        else:
+            wishcount=0  
+            wishlistdict={}
          
 
        
    
-        return render(request,"store/guestpreview.html",{"pdtobj":pdtobj})
+        return render(request,"store/guestpreview.html",{"pdtobj":pdtobj,"wishcount":wishcount,"cartcount":cartcount,"cartdict":cartdict,"totalsum":subtotal})
 
 
 def guestcart(request):
@@ -180,7 +301,22 @@ def guestcart(request):
     for key,value in cartdict.items():
         subtotal+=value["total"]
     request.session["subtotal"]=subtotal
-    context={"cartdict":cartdict,"subtotal":subtotal}
+    if "cartdict" in request.session:
+        cartdict=request.session["cartdict"]
+        subtotal=0
+        for k,v in cartdict.items():
+            subtotal+=v["total"]
+        cartcount=len(cartdict)
+    else:
+        cartdict={}
+        subtotal=0
+        cartcount=0
+    if "wishlistdict" in request.session:
+        wishlistdict=request.session["wishlistdict"]
+        wishcount=len(wishlistdict) 
+    else:
+        wishcount=0  
+    context={"cartdict":cartdict,"subtotal":subtotal,"wishcount":wishcount,"cartcount":cartcount}
     return render(request,"store/guestcart.html",context)
     
 
@@ -295,8 +431,23 @@ def signup(request):
         
         datas={"error":error,"username":username,"name":name,"email":email,"phonenumber":phonenumber,"password":password,"repassword":repassword,}
         return render(request,"store/signup.html",datas)
-            
-    return render(request,"store/signup.html")
+    if "cartdict" in request.session:
+        cartdict=request.session["cartdict"]
+        subtotal=0
+        for k,v in cartdict.items():
+            subtotal+=v["total"]
+        cartcount=len(cartdict)
+    else:
+        cartdict={}
+        subtotal=0
+        cartcount=0
+    if "wishlistdict" in request.session:
+        wishlistdict=request.session["wishlistdict"]
+        wishcount=len(wishlistdict) 
+    else:
+        wishcount=0  
+    context={"cartdict":cartdict,"totalsum":subtotal,"cartcount":cartcount,"wishcount":wishcount}     
+    return render(request,"store/signup.html",context)
 
 # request.session.get("contactno")
 def otplogin(request):
@@ -386,10 +537,25 @@ def login(request):
                 return render(request,"store/login.html",{"error":error})
                 
         
-
-        
-
-    return render(request,"store/login.html")
+    
+    
+    if "cartdict" in request.session:
+        cartdict=request.session["cartdict"]
+        subtotal=0
+        for k,v in cartdict.items():
+            subtotal+=v["total"]
+        cartcount=len(cartdict)
+    else:
+        cartdict={}
+        subtotal=0
+        cartcount=0
+    if "wishlistdict" in request.session:
+        wishlistdict=request.session["wishlistdict"]
+        wishcount=len(wishlistdict) 
+    else:
+        wishcount=0  
+    context={"cartdict":cartdict,"totalsum":subtotal,"cartcount":cartcount,"wishcount":wishcount} 
+    return render(request,"store/login.html",context)
 
 
 
@@ -1430,12 +1596,47 @@ def guestwishlist(request):
     if "wishlistdict" in request.session:
         wishlistdict=request.session["wishlistdict"]
         print("BLUNGOO",wishlistdict)
-        context={"wishlistdict":wishlistdict}
+        
+        if "cartdict" in request.session:
+            cartdict=request.session["cartdict"]
+            subtotal=0
+            for k,v in cartdict.items():
+                subtotal+=v["total"]
+            cartcount=len(cartdict)
+        else:
+            cartdict={}
+            subtotal=0
+            cartcount=0
+        if "wishlistdict" in request.session:
+            wishlistdict=request.session["wishlistdict"]
+            wishcount=len(wishlistdict) 
+        else:
+            wishcount=0  
+        context={"wishlistdict":wishlistdict,"wishcount":wishcount,"cartcount":cartcount,"cartdict":cartdict}
+        
         return render(request,"store/guestwishlist.html",context)
 
     else:
         message="Wishlist is Empty"
         context={"message":message}
+        if "cartdict" in request.session:
+            cartdict=request.session["cartdict"]
+            subtotal=0
+            for k,v in cartdict.items():
+                subtotal+=v["total"]
+            cartcount=len(cartdict)
+        else:
+            cartdict={}
+            subtotal=0
+            cartcount=0
+        if "wishlistdict" in request.session:
+            wishlistdict=request.session["wishlistdict"]
+            wishcount=len(wishlistdict) 
+        else:
+            wishcount=0  
+            wishlistdict={}
+        
+        context={"wishlistdict":wishlistdict,"wishcount":wishcount,"cartcount":cartcount,"cartdict":cartdict}
         return render(request,"store/guestwishlist.html",context)
 
 
