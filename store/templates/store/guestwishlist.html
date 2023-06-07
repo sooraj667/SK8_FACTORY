@@ -1,0 +1,225 @@
+{% extends 'store/index.html' %}
+{% load static %}
+
+{% block content %}
+<br><br><br><br><br><br>
+<h1 class="block1-name ltext-102 trans-04 p-b-8 ml-3">Your Wishlist</h1>
+<br><br><br><br>
+<div class="container">
+    <div class="row">
+        {% if  wishlistdict %}
+        <table class="wishlist-table table">
+            <thead>
+              <tr>
+                <th>Product</th>
+                <th>Image</th>
+                <th>Product Price</th>
+                <th>Remove Item</th>
+                <th>Add To Cart</th>
+              </tr>
+            </thead>
+            
+            <tbody>
+                
+                {% for item,data in wishlistdict.items  %}
+                
+              <tr id="wishitem{{item}}">
+                <td>{{data.productname}} </td>
+                <td>
+                  <img style="  max-width: 150px;
+                  max-height: 150px;" class="img-fluid img-responsive" src="{{ data.image }}" alt="Product Image">
+                </td>
+                <td>Rs. {{data.price}}/-</td>
+                <td>
+                  <button class="removeitem btn btn-danger" data-product-id="{{item}}"  >Remove</button>
+                </td>
+                <td>
+                    <button class="additemtocart btn btn-success" data-product-id="{{item}}" >Add To Cart</button>
+                  </td>
+              </tr>
+              {% endfor %}
+              
+              
+          
+            </tbody>
+
+           
+          </table>
+
+          {% else %}
+          
+          <div >
+
+            <h5 class=" text-danger  ml-5 mt-4">No items in Wishlist!</h5>
+
+
+          </div>
+          <div class="ml-3 mt-4" >
+            
+            
+            
+            <button  class=" flex-c-m stext-101 cl0 btn bg1 bor1 hov-btn1 p-lr-15 trans-04  mt-2"><a class="text-light" href={% url 'shop' %}>Back To Shop</a></button>
+             
+        
+
+        </div>
+        
+
+          {% endif %}
+          
+    
+    
+    
+    
+    
+    </div>
+
+</div>
+
+<br><br><br><br>
+
+
+
+<script>
+    $(document).ready(function(){
+
+        $(".removeitem").click(function(){
+         
+            var productid=$(this).data("product-id");
+
+            $.ajax({
+                url:"/guestwishlistremove/",
+                type:"GET",
+                data:{
+                    productid:productid
+                },
+                success:function(response){
+                
+                    $("#wishitem"+productid).remove()
+                }
+            })
+
+
+
+        })
+
+
+
+
+
+    })
+    
+
+
+
+
+</script>
+
+<script>
+    $(document).ready(function(){
+
+        $(".additemtocart").click(function(){
+      
+
+            
+            var productid=$(this).data("product-id");
+
+            $.ajax({
+                url:"/guestwishtocart/",
+                type:"GET",
+                data:{
+                    productid:productid
+                },
+                success:function(response){
+                 
+                    $("#wishitem"+productid).remove()
+                }
+            })
+
+
+
+        })
+
+
+
+
+
+    })
+    
+
+
+
+
+</script>
+
+
+
+{% comment %} <script>
+	$(document).ready(function() {
+		$(".wishlist").click(function() {
+			var productid=$(this).data("product-id");
+			
+			// Get the selected offer value
+		  
+		   //$("#wishlistModal").modal("show");
+	
+		   //$("#confirm").click(function(){
+			 $.ajax({
+			   url: "/addtowishlist/", // Replace with the URL of your Django view
+			   type: "GET",
+			   data: { productid: productid,
+					   
+					   
+				   },
+			   success: function(response) {
+				if (response.alreadypresent){
+					$("#wishlistmsg"+productid).html(response.alreadypresent).addClass("text-danger");
+
+				}
+				else if(response.added){
+					$("#wishlistmsg"+productid).html(response.added).addClass("text-success");
+
+				}
+				
+				//$("#wishlistModal").modal("hide");
+				 //$("#offer" + orderid).remove();
+				 // Update the offer price on the page
+				 //var content = response.content;  // Assuming the response contains the updated offer price
+				 // Update the appropriate HTML element with the new offer price
+				 //$("#orderitem" + orderid).text("Cancelled").addClass("text-danger");;
+				 
+			   },
+			   error: function(xhr, errmsg, err) {
+				 // Handle any errors that occur during the AJAX request
+				 console.log(xhr.status + ": " + xhr.responseText);
+			   }
+			 });
+
+
+
+
+
+
+
+
+
+		   //})
+		  // Send an AJAX request to update the offer price
+	  
+		});
+
+		//$(".closeit").click(function(){
+		// $("#cancelModal").modal("hide");
+		//})
+
+
+
+	  });
+	</script> {% endcomment %}
+
+
+{% endblock content %}
+
+
+
+

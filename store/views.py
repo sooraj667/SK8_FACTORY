@@ -80,6 +80,7 @@ def guestfiltercategory(request,someid):
 
 
 def guestpreview(request,someid):
+       
     
         pdtobj=Products.objects.get(id=someid)
         if request.method=="POST":
@@ -96,6 +97,7 @@ def guestpreview(request,someid):
                 quantity=int(request.POST.get("quantity"))
                 totalprice=pdtobj.price*Decimal(quantity)
                 totalprice=float(totalprice)
+                print(totalprice,"llllllllllllllllllll")
               
                 
 
@@ -146,7 +148,8 @@ def guestpreview(request,someid):
                     cartdict[str(pdtobj.id)]["image"]=pdtobj.image1.url
                     request.session["cartdict"]=cartdict
 
-                    
+                return redirect(guestcart)
+
 
                 
 
@@ -156,8 +159,7 @@ def guestpreview(request,someid):
         
 
                
-                return redirect(guestcart)
-
+            
 
          
 
@@ -174,7 +176,7 @@ def guestcart(request):
         return render(request,"store/guestcart.html",{"message":"Cart is empty"} )
     
     cartdict=request.session["cartdict"]
-    subtotal=0
+    subtotal=float(0)
     for key,value in cartdict.items():
         subtotal+=value["total"]
     request.session["subtotal"]=subtotal
@@ -1379,3 +1381,137 @@ def wishtocart(request):
         wishlistobj.delete()
 
     return JsonResponse({"message":"Added"})
+
+
+
+def guestaddtowishlist(request):
+
+    
+    productid=request.GET["productid"]
+    productid=str(productid)
+    product=Products.objects.get(id=int(productid))
+    productname=product.name
+    image=product.image1.url
+    price=float(product.price)
+
+    wishlistdict=None
+    added=None
+    alreadypresent=None
+    if "wishlistdict" in request.session:
+        wishlistdict=request.session["wishlistdict"]
+        print("DONNO",wishlistdict)
+
+    if not wishlistdict:
+        wishlistdict={}
+        wishlistdict[productid]={"quantity":1,"productname":productname,"price":price,"image":image}
+        added="Item added to wishlist"
+
+    elif productid not in wishlistdict:
+        wishlistdict[productid]={}
+        wishlistdict[productid]["quantity"]=1
+        wishlistdict[productid]["productname"]=productname
+        wishlistdict[productid]["price"]=price
+        wishlistdict[productid]["image"]=image
+        added="Item added to wishlist"
+
+    elif productid in wishlistdict:
+        alreadypresent="Item already in wishlist"
+
+    request.session["wishlistdict"]=wishlistdict
+    print("DJUNGOO",wishlistdict)
+    if added:
+        return JsonResponse({"added":added})
+    elif alreadypresent:
+        return JsonResponse({"alreadypresent":alreadypresent})
+
+
+def guestwishlist(request):
+    
+    if "wishlistdict" in request.session:
+        wishlistdict=request.session["wishlistdict"]
+        print("BLUNGOO",wishlistdict)
+        context={"wishlistdict":wishlistdict}
+        return render(request,"store/guestwishlist.html",context)
+
+    else:
+        message="Wishlist is Empty"
+        context={"message":message}
+        return render(request,"store/guestwishlist.html",context)
+
+
+
+
+
+
+
+
+    # username=request.session["username"]
+    # user=Customers.objects.get(username=username)
+    # wishlistobjs=Wishlist.objects.filter(user=user)
+    # itemcount=wishlistobjs.count()
+
+    # cartobjs=Cart.objects.filter(user=user)
+    # no_of_cart_items=cartobjs.count()
+    
+    # no_of_wishlist_items=wishlistobjs.count()
+
+
+
+    # totalsum=0
+    # for item in cartobjs:
+    #     totalsum+=item.total
+
+    # context={"wishlistobjs":wishlistobjs,"no_of_cart_items":no_of_cart_items,"no_of_wishlist_items":no_of_wishlist_items,"cartobjs":cartobjs,"totalsum":totalsum,"itemcount":itemcount}
+    # return render(request,"store/userdashboard/wishlist.html",context)
+
+
+def guestwishlistremove(request):
+    wishlistdict=request.session["wishlistdict"]
+    productid=request.GET["productid"]
+    del wishlistdict[str(productid)]
+    request.session["wishlistdict"]=wishlistdict
+
+    return JsonResponse({"removed":"removed"})
+
+def guestwishtocart(request):
+    print("FLINGO")
+    productid=request.GET["productid"]
+    wishlistdict=request.session["wishlistdict"]
+    productname=wishlistdict[str(productid)]["productname"]
+    price=wishlistdict[str(productid)]["price"]
+    quantity=wishlistdict[str(productid)]["quantity"]
+    image=wishlistdict[str(productid)]["image"]
+
+    if "cartdict" in request.session:
+        cartdict=request.session["cartdict"]
+        if str(productid) not in cartdict:
+            cartdict[str(productid)]={}
+            cartdict[str(productid)]["product"]=productname
+            cartdict[str(productid)]["total"]=price
+            cartdict[str(productid)]["quantity"]=quantity
+            cartdict[str(productid)]["image"]=image
+        else:
+            
+            cartdict[str(productid)]["product"]=productname
+            cartdict[str(productid)]["total"]+=price
+            cartdict[str(productid)]["quantity"]+=quantity
+            cartdict[str(productid)]["image"]=image
+        request.session["cartdict"]=cartdict
+
+
+
+    else:
+        request.session["cartdict"]={}
+        cartdict=request.session["cartdict"]
+        cartdict[str(productid)]={}
+        cartdict[str(productid)]["product"]=productname
+        cartdict[str(productid)]["quantity"]=quantity
+        cartdict[str(productid)]["total"]=price
+        cartdict[str(productid)]["image"]=image
+        request.session["cartdict"]=cartdict
+
+
+    del wishlistdict[str(productid)]
+    request.session["wishlistdict"]=wishlistdict
+    return JsonResponse({"messagge":"success"})
+
