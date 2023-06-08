@@ -7,14 +7,14 @@
     <div class="form-group mt-2">
       {% comment %} {% for item in content  %} {% endcomment %}
       <label for="username">Coupon Code</label>
-      <input value="{{obj.name}}" name="code" type="text" class="form-control" id="username" placeholder="Enter Category">
+      <input value="{{obj.name}}" name="code" type="text" class="form-control" id="username" placeholder="Enter Code">
       <br><br>
 
 
 
 
       <label for="username">Discount Percent</label>
-      <input value="{{obj.noofitems}}" name="discount_percent" type="number" class="form-control" id="username" placeholder="Enter username">
+      <input value="{{obj.noofitems}}" name="discount_percent" type="number" class="form-control" id="username" placeholder="Enter Percentage">
       <br><br>
 
 
@@ -30,12 +30,12 @@
 
 
       <label for="username">Maximum price</label>
-      <input value="" name="maxprice" type="text" class="form-control" id="username" placeholder="Enter Category">
+      <input value="" name="maxprice" type="text" class="form-control" id="username" placeholder="Enter Maximum Price">
       <br><br>
 
 
       <label for="username">Available</label>
-      <select name="isavailable" id="">
+      <select class="form-control" name="isavailable" id="">
         <option value="Yes">Yes</option>
         <option value="No">No</option>
       </select>

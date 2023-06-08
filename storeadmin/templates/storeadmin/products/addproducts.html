@@ -5,14 +5,14 @@
     <div class="form-group mt-2">
       {% comment %} {% for item in content  %} {% endcomment %}
       <label for="username">Name</label>
-      <input value="{{name}}" name="name" type="text" class="form-control" id="username" placeholder="Enter productname">
+      <input value="{{name}}" name="name" type="text" class="form-control" id="username" placeholder="Enter Product Name">
       {% if error and "name" in error %}
       <span style="color: red">{{error.name}}</span>
       {% endif %}
     </div>
     <div class="form-group mt-2">
       <label for="email">Price</label>
-      <input value="{{price}}" name="price" type="text" class="form-control" id="email" aria-describedby="emailHelp" placeholder="Enter price">
+      <input value="{{price}}" name="price" type="text" class="form-control" id="email" aria-describedby="emailHelp" placeholder="Enter Price">
       
       {% if error and "price" in error %}
       <span style="color: red">{{error.price}}</span>

@@ -103,7 +103,8 @@ def users(request):
         datas=Customers.objects.all()
         if request.method=="POST":
             enteredname=request.POST.get("searchitem")
-            datas=Customers.objects.filter(username=enteredname)
+            # datas=Customers.objects.filter(username=enteredname)
+            datas = Customers.objects.filter(username__icontains=enteredname)
             return render(request,"storeadmin/users/users.html",{"datas":datas})
         return render(request,"storeadmin/users/users.html",{"datas":datas})
     else:
@@ -134,7 +135,7 @@ def products(request):
         datas=Products.objects.all()
         if request.method=="POST":
             enteredproduct=request.POST.get("searchitem")
-            datas=Products.objects.filter(name=enteredproduct)
+            datas=Products.objects.filter(name__icontains=enteredproduct)
             return render(request,"storeadmin/products/products.html",{"datas":datas})
         return render(request,"storeadmin/products/products.html",{"datas":datas})
     else:
@@ -411,6 +412,10 @@ def addproducts(request):
 def categories(request):
     if "adminname" in request.session:
         datas=Category.objects.all()
+        if request.method=="POST":
+            enteredname=request.POST["searchitem"]
+            datas=Category.objects.filter(name__icontains=enteredname)
+        
         return render(request,"storeadmin/categories/categories.html",{"datas":datas})
     else:
         return redirect(adminsignin)
@@ -546,6 +551,9 @@ def addcategories(request):
 
 def orders(request):
     orderobjs=Orders.objects.all()
+    if request.method=="POST":
+        entereddate=request.POST["searchitem"]
+        orderobjs=Orders.objects.filter(orderdate__icontains=entereddate)
 
 
     return render(request,"storeadmin/orders/orders.html",{"orderobjs":orderobjs})
@@ -802,6 +810,10 @@ def salesreport(request):
 
 def coupon(request):  
     couponobjs=Coupon.objects.all()
+    if request.method=="POST":
+            enteredcoupon=request.POST.get("searchitem")
+            couponobjs=Coupon.objects.filter(code__icontains=enteredcoupon)
+            return render(request,"storeadmin/coupons/coupons.html",{"couponobjs":couponobjs})
     return render(request,"storeadmin/coupons/coupons.html",{"couponobjs":couponobjs})
 
 def addcoupon(request):
@@ -862,6 +874,11 @@ def deletecoupon(request,couponid):
 
 def categoryoffer(request):
     catofferobjs=Categoryoffer.objects.all()
+    if request.method=="POST":
+            enteredoffer=request.POST.get("searchitem")
+            catofferobjs=Categoryoffer.objects.filter(offer_description__icontains=enteredoffer)
+            context={"catofferobjs":catofferobjs}
+            return render(request,"storeadmin/categoryoffer/categoryoffer.html",context)
 
     context={"catofferobjs":catofferobjs}
     return render(request,"storeadmin/categoryoffer/categoryoffer.html",context)
@@ -919,6 +936,11 @@ def deletecategoryoffer(request,offerid):
 
 def productoffer(request):
     pdtofferobjs=Productoffer.objects.all()
+    if request.method=="POST":
+            enteredoffer=request.POST.get("searchitem")
+            pdtofferobjs=Productoffer.objects.filter(offer_description__icontains=enteredoffer)
+            context={"pdtofferobjs":pdtofferobjs}
+            return render(request,"storeadmin/productoffer/productoffer.html",context)
 
     context={"pdtofferobjs":pdtofferobjs}
     return render(request,"storeadmin/productoffer/productoffer.html",context)

@@ -3,6 +3,28 @@
 {% block content %}
 
 <div class="container">
+
+  <div class="container">
+    <form action="" method="POST">{% csrf_token %}
+      <div class="input-group">
+        <div class="input-group-prepend hover-cursor" id="navbar-search-icon">
+          {% comment %} <span class="input-group-text" id="search">
+            <i class="icon-search"></i> 
+          </span> {% endcomment %}
+        </div>
+        <input style="background-color:#FFFFF0
+        ;" type="date" name="searchitem" class="form-control mt-3" id="navbar-search-input" placeholder="Enter a date" aria-label="search" aria-describedby="search">
+        <div>
+          <button  type="submit" class="btn btn-primary btn-block mt-3 ml-3">Search</button>
+          
+        </div>
+      </div>
+    
+    </form>
+  
+  </div>
+
+
   <div class="row">
     <table class="table table-hover">
       <thead>
