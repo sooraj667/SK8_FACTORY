@@ -5,7 +5,7 @@ from django.contrib.auth import authenticate,logout
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import never_cache
 from django.core.files.storage import FileSystemStorage
-from django.http import JsonResponse
+from django.http import JsonResponse,HttpResponse
 from django.db import IntegrityError
 import os
 
@@ -23,6 +23,7 @@ from reportlab.lib.pagesizes import letter
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib import colors
+import xlsxwriter
 
 
 
@@ -67,7 +68,7 @@ def index(request):
                     break
             
             #Most Returned Products Graph logic
-            returninitiatedobjs=Orders.objects.filter(orderstatus="ReturnRequested")
+            returninitiatedobjs=Orders.objects.filter(orderstatus="Returned")
             returndict={}
             for i in returninitiatedobjs:
                 if i.product.name not in returndict:
@@ -637,6 +638,50 @@ def salesreport(request):
                 doc.build(elements)
                 buf.seek(0)
                 return FileResponse(buf, as_attachment=True, filename='Orders.pdf')
+        
+        elif "downloadinexcel" in request.POST:
+
+            start_date_str = request.POST.get('start_date')
+            end_date_str = request.POST.get('end_date')
+
+            start_date = datetime.strptime(start_date_str, "%Y-%m-%d")
+            end_date = datetime.strptime(end_date_str, "%Y-%m-%d")
+
+
+
+            ords = Orders.objects.filter(orderdate__range=[start_date, end_date])
+
+            # Create Excel workbook and worksheet
+            workbook = xlsxwriter.Workbook("Sales_Report.xlsx")
+            worksheet = workbook.add_worksheet('Sales Report')
+
+            # Write the table headers
+            headers = ['Sl.No.', 'Name', 'Product', 'House', 'Order Date', 'Order Status', 'Quantity']
+            for col, header in enumerate(headers):
+                worksheet.write(0, col, header)
+
+            # Write the data rows
+            row = 1
+            for slno, ord in enumerate(ords, start=1):
+                worksheet.write(row, 0, slno)
+                worksheet.write(row, 1, ord.user.name)
+                worksheet.write(row, 2, ord.product.name)
+                worksheet.write(row, 3, ord.address.house)
+                worksheet.write(row, 4, str(ord.orderdate))
+                worksheet.write(row, 5, ord.orderstatus)
+                worksheet.write(row, 6, ord.quantity)
+                row += 1
+
+            workbook.close()
+
+            # Create a file-like buffer to receive the workbook data
+            buf = io.BytesIO()
+            
+            buf.seek(0)
+            
+
+            # Return the Excel file as a FileResponse
+            return FileResponse(buf, as_attachment=True, filename='Sales_Report.xlsx', content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
 
 
 
@@ -645,6 +690,9 @@ def salesreport(request):
 
     
     return render(request,"storeadmin/salesreport.html")
+
+
+
 
 
 # def downloadsales(request):
