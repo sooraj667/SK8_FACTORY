@@ -742,6 +742,8 @@ def loggedinproduct(request):
 def preview(request,someid):
     if "username" in request.session and not Customers.objects.get(username=request.session["username"]).isblocked:
         pdtobj=Products.objects.get(id=someid)
+        username=request.session["username"]
+        user=Customers.objects.get(username=username)
 
         categoryofferobjs=Categoryoffer.objects.all()
         productofferobjs=Productoffer.objects.all()
@@ -879,9 +881,23 @@ def preview(request,someid):
                 return redirect(loggedincart)
 
 
-         
+        wishlistobjs=Wishlist.objects.filter(user=user)
+        
 
-        return render(request,"store/userdashboard/preview.html",{"pdtobj":pdtobj,"totalsum":totalsum,     "offers":offers,"categoryofferobjs":categoryofferobjs,"categoryfound":categoryfound,"productfound":productfound,"no_of_cart_items":no_of_cart_items})
+        cartobjs=Cart.objects.filter(user=user)
+        no_of_cart_items=cartobjs.count()
+        
+        no_of_wishlist_items=wishlistobjs.count()
+
+
+
+        totalsum=0
+        for item in cartobjs:
+            totalsum+=item.total
+
+        
+
+        return render(request,"store/userdashboard/preview.html",{"pdtobj":pdtobj,"totalsum":totalsum,     "offers":offers,"categoryofferobjs":categoryofferobjs,"categoryfound":categoryfound,"productfound":productfound,"no_of_cart_items":no_of_cart_items  ,"no_of_wishlist_items":no_of_wishlist_items,"cartobjs":cartobjs,"totalsum":totalsum,})
     else:
         return redirect(login)
     
