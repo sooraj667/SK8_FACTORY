@@ -10,7 +10,7 @@ urlpatterns = [
     path("deleteproducts/<int:someid>/",views.deleteproducts,name="admin_deleteproducts"),
     path("addproducts/",views.addproducts,name="admin_addproducts"),
     path("editcategories/<int:someid>/",views.editcategories,name="admin_editcategories"),
-    path("deletecategories/<int:someid>/",views.deletecategories,name="admin_deletecategories"),
+    path("blockcategories/<int:someid>/",views.blockcategories,name="admin_blockcategories"),
     path("addactegories/",views.addcategories,name="admin_addcategories"),
     path("blockuser/<int:someid>",views.blockuser,name="admin_blockuser"),
     path("unblockuser/<int:someid>",views.unblockuser,name="admin_unblockuser"),
@@ -18,6 +18,11 @@ urlpatterns = [
     path("adminsignout/",views.adminsignout,name="admin_signout"),
     path("salesreport/",views.salesreport,name="salesreport"),
     # path("downloadsales/",views.downloadsales,name="downloadsales"),
+
+    # path("unblockcategories/",views.unblockcategories,name="admin_unblockcategories"),
+    # path("blockcategories/",views.blockcategories,name="admin_blockcategories"),
+    
+
     
 
 

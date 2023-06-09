@@ -467,7 +467,7 @@ def editcategories(request,someid):
 #         content.delete()
 #         return redirect(categories)
 #     return render(request,"storeadmin/categories/deletecategories.html",{"content":content})
-def deletecategories(request, someid):
+def blockcategories(request, someid):
     print(someid,"SOMEID ***********")
     
 
@@ -476,9 +476,37 @@ def deletecategories(request, someid):
     if content.isblocked==True:
         content.isblocked=False
         content.save()
+        return redirect(categories)
     elif content.isblocked==False:
         content.isblocked=True
         content.save()
+        return redirect(categories)
+
+# def unblockcategories(request):
+#     categoryid=request.GET["categoryid"]
+#     categoryobj = Category.objects.get(id=categoryid)
+    
+#     categoryobj.isblocked=False
+#     categoryobj.save()
+#     print("DONEE")
+#     return JsonResponse({"message": "Unblocked","offerid":categoryid})
+
+# def blockcategories(request):
+#     categoryid=request.GET["categoryid"]
+#     categoryobj = Category.objects.get(id=categoryid)
+
+#     if categoryobj.isblocked==True:
+#         categoryobj.isblocked=False
+#         categoryobj.save()
+#         return JsonResponse({"message": "Unblocked"})
+#     elif categoryobj.isblocked==False:
+#         categoryobj.isblocked=True
+#         categoryobj.save()
+#         return JsonResponse({"message": "Blocked"})
+    
+    # categoryobj.isblocked=True
+    # categoryobj.save()
+    # return JsonResponse({"message": "Blocked","offerid":categoryid})
 
 
 

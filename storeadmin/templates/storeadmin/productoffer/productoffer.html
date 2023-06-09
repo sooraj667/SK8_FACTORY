@@ -77,7 +77,33 @@
 </div>
 
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js" integrity="sha512-pumBsjNRGGqkPzKHndZMaAG+bir374sORyzM3uulLV14lN5LyykqNk8eEeUlUkB3U0M4FApyaHraT65ihJhDpQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+
+{% comment %} DELETE MODAL {% endcomment %}
+ 
+<div style="margin-top:100px;" class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="cancelModalLabel" aria-hidden="true">
+ 
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="cancelModalLabel">Confirm Order Cancellation</h5>
+        <button type="button" class="close closeit" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>Are you sure you want to delete?</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary closeit" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-danger closeit" data-dismiss="modal" id="deleteconfirm">Confirm</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+{% comment %} <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js" integrity="sha512-pumBsjNRGGqkPzKHndZMaAG+bir374sORyzM3uulLV14lN5LyykqNk8eEeUlUkB3U0M4FApyaHraT65ihJhDpQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
  <script>
   $(document).ready(function() {
       $(".delete-btn").click(function() {
@@ -107,129 +133,55 @@
         });
       });
     });
-  </script>
+  </script> {% endcomment %}
   
   
   
-  
-  
-  
-  
-  
-  
-  {% comment %} $(".delete-btn").click(function() {
-    var categoryId = $(this).data("category-id");
-    if (confirm("Are you sure you want to delete this category?")) {
-        
-        $.ajax({
-            url: "/storeadmin/deletecategories/" + categoryId + "/",
-            type: "GET",
-            success: function(response) {
-                alert(response.message);
-                location.reload();
-            },
-            error: function(xhr, status, error) {
-                alert("Error: " + error);
-            }
+  <script>
+    $(document).ready(function() {
+        $(".delete-btn").click(function() {
+          var offerid = $(this).data("category-id");
+          
+          $("#deleteModal").modal("show");
+          $("#deleteconfirm").click(function(){
+            
+            // Get the selected offer value
+          
+          // Send an AJAX request to update the offer price
+            $.ajax({
+              url: "../deleteproductoffer/" + offerid, // Replace with the URL of your Django view
+              type: "GET",
+              data: { offer: offerid,
+                      
+                      
+                  },
+              success: function(response) {
+                $("#offer" + offerid).remove();
+                // Update the offer price on the page
+                var newOfferPrice = response.message;  // Assuming the response contains the updated offer price
+                // Update the appropriate HTML element with the new offer price
+                //$("#offer_price").text(newOfferPrice);
+                
+              },
+              error: function(xhr, errmsg, err) {
+                // Handle any errors that occur during the AJAX request
+                console.log(xhr.status + ": " + xhr.responseText);
+              }
+            });       
+          })
+          
         });
-    }
-});  {% endcomment %}
-
-
-
-{% comment %} $(".delete-btn").click(function() {
-  var categoryId = $(this).data("category-id");
-  if (confirm("Are you sure you want to delete this category?")) {
-      var csrfToken = $("meta[name='csrf-token']").attr("content");
-      $.ajax({
-          url: "deletecategories/" + categoryId + "/",
-          type: "POST",
-          data: { csrfmiddlewaretoken: csrfToken },
-          success: function(response) {
-              alert(response.message);
-              location.reload();
-          },
-          error: function(xhr, status, error) {
-              alert("Error: " + error);
-          }
+        $(".closeit").click(function(){
+          $("#deleteModal").modal("hide");
+         })
       });
-  }
-});   {% endcomment %}
-
-
-
-
-
-
-
- 
-
-
-
-
-
-  {% comment %} $(".delete-btn").click(function() {
-    var categoryId = $(this).data("category-id");
-    if (confirm("Are you sure you want to delete this category?")) {
-        $.ajax({
-            url: "/deletecategories/" + categoryId + "/",
-            type: "POST",
-            data: { csrfmiddlewaretoken: "{{ csrf_token }}" },
-            success: function(response) {
-                alert(response.message);
-                location.reload();
-            },
-            error: function(xhr, status, error) {
-                alert("Error: " + error);
-            }
-        });
-    }
-}); {% endcomment %}
-
-
-</script>
-{% comment %} <div>
-  <div class="row  justify-content-end">
-    <a href={% url 'admin_addcategories' %}><button>Add Category</button></a>
-  </div>
-  <div class="row">
-  <table class="table table-striped">
-    <thead>
-      <tr>
-        <th>
-            Category
-          </th>
-
-        <th>
-          Edit
-        </th>
-        <th>
-          Delete
-        </th>
-      
-      </tr>
-    </thead>
-    <tbody>
-      {% for item in datas  %}
-      <tr>
-        <td class="py-1">
-          {{item.name}}
-        </td>
-        <td class="py-1">
-          <a href={% url 'admin_editcategories' item.id %}>Edit</a>
-        </td>
-        <td class="py-1">
-          <a href={% url 'admin_deletecategories' item.id %}>Delete</a>
-        </td>
-   
-      </tr>
-      
-      
-      {% endfor %}
-      
-      </tbody>
-    </table>
-</div> {% endcomment %}
+    </script>  
+  
+  
+  
+  
+  
+  
 
 
 
