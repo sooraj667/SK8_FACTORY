@@ -1270,7 +1270,11 @@ def cashondelivery(request):
                 userobj=item.user
                 pdtobj=item.product
                 quantityobj=item.quantity
-                addressobj=Address.objects.get(house=housename)
+                try:
+                    addressobj=Address.objects.get(house=housename)
+                except:
+                    messages.error(request, "Address cannot be empty.")
+                    return redirect(checkout)
                 orderstatusobj="Ordered"
                 if "cashondeliverybutton" in request.POST:
                     ordertypeobj="Cash On Delivery"

@@ -62,15 +62,7 @@
 							<button type="submit" name="addressform" class="flex-c-m stext-101 cl5 size-103 bg2 bor1 hov-btn1 p-lr-15 trans-04 ">Add Address</button>
 
 						</div>
-						<div>
-							{% if messages %}
-								{% for message in messages %}
-									<div class="alert alert-success" role="alert">
-										{{ message }}
-									</div>
-								{% endfor %}
-							{% endif %}
-						</div>
+					
 						
 						<div >
 							<h5 class=" text-success mt-3">
@@ -218,11 +210,12 @@
 					</span>
 	
 				</div>
+				
 				<div class="col-md-8">
 	
 					<form class="card-body" method="POST" action="{% url 'cashondelivery' %}">
 						{% csrf_token %}
-						<select id="dropdown" name="address" class="form-control">
+						<select id="dropdown" name="address" class="form-control" >
 							{% for item in addressobjs  %}
 							<option value="{{item.house}}">{{item.house}} -  {{item.district}} - {{item.state}} - {{item.country}} <br><br> </option>
 							{% endfor %}
@@ -230,6 +223,16 @@
 						</select> 
 						
 	
+				</div>
+
+				<div>
+					{% if messages %}
+						{% for message in messages %}
+							<div class="alert alert-danger" role="alert">
+								{{ message }}
+							</div>
+						{% endfor %}
+					{% endif %}
 				</div>
 
 			</div>
@@ -348,9 +351,75 @@
 </script>
 
 
+{% comment %} <script>
+	$(".razorpaybutton").click(function(){
+		
+		
+		var couponid=$("#couponid").val();
+		var totalamount=$("#totalamount").html()
+		$.ajax({
+			url:"/applycouponajax/",
+			type:"GET",
+			data:{
+
+				couponid:couponid,
+				totalamount:totalamount
+			},
+			success:function(response){
+				var discounted_amount=response.amount;
+				//var couponmessage=response.message;
+				$("#totalamount").html(discounted_amount);
+
+				if (response.message_success){
+					$("#couponmessage").html(response.message_success).addClass("text-success");
+
+				}
+				else if(response.message){
+					$("#couponmessage").html(response.message).addClass("text-danger");
+
+				}
+
+
+
+				//$("#couponmessage").html(couponmessage);
+				
+
+			},
+			error: function(xhr, status, error) {
+				
+				console.log(error);
+			  }
+
+
+
+
+
+		})
+
+
+
+	})
+	
 	
 
-<script>
+
+</script> {% endcomment %}
+
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+{% comment %} <script>
 	$(".choosequantity").change(function(){
 		var itemid=$(this).data("item-id");
 		var quantity=$(this).val();
@@ -392,7 +461,7 @@
 
 
 
-</script>
+</script> {% endcomment %}
 
 
 
@@ -456,9 +525,9 @@ var options = {
 	//"image": "https://example.com/your_logo",
 	"order_id": "{{order_id}}", //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
 	"handler": function (response){
-		alert(response.razorpay_payment_id);
-		alert(response.razorpay_order_id);
-		alert(response.razorpay_signature)
+		//alert(response.razorpay_payment_id);
+		//alert(response.razorpay_order_id);
+		//alert(response.razorpay_signature)
 	},
 	"prefill": {
 	"name": "Gaurav Kumar",
@@ -475,7 +544,7 @@ var options = {
 var rzp1 = new Razorpay(options);
 rzp1.on('payment.failed', function (response){
 		//alert(response.error.code);
-		alert(response.error.description);
+		//alert(response.error.description);
 		//alert(response.error.source);
 		//alert(response.error.step);
 		//alert(response.error.reason);
