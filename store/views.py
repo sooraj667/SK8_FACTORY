@@ -16,6 +16,11 @@ from ecommerce.settings import RAZORPAY_API_SECRET_KEY,RAZORPAY_API_KEY
 # Create your views here.
 from decimal import Decimal
 
+import requests
+
+
+
+
 def index(request):
     if "username" in request.session:
         return redirect(loggedin)
@@ -426,7 +431,7 @@ def signup(request):
             fieldvalues=Customers(username=username,name=name,email=email,phonenumber=phonenumber,password=password,repassword=repassword)
             fieldvalues.save()
             request.session["guestuser"]="guestuser"
-            messages.success(request, 'Signup successful!')
+            
             return redirect(otplogin)
         
         datas={"error":error,"username":username,"name":name,"email":email,"phonenumber":phonenumber,"password":password,"repassword":repassword,}
@@ -449,55 +454,98 @@ def signup(request):
     context={"cartdict":cartdict,"totalsum":subtotal,"cartcount":cartcount,"wishcount":wishcount}     
     return render(request,"store/signup.html",context)
 
+
+
+
+def generate_otp():
+    return str(random.randint(1000, 9999))
+
 # request.session.get("contactno")
 def otplogin(request):
     if "username" in request.session:
         return redirect(loggedin)
     if request.method=="POST":
-        pnum=request.POST["phonenumber"]
-        cust=Customers.objects.filter(phonenumber=pnum).count()
+        phonenumber=request.POST["phonenumber"]
+        cust=Customers.objects.filter(phonenumber=phonenumber).count()
         if cust==0:
             error="Phonenumber not registered"
             return render(request,"store/otplogin.html",{"error":error})
-        phonenum = '+91' + pnum
-        otp = str(random.randint(100000, 999999))
-        client = Client(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
-        verification = client.verify.services(settings.TWILIO_VERIFY_SERVICE_SID) \
-                .verifications \
-                .create(to=phonenum, channel='sms')
-            # Store the phone number and OTP in the session
-        request.session['phone_number'] = phonenum
-        request.session['otp'] = otp
-        request.session['verification_sid'] = verification.sid
-        return redirect(verifyotp)
+        else:
+            
+            otp = generate_otp()
+            
+            request.session['U_otp'] = otp
+            request.session['U_phone'] = phonenumber
+            
+            send_otp(phonenumber, otp)
+            
+            return redirect(verifyotp)
+    
         
 
     return render(request,"store/otplogin.html")
+
+
+def send_otp(phonenumber, otp):
+    url = 'https://www.fast2sms.com/dev/bulkV2'
+    payload = f'sender_id=TXTIND&message={otp}&route=v3&language=english&numbers={phonenumber}'
+    headers = {
+        'authorization': "9mCRNewf4y51lc6KJLFYIgZtEjxv0WV3PuoHOra2BphzsGUMiqwmdFs3TZfEMB2vkcG5JqNeRSyCj8Yp",
+        'Content-Type': "application/x-www-form-urlencoded"
+    }
+    response = requests.request("POST", url, data=payload, headers=headers)
+    print(response.text)
 
 def verifyotp(request):
     if "username" in request.session:
         return redirect(loggedin)
     msg="Otp sent.Please enter the otp recieved in your phone."
     if request.method == 'POST':
-        entered_otp = request.POST.get('otp')
-        phone_number = request.session.get('phone_number')
-        phone_number = "+91" + phone_number
-        verification_sid = request.session.get('verification_sid')
-        # Initialize the Twilio client with your Twilio account SID and auth token
-        client = Client(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
-        # Check if the entered OTP is valid
-        print("*********")
-        print("entered_otp:", entered_otp)
-        verification_check = client.verify.services(settings.TWILIO_VERIFY_SERVICE_SID) \
-            .verification_checks \
-            .create(to=phone_number, code=entered_otp, verification_sid=verification_sid)
-        if verification_check.status == 'approved':
-            request.session["username"]="somevalue"
-            return redirect(login)
-        else:
-            error="Otp doesn't match"
-            return render(request,"store/verifyotp.html",{"msg":msg,"error":error})
+        user_otp = request.POST.get('otp')
+        if 'U_otp' in request.session and 'U_phone' in request.session:
+            exact_otp = request.session['U_otp']
+            phonenumber = request.session['U_phone']
+            if exact_otp == user_otp:
+                try:
+                    
+                    user = Customers.objects.get(phonenumber=phonenumber)
+                    
+                    if user is not None:
+
+                        request.session['username'] = user.username 
+                        request.session['phonenumber'] = phonenumber
+                        # messages.success(request, "Login completed successfully")
+                        return redirect(loggedin)
+                except Customers.DoesNotExist:
+                    messages.error(request, "This User doesn't Exist")
+            else:
+                # messages.error(request, "Invalid OTP. Please try again.")
+                error="Otp doesn't match"
+                return render(request,"store/verifyotp.html",{"msg":msg,"error":error})
     return render(request,"store/verifyotp.html",{"msg":msg})
+
+
+
+
+
+    #     phone_number = request.session.get('phone_number')
+    #     phone_number = "+91" + phone_number
+    #     verification_sid = request.session.get('verification_sid')
+    #     # Initialize the Twilio client with your Twilio account SID and auth token
+    #     client = Client(settings.TWILIO_ACCOUNT_SID, settings.TWILIO_AUTH_TOKEN)
+    #     # Check if the entered OTP is valid
+    #     print("*********")
+    #     print("entered_otp:", entered_otp)
+    #     verification_check = client.verify.services(settings.TWILIO_VERIFY_SERVICE_SID) \
+    #         .verification_checks \
+    #         .create(to=phone_number, code=entered_otp, verification_sid=verification_sid)
+    #     if verification_check.status == 'approved':
+    #         request.session["username"]="somevalue"
+    #         return redirect(login)
+    #     else:
+    #         error="Otp doesn't match"
+    #         return render(request,"store/verifyotp.html",{"msg":msg,"error":error})
+    # return render(request,"store/verifyotp.html",{"msg":msg})
 
 def login(request):
     try:
