@@ -7,7 +7,7 @@
     <div class="form-group mt-2">
       {% comment %} {% for item in content  %} {% endcomment %}
       <label for="username">Product Name</label>
-      <select id="dropdown" name="productname">
+      <select class="form-control" id="dropdown" name="productname">
         {% for item in productobjs  %}
         <option value="{{item.name}}">{{item.name}}<br><br> </option>
         {% endfor %}
