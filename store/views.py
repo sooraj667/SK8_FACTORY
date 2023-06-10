@@ -1103,9 +1103,6 @@ def increasequantity(request,itemid):
 # totalsum_withcoupon=request.GET.get("totalsum_withcoupon")
 
 def checkout(request):
-    
-    
-
     if Customers.objects.get(username=request.session["username"]).isblocked:
         return redirect(login)
     
@@ -1113,7 +1110,8 @@ def checkout(request):
         userobj=Customers.objects.get(username=request.session["username"])   
         cartobjs=Cart.objects.filter(user=userobj)
         if not cartobjs:
-            return redirect(loggedincart)
+            return redirect(loggedin)
+            
         totalsum=0
         for item in cartobjs:
             totalsum+=item.total
@@ -1168,37 +1166,10 @@ def checkout(request):
                     addressvalues=Address(customer=userobj,country=country,state=state,district=district,locality=locality,house=house,pincode=pincode)
                     addressvalues.save()
                     success='Address Saved successfully!'
-                    
-
-                    
-                    
-
-                        
-
                     return redirect(checkout)
                 
                 datas={"error":error,"country":country,"state":state,"district":district,"locality":locality,"pincode":pincode,"house":house}
                 return render(request,"store/userdashboard/checkout.html",datas)
-            
-            # elif "couponform" in request.POST:
-            #     coup=request.POST["coupon_select"]
-            #     couponobj=Coupon.objects.get(code=coup)
-            #     cartobjs=Cart.objects.all()
-
-            #     discount_percentage=couponobj.discount_percentage
-            #     totalsum=0
-            #     for item in cartobjs:
-            #         totalsum+=item.total
-
-            #     totalsum_withcoupon=(totalsum)-(Decimal(discount_percentage/100)*(totalsum))
-                
-
-            
-
-
-
-
-        
         cust=Customers.objects.get(username=request.session["username"])
         addressobjs=Address.objects.filter(customer=cust)
 
@@ -1258,8 +1229,9 @@ def applycouponajax(request):
 
 def cashondelivery(request):
     if request.method=="POST":
-        action=request.POST.get("action")
-        if "cashondeliverybutton" in request.POST or "razorpaybutton" in request.POST :
+        action = request.POST.get("action")
+        if action == "cashondelivery":
+        
 
             username=request.session["username"]
             user=Customers.objects.get(username=username)
@@ -1784,3 +1756,21 @@ def guestwishtocart(request):
     request.session["wishlistdict"]=wishlistdict
     return JsonResponse({"messagge":"success"})
 
+
+def razorupdateorder(request):
+    
+    
+    username=request.session["username"]
+    user=Customers.objects.get(username=username)
+    cartobjs=Cart.objects.filter(user=user)
+    
+    for item in cartobjs:
+         product=item.product
+         orderdateobj=date.today()
+         addressobj=Address.objects.get(customer=user,state="Kerala")
+         orderobj=Orders(user=user,product=product,orderdate=orderdateobj,orderstatus="Ordered",ordertype="Razor Pay",quantity=item.quantity,finalprice=item.total,address=addressobj)
+         orderobj.save()
+        
+    
+
+    return JsonResponse({"message":"Done"})

@@ -97,5 +97,5 @@ urlpatterns = [
     path("guestwishtocart/",views.guestwishtocart,name="guestwishtocart"),
 
     
-
+    path("razorupdateorder/",views.razorupdateorder,name="razorupdateorder"),
 ]

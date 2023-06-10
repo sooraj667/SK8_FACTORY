@@ -239,13 +239,13 @@
 			<hr>
 			<div class="row mt-5">
 				<div class="col-md-6">
-					<button type="submit" name="cashondeliverybutton" value="cashondelivery" class="btn btn-primary">Cash On Delivery</button>
+					<button type="submit" name="action" value="cashondelivery" value="cashondelivery" class="btn btn-primary">Cash On Delivery</button>
 
 				</div>
 				
 				{% comment %} <button type="submit" name="action" value="razorpay"  class="btn btn-success" id="rzp-button1">Pay with Razorpay</button> {% endcomment %}
 				<div class="col-md-6">
-					<button name="razorpaybutton" type="submit"   class="btn btn-success" id="rzp-button1">Pay with Razorpay</button>
+					<button type="submit" name="action" value="razorpay"  class="btn btn-success" id="rzp-button1">Pay with Razorpay</button>
 				</div>
 	
 			</div>
@@ -525,6 +525,30 @@ var options = {
 	//"image": "https://example.com/your_logo",
 	"order_id": "{{order_id}}", //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
 	"handler": function (response){
+
+		$.ajax({
+			url: '/razorupdateorder/', // Replace with the URL of your update order view
+			method: 'GET',
+			data: {
+				paymentId: response.razorpay_payment_id,
+				orderId: response.razorpay_order_id,
+				
+			},
+			success: function(data) {
+				// Handle the response from the server
+				// For example, you can display a success message or redirect to a new page
+				alert('Order updated successfully!');
+				//window.location.href = '/order-details'; // Redirect to the order details page
+			},
+			error: function(error) {
+				// Handle the error, if any
+				// For example, you can display an error message or perform alternative actions
+				alert('Error updating order: ' + error.message);
+			}
+		});
+
+
+
 		//alert(response.razorpay_payment_id);
 		//alert(response.razorpay_order_id);
 		//alert(response.razorpay_signature)
@@ -543,6 +567,10 @@ var options = {
 };
 var rzp1 = new Razorpay(options);
 rzp1.on('payment.failed', function (response){
+
+
+
+
 		//alert(response.error.code);
 		//alert(response.error.description);
 		//alert(response.error.source);
