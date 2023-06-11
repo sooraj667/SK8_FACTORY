@@ -1856,3 +1856,20 @@ def razorupdateorder(request):
     
 
     return JsonResponse({"message":"Done"})
+
+
+def wallet(request):
+    username=request.session["username"]
+    user=Customers.objects.get(username=username)
+    walletobj=Wallet.objects.get(user=user)
+    userobj=Customers.objects.get(username=request.session["username"])
+    cartobjs=Cart.objects.filter(user=userobj)
+    subtotal=0
+    for item in cartobjs:
+        subtotal+=item.total
+
+    no_of_cart_items=cartobjs.count()
+    wishlistobjs=Wishlist.objects.filter(user=userobj)
+    no_of_wishlist_items=wishlistobjs.count()
+    context={"walletobj":walletobj,"user":user,"no_of_wishlist_items":no_of_wishlist_items,"no_of_cart_items":no_of_cart_items,"totalsum":subtotal}
+    return render (request,"store/userdashboard/wallet.html",context)

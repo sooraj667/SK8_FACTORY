@@ -127,8 +127,34 @@
 
 
  <div class="container">
+  <div class="dropdown ">
+    <button class="btn  dropdown-toggle stext-101 cl0  bg1  hov-btn2 p-lr-15 trans-04 mt-3" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+      More
+    </button>
+    <div class="dropdown-menu " aria-labelledby="dropdownMenuButton">
+      <a class="dropdown-item" href={% url 'wallet' %}> 
+         <div class="" style="color:#717fe0;">
+           <i class="fas fa-wallet"></i> <span style="color:black;">Your wallet</span>
+         </div>
+      </a>
+      <a style="color:#717fe0" class="dropdown-item" href={% url 'deliveredproducts' %}>
+        <div>
+          <i class="bi bi-basket"></i>
+
+          <i style="color:#717fe0" class="fas fa-shopping-cart"></i> <span style="color:black;">Delivered Products</span>
+        </div>
+      </a>
+      
+    </div>
+  </div>
+  <br>
+  
+
+
+  
     <div class="row">
         <div class="col-md-4 border border-1">
+         
 
 
             <div class="container formcont">
@@ -297,9 +323,7 @@
                     
             
                 </div>
-                <div>
-                  <a style="color:#717fe0" href={% url 'deliveredproducts' %}>Delivered Products</a>
-                </div>
+               
                 
             </div>
 

@@ -99,4 +99,6 @@ urlpatterns = [
     
     path("razorupdateorder/",views.razorupdateorder,name="razorupdateorder"),
     path("orderplaced/",views.orderplaced,name="orderplaced"),
+    path("wallet/",views.wallet,name="wallet"),
+    
 ]

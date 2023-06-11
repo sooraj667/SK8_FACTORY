@@ -1,0 +1,33 @@
+{% extends 'store/userdashboard/loggedin.html' %}
+{% load static %}
+
+{% block content %}
+
+
+<br><br><br>
+<br><br><br><br>
+<div class="card">
+    <div class="card-body">
+      <div class="wallet-details bg-gray-100 p-4 rounded-lg shadow-lg">
+        <h3 class="text-center text-2xl mb-4">Hey, {{user.name}}!</h3>
+        <div class="wallet-content">
+          <div class="balance text-center">
+            <h4 class="text-lg font-semibold mb-2">Your Wallet Balance:</h4>
+            <div class="text-2xl text-success">
+              Rs.{{walletobj.amount}}/-
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <br><br><br><br>
+
+
+
+{% endblock content %}
+
+
+
+
+
