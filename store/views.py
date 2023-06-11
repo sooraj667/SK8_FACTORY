@@ -1802,11 +1802,25 @@ def razorupdateorder(request):
     print("################",house)
     
     for item in cartobjs:
-         product=item.product
-         orderdateobj=date.today()
-         addressobj=Address.objects.get(customer=user,house=house)
-         orderobj=Orders(user=user,product=product,orderdate=orderdateobj,orderstatus="Ordered",ordertype="Razor Pay",quantity=item.quantity,finalprice=item.total,address=addressobj)
-         orderobj.save()
+        product=item.product
+        orderdateobj=date.today()
+        addressobj=Address.objects.get(customer=user,house=house)
+        orderobj=Orders(user=user,product=product,orderdate=orderdateobj,orderstatus="Ordered",ordertype="Razor Pay",quantity=item.quantity,finalprice=item.total,address=addressobj)
+        orderobj.save()
+        finalprice=float(item.total)
+        quantityobj=int(item.quantity)
+        orderdateobj=str(orderdateobj)
+        fulladdress=f"{addressobj.house}, {addressobj.locality},{addressobj.district},{addressobj.state},{addressobj.country},"
+        if "currentorder" not in request.session:
+            request.session["currentorder"] = {}
+                    
+        request.session["currentorder"][item.product.name] = {
+                    "quantity": quantityobj,
+                    "address": fulladdress, 
+                    "orderdate": orderdateobj,
+                    "ordertype": "Razor Pay",
+                    "finalprice":finalprice,
+                }
     cartobjs.delete()
         
     
