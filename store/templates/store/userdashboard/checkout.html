@@ -215,7 +215,7 @@
 	
 					<form class="card-body" method="POST" action="{% url 'cashondelivery' %}">
 						{% csrf_token %}
-						<select id="dropdown" name="address" class="form-control" >
+						<select id="addressdropdown" name="address" class="form-control" >
 							{% for item in addressobjs  %}
 							<option value="{{item.house}}">{{item.house}} -  {{item.district}} - {{item.state}} - {{item.country}} <br><br> </option>
 							{% endfor %}
@@ -239,7 +239,7 @@
 			<hr>
 			<div class="row mt-5">
 				<div class="col-md-6">
-					<button type="submit" name="action" value="cashondelivery" value="cashondelivery" class="btn btn-primary">Cash On Delivery</button>
+					<button type="submit" name="cashondelivery" class="btn btn-primary">Cash On Delivery</button>
 
 				</div>
 				
@@ -525,6 +525,7 @@ var options = {
 	//"image": "https://example.com/your_logo",
 	"order_id": "{{order_id}}", //This is a sample Order ID. Pass the `id` obtained in the response of Step 1
 	"handler": function (response){
+		//var addressval=$("#addressdropdown").val()
 
 		$.ajax({
 			url: '/razorupdateorder/', // Replace with the URL of your update order view
@@ -532,6 +533,10 @@ var options = {
 			data: {
 				paymentId: response.razorpay_payment_id,
 				orderId: response.razorpay_order_id,
+				addressval:$("#addressdropdown").val(),
+				finalprice:$("#totalamount").text(),
+
+
 				
 			},
 			success: function(data) {

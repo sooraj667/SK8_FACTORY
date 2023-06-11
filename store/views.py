@@ -1229,8 +1229,8 @@ def applycouponajax(request):
 
 def cashondelivery(request):
     if request.method=="POST":
-        action = request.POST.get("action")
-        if action == "cashondelivery":
+        
+        if "cashondelivery" in request.POST:
         
 
             username=request.session["username"]
@@ -1248,10 +1248,7 @@ def cashondelivery(request):
                     messages.error(request, "Address cannot be empty.")
                     return redirect(checkout)
                 orderstatusobj="Ordered"
-                if "cashondeliverybutton" in request.POST:
-                    ordertypeobj="Cash On Delivery"
-                elif "razorpaybutton" in request.POST:
-                    ordertypeobj="Razor Pay"
+                ordertypeobj="Cash On Delivery"   
                 orderdateobj=date.today() 
                 finalprice=item.total
                 orderdata=Orders(user=userobj,product=pdtobj,quantity=quantityobj,address=addressobj,orderstatus=orderstatusobj,orderdate=orderdateobj,ordertype=ordertypeobj,finalprice=finalprice)
@@ -1763,13 +1760,18 @@ def razorupdateorder(request):
     username=request.session["username"]
     user=Customers.objects.get(username=username)
     cartobjs=Cart.objects.filter(user=user)
+    house=request.GET["addressval"]
+    finalprice=request.GET["finalprice"]
+    finalprice=Decimal(finalprice)
+    print("################",house)
     
     for item in cartobjs:
          product=item.product
          orderdateobj=date.today()
-         addressobj=Address.objects.get(customer=user,state="Kerala")
-         orderobj=Orders(user=user,product=product,orderdate=orderdateobj,orderstatus="Ordered",ordertype="Razor Pay",quantity=item.quantity,finalprice=item.total,address=addressobj)
+         addressobj=Address.objects.get(customer=user,house=house)
+         orderobj=Orders(user=user,product=product,orderdate=orderdateobj,orderstatus="Ordered",ordertype="Razor Pay",quantity=item.quantity,finalprice=finalprice,address=addressobj)
          orderobj.save()
+    cartobjs.delete()
         
     
 
