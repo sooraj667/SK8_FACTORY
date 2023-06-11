@@ -270,7 +270,7 @@
                             <td><img class="img-fluid img-thumbnail" src="{{ item.product.image1.url }}" alt="" width="50" height="50"></td>
 
                             {% if item.orderstatus != 'Cancelled' %}
-                            <td id="orderitem{{item.id}}"><button  type="button" class="btn delete-btn btn-danger" data-category-id="{{ item.id }}">Cancel</button></td>
+                            <td id="orderitem{{item.id}}"><button  type="button" class="btn delete-btn btn-danger" data-category-id="{{ item.id }}">Cancel</button>    </td>
                             
                             {% else %}
 
@@ -437,6 +437,29 @@
     </div>
   </div>
 
+
+
+  <div style="margin-top:100px;" class="modal fade" id="walletmodal" tabindex="-1" role="dialog" aria-labelledby="cancelModalLabel" aria-hidden="true">
+ 
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="cancelModalLabel">Order Cancelled</h5>
+          
+            {% comment %} <span aria-hidden="true">&times;</span> {% endcomment %}
+          </button>
+        </div>
+        <div class="modal-body p-5">
+          <p > <h5 style="color:green;"> Amount is added to your wallet &#x2713; </h5></p>
+        </div>
+        {% comment %} <div class="modal-footer">
+          <button type="button" class="btn btn-secondary closeit" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-danger closeit" data-dismiss="modal" id="confirmcancel">Cancel Order</button>
+        </div> {% endcomment %}
+      </div>
+    </div>
+  </div>
+
 <br><br><br><br><br><br>
 
 
@@ -491,11 +514,18 @@
                                 
                             },
                         success: function(response) {
+                          var walletcontent=response.walletcontent
                           //$("#offer" + orderid).remove();
                           // Update the offer price on the page
                           var content = response.content;  // Assuming the response contains the updated offer price
                           // Update the appropriate HTML element with the new offer price
-                          $("#orderitem" + orderid).text("Cancelled").addClass("text-danger");;
+                          $("#orderitem" + orderid).text("Cancelled").addClass("text-danger");
+                          
+                          $("#walletmodal").modal('show');
+                          setTimeout(function() {
+                            $("#walletmodal").modal('hide');
+                          }, 1800);
+                          
                           
                         },
                         error: function(xhr, errmsg, err) {

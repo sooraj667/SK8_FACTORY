@@ -114,6 +114,30 @@
 
 
 
+<div style="margin-top:100px;" class="modal fade" id="walletmodal" tabindex="-1" role="dialog" aria-labelledby="cancelModalLabel" aria-hidden="true">
+ 
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="cancelModalLabel">Order Cancelled</h5>
+        
+          {% comment %} <span aria-hidden="true">&times;</span> {% endcomment %}
+        </button>
+      </div>
+      <div class="modal-body p-5">
+        <p > <h5 style="color:green;"> Amount is added to your wallet &#x2713; </h5></p>
+      </div>
+      {% comment %} <div class="modal-footer">
+        <button type="button" class="btn btn-secondary closeit" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-danger closeit" data-dismiss="modal" id="confirmcancel">Cancel Order</button>
+      </div> {% endcomment %}
+    </div>
+  </div>
+</div>
+
+
+
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js" integrity="sha512-pumBsjNRGGqkPzKHndZMaAG+bir374sORyzM3uulLV14lN5LyykqNk8eEeUlUkB3U0M4FApyaHraT65ihJhDpQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
  <script>
   $(document).ready(function() {
@@ -132,12 +156,17 @@
                     
                 },
             success: function(response) {
-              $("#order" + orderid).text("Return Initiated").addClass("text-warning");;
+              $("#walletmodal").modal('show');
+              setTimeout(function() {
+                $("#walletmodal").modal('hide');
+              }, 1800);
+              $("#order" + orderid).text("Return Initiated").addClass("text-warning");
               // Update the offer price on the page
-              var newOfferPrice = response.message;  // Assuming the response contains the updated offer price
+              //var newOfferPrice = response.message;  // Assuming the response contains the updated offer price
               // Update the appropriate HTML element with the new offer price
               //$("#offer_price").text(newOfferPrice);
-            
+      
+
             },
             error: function(xhr, errmsg, err) {
               // Handle any errors that occur during the AJAX request

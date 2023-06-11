@@ -1443,8 +1443,21 @@ def previousorders(request):
 
 def cancelorder(request,someid):
 
-    
+    username=request.session["username"]
+    user=Customers.objects.get(username=username)
     orderobj=Orders.objects.get(id=someid)
+    walletamount=orderobj.finalprice
+    walletcontent=f" Rs.{walletamount} added to your wallet "
+    try:
+        walletobj=Wallet.objects.get(user=user)
+        walletobj.amount=walletamount
+        walletobj.save()
+    except:
+        walletobj=Wallet(user=user,amount=walletamount)
+        walletobj.save()
+
+
+      
     product=orderobj.product
     product.quantity+=orderobj.quantity
     product.save()
@@ -1453,7 +1466,7 @@ def cancelorder(request,someid):
 
     
 
-    return JsonResponse({"message": "Confirm !","content":"Order Cancelled"})
+    return JsonResponse({"message": "Confirm !","content":"Order Cancelled","walletcontent":walletcontent})
 
 
 
@@ -1544,7 +1557,24 @@ def deliveredproducts(request):
 
 def returnorder(request,orderid):
     orderobj=Orders.objects.get(id=orderid)
+    
+    price=orderobj.finalprice
     orderobj.orderstatus="ReturnRequested"
+
+
+    username=request.session["username"]
+    user=Customers.objects.get(username=username)
+    try:
+        walletobj=Wallet.objects.get(user=user)
+        walletobj.amount+=price
+        walletobj.save()
+    except:
+        walletobj=Wallet(user=user,amount=price)
+        walletobj.save()
+
+
+
+
     orderobj.save()
     return JsonResponse({"message":"Return Initiated"})
 

@@ -89,4 +89,6 @@ class Wishlist(models.Model):
 
 
 
-    
+class Wallet(models.Model):
+    user=models.ForeignKey(Customers,on_delete=models.CASCADE)
+    amount=models.DecimalField(max_digits=10, decimal_places=2)

@@ -24,6 +24,8 @@ class CategoryofferAdmin(admin.ModelAdmin):
     list_display=("category","offer_description","discount")
 class WishlistAdmin(admin.ModelAdmin):
     list_display=("product","user")
+class WalletAdmin(admin.ModelAdmin):
+    list_display=("user","amount")
     
 
 
@@ -40,6 +42,7 @@ admin.site.register(Coupon,CouponAdmin)
 admin.site.register(Productoffer,ProductofferAdmin)
 admin.site.register(Categoryoffer,CategoryofferAdmin)
 admin.site.register(Wishlist,WishlistAdmin)
+admin.site.register(Wallet,WalletAdmin)
 
 
 
