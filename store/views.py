@@ -756,6 +756,10 @@ def loggedinabout(request):
 
 def loggedinproduct(request):
     if "username" in request.session and not Customers.objects.get(username=request.session["username"]).isblocked:
+        if "currentorder" in request.session:
+            del request.session["currentorder"]
+
+
         products=Products.objects.all()
         
         extracheapproducts = Products.objects.filter(price__lte=1000)
@@ -1220,7 +1224,22 @@ def applycouponajax(request):
         message_success=f"{couponid} - Coupon applied"
         return JsonResponse({"amount":discounted_amount,"message_success":message_success})
 
+def orderplaced(request):
+    username=request.session["username"]
+    userobj=Customers.objects.get(username=username)
+    cartobjs=Cart.objects.filter(user=userobj)
+    wishlistobjs=Wishlist.objects.filter(user=userobj)
+    no_of_wishlist_items=wishlistobjs.count()
+    no_of_cart_items=cartobjs.count()
+    totalsum=0
+    for item in cartobjs:
+        totalsum+=item.total
+    if  "currentorder" in request.session:
+        currentorder=request.session["currentorder"]
 
+        
+    context={"no_of_wishlist_items":no_of_wishlist_items,"no_of_cart_items":no_of_cart_items,"cartobjs":cartobjs ,"wishlistobjs":wishlistobjs,"totalsum":totalsum,"currentorder":currentorder}
+    return render(request,"store/userdashboard/orderplaced.html",context)
 
 
     
@@ -1253,6 +1272,23 @@ def cashondelivery(request):
                 finalprice=item.total
                 orderdata=Orders(user=userobj,product=pdtobj,quantity=quantityobj,address=addressobj,orderstatus=orderstatusobj,orderdate=orderdateobj,ordertype=ordertypeobj,finalprice=finalprice)
                 orderdata.save()
+                finalprice=float(finalprice)
+                quantityobj=int(quantityobj)
+                orderdateobj=str(orderdateobj)
+                fulladdress=f"{addressobj.house}, {addressobj.locality},{addressobj.district},{addressobj.state},{addressobj.country},"
+                if "currentorder" not in request.session:
+                    request.session["currentorder"] = {}
+                    
+                request.session["currentorder"][item.product.name] = {
+                    "quantity": quantityobj,
+                    "address": fulladdress, 
+                    "orderdate": orderdateobj,
+                    "ordertype": ordertypeobj,
+                    "finalprice":finalprice,
+                }
+
+                
+
 
                 pdtobj.quantity=pdtobj.quantity-item.quantity
                 pdtobj.save()
@@ -1266,7 +1302,7 @@ def cashondelivery(request):
 
             
 
-            return render(request,"store/userdashboard/orderplaced.html",{"totalsum":totalsum,"cartobjs":cartobjs,"no_of_cart_items":no_of_cart_items})
+            return redirect(orderplaced)
         
         #  elif "razorpay" in request.POST:
         #     client = razorpay.Client(
@@ -1761,15 +1797,15 @@ def razorupdateorder(request):
     user=Customers.objects.get(username=username)
     cartobjs=Cart.objects.filter(user=user)
     house=request.GET["addressval"]
-    finalprice=request.GET["finalprice"]
-    finalprice=Decimal(finalprice)
+    # finalprice=request.GET["finalprice"]
+    # finalprice=Decimal(finalprice)
     print("################",house)
     
     for item in cartobjs:
          product=item.product
          orderdateobj=date.today()
          addressobj=Address.objects.get(customer=user,house=house)
-         orderobj=Orders(user=user,product=product,orderdate=orderdateobj,orderstatus="Ordered",ordertype="Razor Pay",quantity=item.quantity,finalprice=finalprice,address=addressobj)
+         orderobj=Orders(user=user,product=product,orderdate=orderdateobj,orderstatus="Ordered",ordertype="Razor Pay",quantity=item.quantity,finalprice=item.total,address=addressobj)
          orderobj.save()
     cartobjs.delete()
         
