@@ -1189,7 +1189,13 @@ def checkout(request):
 
         cartobjsfiltered=Cart.objects.filter(user=cust)
         no_of_cart_items=cartobjsfiltered.count()
-        return render(request,"store/userdashboard/checkout.html",{"addressobjs":addressobjs,"cartobjs":cartobjs,"totalsum":totalsum,"couponobjs":couponobjs,"no_of_cart_items":no_of_cart_items,     "amount":300,"order_id":payment_order_id,"api_key":RAZORPAY_API_KEY})
+        wishlistobjs=Wishlist.objects.filter(user=userobj)
+        no_of_wishlist_items=wishlistobjs.count()
+
+        totalsum=0
+        for item in cartobjs:
+            totalsum+=item.total
+        return render(request,"store/userdashboard/checkout.html",{"addressobjs":addressobjs,"cartobjs":cartobjs,"totalsum":totalsum,"couponobjs":couponobjs,"no_of_cart_items":no_of_cart_items,"no_of_wishlist_items":no_of_wishlist_items,"totalsum":totalsum,     "amount":300,"order_id":payment_order_id,"api_key":RAZORPAY_API_KEY})
 
 
 # def applycoupon(request):
