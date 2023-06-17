@@ -499,7 +499,28 @@ def send_otp(phonenumber, otp):
 def verifyotp(request):
     if "username" in request.session:
         return redirect(loggedin)
-    msg="Otp sent.Please enter the otp recieved in your phone."
+    
+    # CART AND WISHLIST COUNT
+    if "cartdict" in request.session:
+        cartdict=request.session["cartdict"]
+        subtotal=0
+        for k,v in cartdict.items():
+            subtotal+=v["total"]
+        cartcount=len(cartdict)
+    else:
+        cartdict={}
+        subtotal=0
+        cartcount=0
+    if "wishlistdict" in request.session:
+        wishlistdict=request.session["wishlistdict"]
+        wishcount=len(wishlistdict) 
+    else:
+        wishcount=0 
+
+
+
+    msg1="OTP sent. "
+    msg2="Please enter the OTP received in your phone below."
     if request.method == 'POST':
         user_otp = request.POST.get('otp')
         if 'U_otp' in request.session and 'U_phone' in request.session:
@@ -520,9 +541,9 @@ def verifyotp(request):
                     messages.error(request, "This User doesn't Exist")
             else:
                 # messages.error(request, "Invalid OTP. Please try again.")
-                error="Otp doesn't match"
-                return render(request,"store/verifyotp.html",{"msg":msg,"error":error})
-    return render(request,"store/verifyotp.html",{"msg":msg})
+                error="Otp doesn't match!"
+                return render(request,"store/verifyotp.html",{"msg1":msg1,"msg2":msg2,"error":error,  "cartcount":cartcount,"wishcount":wishcount,"totalsum":subtotal,"cartdict":cartdict,"wishlistdict":wishlistdict})
+    return render(request,"store/verifyotp.html",{"msg1":msg1,"msg2":msg2,  "cartcount":cartcount,"wishcount":wishcount,"totalsum":subtotal,"cartdict":cartdict,"wishlistdict":wishlistdict})
 
 
 
@@ -1035,7 +1056,7 @@ def guestquantityupdate(request):
     
     request.session["subtotal"]=float(subtotal)
     
- 
+    subtotal=Decimal(subtotal)
 
 
 
@@ -1452,16 +1473,19 @@ def cancelorder(request,someid):
     username=request.session["username"]
     user=Customers.objects.get(username=username)
     orderobj=Orders.objects.get(id=someid)
-    walletamount=orderobj.finalprice
-    walletcontent=f" Rs.{walletamount} added to your wallet "
-    try:
-        walletobj=Wallet.objects.get(user=user)
-        walletobj.amount=walletamount
-        walletobj.save()
-    except:
-        walletobj=Wallet(user=user,amount=walletamount)
-        walletobj.save()
+    if orderobj.ordertype=="Razor Pay":
 
+        walletamount=orderobj.finalprice
+        walletcontent="added"
+        try:
+            walletobj=Wallet.objects.get(user=user)
+            walletobj.amount+=walletamount
+            walletobj.save()
+        except:
+            walletobj=Wallet(user=user,amount=walletamount)
+            walletobj.save()
+    else:
+        walletcontent="notadded"
 
       
     product=orderobj.product
@@ -1867,7 +1891,11 @@ def razorupdateorder(request):
 def wallet(request):
     username=request.session["username"]
     user=Customers.objects.get(username=username)
-    walletobj=Wallet.objects.get(user=user)
+    try:
+        walletobj=Wallet.objects.get(user=user)
+    except:
+        walletobj=None
+        pass
     userobj=Customers.objects.get(username=request.session["username"])
     cartobjs=Cart.objects.filter(user=userobj)
     subtotal=0

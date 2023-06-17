@@ -194,7 +194,7 @@
 				var result=response.sum;
 				var subtotal=response.subtotal;
 				$("#amount"+itemid).html(result);
-				$(".subtotal").html(subtotal)
+				$(".subtotal").html(parseFloat(response.subtotal).toFixed(2))
 			
 				
 

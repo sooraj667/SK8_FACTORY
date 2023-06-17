@@ -544,11 +544,16 @@
                           var content = response.content;  // Assuming the response contains the updated offer price
                           // Update the appropriate HTML element with the new offer price
                           $("#orderitem" + orderid).text("Cancelled").addClass("text-danger");
-                          
-                          $("#walletmodal").modal('show');
-                          setTimeout(function() {
-                            $("#walletmodal").modal('hide');
-                          }, 1800);
+                          if (walletcontent=="added"){
+                            $("#walletmodal").modal('show');
+                            setTimeout(function() {
+                              $("#walletmodal").modal('hide');
+                            }, 1800);
+
+
+
+                          }
+                         
                           
                           
                         },

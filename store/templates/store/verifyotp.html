@@ -6,26 +6,30 @@
     <br><br><br>
     <div class="row mt-5 text-success justify-content-center">
         
-            {{msg}}
+            {{msg1}}&#x2713; 
+            <div class="ml-2">
+                {{msg2}}
+            </div>
         
     </div>
     <div class="row justify-content-center mt-5">
         <div class="col-md-6">
             <div class="card">
                 <div class="card-header flex-c-m p-lr-10 trans-04 ">
-                    <h4>Verify Otp</h4>
+                    <h4>Verify OTP</h4>
                 </div>
                 <div class="card-body">
                     <form method="POST">{% csrf_token %}
                         <div class="form-group">
-                            <label for="email">Verify Otp</label>
-                            <input type="number" class="form-control" id="email" placeholder="Enter your phone number" name="otp">
+                            <label for="email">Enter OTP</label>
+                            <input type="number" class="form-control" id="email" placeholder="Enter the OTP" name="otp">
                         </div>
+                        <br>
                         <div class="justify-content-center ">
-                            <button type="submit" class="flex-c-m stext-101 cl5 size-103 bg2 bor1 hov-btn1 p-lr-15 trans-04 ">Verify</button>
+                            <button type="submit" class="flex-c-m stext-101 cl0 size-103 bg1 bor1 hov-btn2 p-lr-15 trans-04 ">Verify</button>
 
                         </div>
-                        <div class="text-danger">
+                        <div class="text-danger mt-2">
                              {{error}}
                         </div>
                         

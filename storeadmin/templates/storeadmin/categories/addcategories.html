@@ -6,14 +6,19 @@
       {% comment %} {% for item in content  %} {% endcomment %}
       <label for="username">Category Name</label>
       <input value="{{obj.name}}" name="name" type="text" class="form-control" id="username" placeholder="Enter Category Name">
+      {% if error and "name" in error %}
+      <span class="text-danger"> {{error.name}}</span>
+      
+      {% endif %}
 
 
-
-
+      <br><br>
       <label for="username">Quantity</label>
       <input value="{{obj.noofitems}}" name="quantity" type="number" class="form-control" id="username" placeholder="Enter Quantity">
 
       <div class="mb-3">
+
+        <br><br>
         <label for="image">Image</label>
         <div class="card-img-top">
          
@@ -24,7 +29,7 @@
 
     </div>
     <button type="submit" class="btn btn-primary mt-4">Add</button>
-    <h5> {{error}} {{duplicate}}</h5>
+
     {% comment %} {% endfor %} {% endcomment %}
   
   </form> 

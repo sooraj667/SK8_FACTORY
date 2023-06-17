@@ -13,9 +13,15 @@
         <div class="wallet-content">
           <div class="balance text-center">
             <h4 class="text-lg font-semibold mb-2">Your Wallet Balance:</h4>
+            {% if walletobj %}
             <div class="text-2xl text-success">
               Rs.{{walletobj.amount}}/-
             </div>
+            {% else %}
+            <div class="text-2xl text-danger">
+              Sorry no amount in your wallet!
+            </div>
+            {% endif %}
           </div>
         </div>
       </div>

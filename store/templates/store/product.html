@@ -98,14 +98,16 @@
 				<div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item women">
 					<!-- Block2 -->
 					<div class="block2">
-						<div style="width:250px;height:400px;" class="block2-pic hov-img0">
+						{% comment %} style="width:250px;height:400px;" {% endcomment %}
+						<div  class="block2-pic hov-img0">
 							
-							
-								  <img src="{{ item.image1.url }}" alt="{{ item.name }} image" class="image-zoom-container">
-							
-
-							{% comment %} <a href="#" id="{{item}}" class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 js-show-modal1">
-								Quick View {% endcomment %}
+									<a href={% url 'guestpreview' item.id %}>
+										<img  style:" width: 200px; 
+										height: 200px; 
+										object-fit: cover;aspect-ratio:1/1;" src="{{ item.image1.url }}" alt="{{ item.name }} image" class="image-zoom-container">
+									</a>
+								  
+		
 
 							
 						
@@ -113,7 +115,7 @@
 
 						<div class="block2-txt flex-w flex-t p-t-14">
 							<div class="block2-txt-child1 flex-col-l ">
-								<a href="product-detail.html" class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
+								<a  class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
 									{{item.name}}
 								</a>
 
@@ -124,10 +126,10 @@
 								{% comment %} <a href={% url 'buynow' item.id %}>
 									Buy it
 								</a> {% endcomment %}
-								<div style="margin-left:200px;">
+								{% comment %} <div style="margin-left:200px;">
 									<a href={% url 'guestpreview' item.id %}> <button class="btn btn-info">Preview</button> </a>
 
-								</div>
+								</div> {% endcomment %}
 								
 								{% comment %} <a href={% url 'addtocart' item.id %}> Add to Cart</a> {% endcomment %}
 								{% comment %} <button type="button" class="addit" data-toggle="modal" data-target="#myModal" data-category-id="{{ item.id }}">Add to Cart</button> {% endcomment %}
@@ -185,7 +187,8 @@
 								<img class=" icon-heart2 dis-block trans-04 ab-t-l" src="{% static 'store/images/icons/icon-heart-02.png' %}" alt=""  >
 							</a> {% endcomment %}
 						</div>
-						<div id="wishlistmsg{{item.id}}" class="row">
+						<div  class="row">
+							<i id="wishlistmsg{{item.id}}">	</i>
 
 						</div>
 						</div>
@@ -396,10 +399,9 @@
 
 				}
 				else if(response.added){
-					$("#wishlistmsg"+productid).html(response.added).addClass("text-success");
+					$("#wishlistmsg"+productid).html(response.added + " &#x2713;").addClass("text-success");
 
 				}
-				
 				//$("#wishlistModal").modal("hide");
 				 //$("#offer" + orderid).remove();
 				 // Update the offer price on the page

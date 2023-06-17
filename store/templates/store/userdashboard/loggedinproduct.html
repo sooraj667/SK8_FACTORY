@@ -93,8 +93,12 @@
 					<div  class="block2">
 						<div style="width:250px;height:400px;" class="block2-pic hov-img0 ">
 							
-							
-  								<img  src="{{ item.image1.url }}" alt="{{ item.name }} image" class="image-zoom-container">
+								<a href={% url 'preview' item.id %}>
+									<img  src="{{ item.image1.url }}" alt="{{ item.name }} image" class="image-zoom-container">
+
+
+								</a>
+  								
 							
 
 							{% comment %} <a href="#" id="{{item}}" class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 js-show-modal1">
@@ -116,10 +120,10 @@
 								{% comment %} <a href={% url 'buynow' item.id %}>
 									Buy it
 								</a> {% endcomment %}
-								<div style="margin-left:200px;" class="">
+								{% comment %} <div style="margin-left:200px;" class="">
 									<a href={% url 'preview' item.id %}> <button class="btn btn-info">Preview</button> </a>
 
-								</div>
+								</div> {% endcomment %}
 								
 								
 								{% comment %} <button type="button" class="addit" data-toggle="modal" data-target="#myModal" data-category-id="{{ item.id }}">Add to Cart</button> {% endcomment %}
@@ -181,9 +185,9 @@
 									<img class=" icon-heart2 dis-block trans-04 ab-t-l" src="{% static 'store/images/icons/icon-heart-02.png' %}" alt=""  >
 								</a> {% endcomment %}
 							</div>
-							<div id="wishlistmsg{{item.id}}" class="row">
+							<i class="ml-4" id="wishlistmsg{{item.id}}" class="row">
 
-							</div>
+							</i>
 						</div>
 					</div>
 				</div>
@@ -393,7 +397,7 @@
 
 				}
 				else if(response.added){
-					$("#wishlistmsg"+productid).html(response.added).addClass("text-success");
+					$("#wishlistmsg"+productid).html(response.added +" &#x2713;").addClass("text-success");
 
 				}
 				

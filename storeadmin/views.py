@@ -8,7 +8,7 @@ from django.core.files.storage import FileSystemStorage
 from django.http import JsonResponse,HttpResponse
 from django.db import IntegrityError
 import os
-
+import re
 
 
 from django.http import FileResponse
@@ -202,8 +202,8 @@ def editproducts(request, someid):
             error="Productname should contain minimum four characters"
         elif len(name)>20:
             error="Username can only have upto 20 characters"
-        elif name.isalpha()==False:
-            error="Productname can't have numbers" 
+        elif not re.match(r'^[a-zA-Z\s]+$', name):
+            error["name"] = "Product name can't contain numbers or special characters"
         elif price.isalpha()==True:
             error="Price can't have letters"
         elif quantity.isalpha()==True:
@@ -377,8 +377,8 @@ def addproducts(request):
             error["name"]="Productname should contain minimum four characters"
         elif len(name)>20:
             error["name"]="Username can only have upto 20 characters"
-        elif name.isalpha()==False:
-            error["name"]="Productname can't have numbers" 
+        elif not re.match(r'^[a-zA-Z\s]+$', name):
+            error["name"] = "Product name can't contain numbers or special characters"
         elif price.isalpha()==True:
             error["price"]="Price can't have letters"
         elif quantity.isalpha()==True:
@@ -426,16 +426,18 @@ def editcategories(request,someid):
     if request.method=="POST":
         name=request.POST.get("name")
         items=request.POST.get("noofitems")
+        error={}
         if len(name)==0:
-            error="Category name field can't be empty"
-        elif name.isalpha()==False:
-            error="Category name can;t be numbers"
+            error["name"]="Category name field can't be empty"
+        elif not re.match(r'^[a-zA-Z\s]+$', name):
+            error["name"] = "Category name can't contain numbers or special characters"
         elif len(name)<4:
-            error="Category name should atleast have 4 letters"
-        elif Category.objects.filter(name=name):
-            error="Same Category name is not allowed"
+            error["name"]="Category name should atleast have 4 letters"
+        # elif Category.objects.filter(name=name):
+        #     error["name"]="Same Category name is not allowed"
         elif len(name)>20:
-            error="Category name can atmost can have 20 letters"
+            error["name"]="Category name can atmost can have 20 letters"
+        
         else:
             obj.name=name
             obj.noofitems=items
@@ -527,14 +529,17 @@ def addcategories(request):
         name = request.POST.get("name")
         quantity=request.POST.get("quantity")
         image=request.FILES.get("image")
-        if len(name) == 0:
-            error = "Category name field can't be empty"
-        elif not name.isalpha():
-            error = "Category name can't be numbers"
-        elif len(name) < 4:
-            error = "Category name should have at least 4 letters"
-        elif len(name) > 20:
-            error = "Category name can have at most 20 letters"
+        error={}
+        if len(name)==0:
+            error["name"]="Category name field can't be empty"
+        elif not re.match(r'^[a-zA-Z\s]+$', name):
+            error["name"] = "Category name can't contain numbers or special characters"
+        elif len(name)<4:
+            error["name"]="Category name should atleast have 4 letters"
+        elif Category.objects.filter(name=name):
+            error["name"]="Same Category name is not allowed"
+        elif len(name)>20:
+            error["name"]="Category name can atmost can have 20 letters"
         else:
             try:
                 added = Category(name=name,noofitems=quantity,image=image)
