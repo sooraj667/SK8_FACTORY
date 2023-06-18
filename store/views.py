@@ -1305,8 +1305,8 @@ def cashondelivery(request):
             username=request.session["username"]
             user=Customers.objects.get(username=username)
             cartobjs=Cart.objects.filter(user=user)
+            
             housename=request.POST.get("address")
-            print("$$$$$$$$$$$$",housename)
             for item in cartobjs:
                 userobj=item.user
                 pdtobj=item.product
@@ -1354,36 +1354,72 @@ def cashondelivery(request):
 
             return redirect(orderplaced)
         
-        #  elif "razorpay" in request.POST:
-        #     client = razorpay.Client(
-        #     auth=(RAZORPAY_API_KEY, RAZORPAY_API_SECRET_KEY))
-        #     amount=2000
-        #     currency='INR'
-        #     data = dict(amount=amount,currency=currency,payment_capture=1)
+        elif "walletpayment" in request.POST:
+            username=request.session["username"]
+            user=Customers.objects.get(username=username)
+            cartobjs=Cart.objects.filter(user=user)
+            totalsum=0
+            for item in cartobjs:
+                totalsum+=item.total
+            walletobj=Wallet.objects.get(user=user)
+            if walletobj.amount<totalsum:
+                messages.error(request,f"Can't place order! Wallet balance is Rs. {walletobj.amount}")
+                return redirect(checkout)
+            else:
+                walletobj.amount-=totalsum
+                walletobj.save()
+            housename=request.POST.get("address")
+            for item in cartobjs:
+                userobj=item.user
+                pdtobj=item.product
+                quantityobj=item.quantity
+                try:
+                    addressobj=Address.objects.get(house=housename)
+                except:
+                    messages.error(request, "Address cannot be empty.")
+                    return redirect(checkout)
+                orderstatusobj="Ordered"
+                ordertypeobj="Wallet Payment"   
+                orderdateobj=date.today() 
+                finalprice=item.total
+                orderdata=Orders(user=userobj,product=pdtobj,quantity=quantityobj,address=addressobj,orderstatus=orderstatusobj,orderdate=orderdateobj,ordertype=ordertypeobj,finalprice=finalprice)
+                orderdata.save()
+                finalprice=float(finalprice)
+                quantityobj=int(quantityobj)
+                orderdateobj=str(orderdateobj)
+                fulladdress=f"{addressobj.house}, {addressobj.locality},{addressobj.district},{addressobj.state},{addressobj.country},"
+                if "currentorder" not in request.session:
+                    request.session["currentorder"] = {}
                     
-        #     payment_order = client.order.create(data=data)
-        #     payment_order_id=payment_order['id']
-        #     print(payment_order)
+                request.session["currentorder"][item.product.name] = {
+                    "quantity": quantityobj,
+                    "address": fulladdress, 
+                    "orderdate": orderdateobj,
+                    "ordertype": ordertypeobj,
+                    "finalprice":finalprice,
+                }
 
-        #     cartobjs=Cart.objects.all()
-        #     housename=request.POST.get("address")
-        #     print("$$$$$$$$$$$$",housename)
-        #     for item in cartobjs:
-        #         userobj=item.user
-        #         pdtobj=item.product
-        #         quantityobj=item.quantity
-        #         addressobj=Address.objects.get(house=housename)
-        #         orderstatusobj="Ordered"
-        #         ordertypeobj="Cash On Delivery"
-        #         orderdateobj=date.today() 
-        #     orderdata=Orders(user=userobj,product=pdtobj,quantity=quantityobj,address=addressobj,orderstatus=orderstatusobj,orderdate=orderdateobj,ordertype=ordertypeobj)
-        #     orderdata.save()
-        #     cartobjs.delete()
-        #     totalsum=0
-        #     for item in cartobjs:
-        #         totalsum+=item.total
+                
 
-        #     return render(request,"store/userdashboard/checkout.html",{ "amount":200,"order_id":payment_order_id,"api_key":RAZORPAY_API_KEY})
+
+                pdtobj.quantity=pdtobj.quantity-item.quantity
+                pdtobj.save()
+            cartobjs.delete()
+            totalsum=0
+            for item in cartobjs:
+                totalsum+=item.total
+            
+
+            no_of_cart_items=cartobjs.count()
+
+            
+
+            return redirect(orderplaced)
+
+            
+        
+        
+        
     return HttpResponse("Invalid request")
 
 
@@ -1496,7 +1532,7 @@ def cancelorder(request,someid):
     username=request.session["username"]
     user=Customers.objects.get(username=username)
     orderobj=Orders.objects.get(id=someid)
-    if orderobj.ordertype=="Razor Pay":
+    if orderobj.ordertype=="Razor Pay" or orderobj.ordertype=="Wallet Payment":
 
         walletamount=orderobj.finalprice
         walletcontent="added"

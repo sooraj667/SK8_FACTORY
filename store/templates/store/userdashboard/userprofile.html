@@ -271,7 +271,7 @@
                     <div class="row mt-5"></div>
                 </div>
                 <div class="row">
-                    <table class="table table-striped">
+                    <table class="table table-hover">
                         <thead>
                           <tr>
                             <th>Product</th>
@@ -279,6 +279,7 @@
                             <th>Quantity</th>
                             <th>Date</th>
                             <th>Status Of Order</th>
+                            <th>Payment Type</th>
                             <th>Image</th>
                             <th>Cancel</th>
                             
@@ -293,6 +294,7 @@
                             <td>{{ item.quantity }}</td>
                             <td>{{ item.orderdate }}</td>
                             <td>{{ item.orderstatus }}</td>
+                            <td>{{ item.ordertype }}</td>
                             <td><img class="img-fluid img-thumbnail" src="{{ item.product.image1.url }}" alt="" width="50" height="50"></td>
 
                             {% if item.orderstatus != 'Cancelled' %}
