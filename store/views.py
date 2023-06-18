@@ -156,6 +156,17 @@ def shop(request):
     else:
         wishcount=0  
 
+    if request.method=="POST":
+        searchproduct=request.POST["search-product"]
+        products=Products.objects.filter(name__startswith=searchproduct)
+        context={"filterpricedict":filterpricedict,"categoryobjs":categoryobjs,"products":products,"cartdict":cartdict,"totalsum":subtotal,"cartcount":cartcount,"wishcount":wishcount}
+        return render(request,"store/product.html",context)
+
+
+
+
+
+
     context={"filterpricedict":filterpricedict,"categoryobjs":categoryobjs,"products":products,"cartdict":cartdict,"totalsum":subtotal,"cartcount":cartcount,"wishcount":wishcount}
     return render(request,"store/product.html",context)
 
@@ -807,6 +818,18 @@ def loggedinproduct(request):
         totalsum=0
         for item in cartobjs:
             totalsum+=item.total
+
+        if request.method=="POST":
+            searchproduct=request.POST["search-product"]
+            products=Products.objects.filter(name__startswith=searchproduct)
+            context={"products":products,"cartobjs":cartobjs,"totalsum":totalsum,"no_of_cart_items":no_of_cart_items,"no_of_wishlist_items":no_of_wishlist_items ,"extracheapproducts":extracheapproducts,"cheapproducts":cheapproducts,"mediumproducts":mediumproducts,"expensiveproducts":expensiveproducts,"categoryobjs":categoryobjs,"filterpricedict":filterpricedict}
+            return render(request,"store/userdashboard/loggedinproduct.html",context)
+            
+            
+
+
+
+
         context={"products":products,"cartobjs":cartobjs,"totalsum":totalsum,"no_of_cart_items":no_of_cart_items,"no_of_wishlist_items":no_of_wishlist_items ,"extracheapproducts":extracheapproducts,"cheapproducts":cheapproducts,"mediumproducts":mediumproducts,"expensiveproducts":expensiveproducts,"categoryobjs":categoryobjs,"filterpricedict":filterpricedict}
         return render(request,"store/userdashboard/loggedinproduct.html",context)
     else:

@@ -40,8 +40,14 @@
 						<button class="size-113 flex-c-m fs-16 cl2 hov-cl1 trans-04">
 							<i class="zmdi zmdi-search"></i>
 						</button>
-	
-						<input class="mtext-107 cl2 size-114 plh2 p-r-15" type="text" name="search-product" placeholder="Search">
+						<form action="" method="POST">{% csrf_token %}
+						
+							<input class="mtext-107 cl2 size-114 plh2 p-r-15 " type="text" name="search-product" placeholder="Search">
+							<button class="mt-4 ml-0 mb-3 flex-c-m stext-101 cl0 size-103 bg1 bor1 hov-btn2 p-lr-15 trans-04" type="submit"> Search</button>
+
+
+						</form>
+						
 					</div>	
 				</div>
 	
@@ -102,9 +108,8 @@
 						<div  class="block2-pic hov-img0">
 							
 									<a href={% url 'guestpreview' item.id %}>
-										<img  style:" width: 200px; 
-										height: 200px; 
-										object-fit: cover;aspect-ratio:1/1;" src="{{ item.image1.url }}" alt="{{ item.name }} image" class="image-zoom-container">
+										<img  style:" 
+										object-fit: contain;aspect-ratio:1/1;" src="{{ item.image1.url }}" alt="{{ item.name }} image" class="image-zoom-container">
 									</a>
 								  
 		
@@ -114,8 +119,8 @@
 						</div>
 
 						<div class="block2-txt flex-w flex-t p-t-14">
-							<div class="block2-txt-child1 flex-col-l ">
-								<a  class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
+							<div class="block2-txt-child1 flex-col-l pl-3 ">
+								<a  class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6 ">
 									{{item.name}}
 								</a>
 

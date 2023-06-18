@@ -238,6 +238,37 @@
       {% block content %}
 
       <div class="container-fluid">
+        {% if not top_count and not top_returned_product %}
+        
+        <br><br><br>
+        <br><br><br><br>
+        <hr>
+        <div class="card">
+            <div style="background-color:#FFFFF0" class="card-body ">
+              <div class="wallet-details bg-gray-100 p-4 rounded-lg shadow-lg">
+                <h3 class="text-center text-2xl mb-4">Sorry!</h3>
+                <div class="wallet-content">
+                  <div class="balance text-center">
+                    <h4 class="text-lg font-semibold mb-2">No Orders</h4>
+                    {% if walletobj %}
+                    <div class="text-2xl text-success">
+                      Rs.{{walletobj.amount}}/-
+                    </div>
+                    {% else %}
+                    <div class="text-2xl text-danger">
+                     
+                    </div>
+                    {% endif %}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <hr>
+          <br><br><br><br>
+          
+        
+        {% endif %}
 
         {% comment %} <div class="row mt-5 ml-5">
           Top Product with Most number Of Orders - <span class="text-success font-weight-bold">{{top_product}}</span>
@@ -245,6 +276,7 @@
         <div class="row  ml-5">
           <div class="col-md-12">
             <div class="row mt-5">
+              {% if top_count %}
               <div class="col-md-6">
                 
                 Top Product with Most number Of Orders - <span class="text-success font-weight-bold">{{top_product}}</span>
@@ -253,6 +285,9 @@
 
                 <br><br><br><br><br><br><br><br>
               </div>
+         
+              {% endif %}
+
                 {% if top_returned_product %}
               <div class="col-md-6" >
                   Most Returned Product- <span class="text-success font-weight-bold">{{top_returned_product}}</span>

@@ -51,7 +51,7 @@ def index(request):
             orderobjs=Orders.objects.all()
             top_returned_product=None
             top_product=None
-
+            top_count=None
             orderdict={}
             for item in orderobjs:
                 if item.product.name not in orderdict:
