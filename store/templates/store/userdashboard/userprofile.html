@@ -255,6 +255,65 @@
           </div>
 
 
+          {% comment %} Add address Modal {% endcomment %}
+          <div class="modal mt-5" id="addaddress_modal" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+              <div class="modal-content mt-5">
+                <div class="modal-header">
+                  <h5 class="modal-title">Add Address</h5>
+                  <button type="button" class="closeit close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <!-- Address form -->
+                  
+                 
+                    <div class="form-group">
+                      <label for="housename">House Name:</label>
+                      <input type="text" class="form-control" id="housename" name="housename" placeholder="Enter house name" Required>
+                      <span class="text-danger" id="error_housename"></span>
+                    </div>
+                    <div class="form-group">
+                      <label for="country">Country:</label>
+                      <input type="text" class="form-control" id="countryname" name="countryname" placeholder="Enter country" Required>
+                      <span class="text-danger" id="error_countryname"></span>
+                    </div>
+                    <div class="form-group">
+                      <label for="state">State:</label>
+                      <input type="text" class="form-control" id="statename" name="statename" placeholder="Enter state" Required>
+                      <span class="text-danger" id="error_statename"></span>
+                    </div>
+                    <div class="form-group">
+                      <label for="district">District:</label>
+                      <input type="text" class="form-control" id="districtname" name="districtname" placeholder="Enter district" Required>
+                      <span class="text-danger" id="error_districtname"></span>
+                    </div>
+                    <div class="form-group">
+                      <label for="locality">Locality:</label>
+                      <input type="text" class="form-control" id="localityname" name="localityname" placeholder="Enter locality" Required>
+                      <span class="text-danger" id="error_localityname"></span>
+                    </div>
+                    <div class="form-group">
+                      <label for="pincode">Pincode:</label>
+                      <input type="text" class="form-control" id="pincodename" name="pincodename" placeholder="Enter pincode" Required>
+                      <span class="text-danger" id="error_pincodename"></span>
+                    </div>
+                    <div class="modal-footer">
+                      <button  class="btn btn-danger closeit" id="">Close</button>
+                    <button  class="flex-c-m stext-101 cl0 size-103 bg1 bor1 hov-btn2 p-lr-15 trans-04" id="submitaddress">Save Address</button>
+
+                    </div>
+            
+                    
+                    
+                 
+                </div>
+              </div>
+            </div>
+          </div>
+
+
 
 
 
@@ -386,6 +445,8 @@
 
     
                 </div>
+                <button style="margin-left:190px;" id="addaddress" class="flex-c-m stext-101 cl0 btn bg1  hov-btn2 p-lr-15 trans-04  mt-5 text-center"  >&#43; Add New Address </button>
+
                 {% comment %} <button class="btn btn-warning mt-3"  data-bs-toggle="modal" data-bs-target="#editaddress-{{forloop.counter}}" > Edit Address</button> {% endcomment %}
         </div>
     </div>
@@ -477,6 +538,28 @@
         </div>
         <div class="modal-body p-5">
           <p > <h5 style="color:green;"> Amount is added to your wallet &#x2713; </h5></p>
+        </div>
+        {% comment %} <div class="modal-footer">
+          <button type="button" class="btn btn-secondary closeit" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-danger closeit" data-dismiss="modal" id="confirmcancel">Cancel Order</button>
+        </div> {% endcomment %}
+      </div>
+    </div>
+  </div>
+
+
+  <div style="margin-top:100px;" class="modal fade" id="addressconfirmmodal" tabindex="-1" role="dialog" aria-labelledby="cancelModalLabel" aria-hidden="true">
+ 
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="cancelModalLabel">Address Added</h5>
+          
+            {% comment %} <span aria-hidden="true">&times;</span> {% endcomment %}
+          </button>
+        </div>
+        <div class="modal-body p-5">
+          <p > <h5 style="color:green;"> New address is addded &#x2713; </h5></p>
         </div>
         {% comment %} <div class="modal-footer">
           <button type="button" class="btn btn-secondary closeit" data-dismiss="modal">Close</button>
@@ -585,6 +668,145 @@
 
 
                });
+             </script>
+
+             <script>
+              $("#addaddress").click(function(){
+                $("#addaddress_modal").modal('show');
+                $(".closeit").click(function(){
+                  $("#addaddress_modal").modal("hide");
+                })
+                $("#submitaddress").click(function(){
+                  
+                  $("#error_housename").html("")
+                  $("#error_countryname").html("")
+                  $("#error_statename").html("")
+                  $("#error_districtname").html("")
+                  $("#error_localityname").html("")
+                  $("#error_pincodename").html("")
+                  var house = $("#housename").val();
+                  var country = $("#countryname").val();
+                  var state = $("#statename").val();
+                  var district = $("#districtname").val();
+                  var locality = $("#localityname").val();
+                  var pincode = $("#pincodename").val();
+                  var error={}
+                  if (house=="") {
+
+                    $("#error_housename").html("House name can't be empty");
+                  }
+                  else if (house.length < 3){
+          
+                    $("#error_housename").html("House name should contain minimum three characters")
+                  }
+                  else if (country=="") {
+
+                    $("#error_countryname").html("Country name can't be empty");
+                  }
+                  else if (!/^[a-zA-Z]+$/.test(country)) {
+
+                    $("#error_countryname").html("Country name can't have numbers");
+                  }
+                  else if (country.length < 3) {
+              
+                    $("#error_countryname").html("Country name should contain minimum three characters")
+                  }
+                  else if (state=="") {
+
+                    $("#error_statename").html("State name can't be empty");
+                  }
+                  else if (!/^[a-zA-Z]+$/.test(state)) {
+
+                    $("#error_statename").html("State name can't have numbers");
+                  }
+                  else if (state.length < 3) {
+      
+                    $("#error_statename").html("State name should contain minimum three characters")
+                  }
+                  else if (district=="") {
+
+                    $("#error_districtname").html("District name can't be empty");
+                  }
+                  else if (!/^[a-zA-Z]+$/.test(district)) {
+
+                    $("#error_districtname").html("District name can't have numbers");
+                  }
+               
+                  else if (district.length < 3) {
+                  
+                    $("#error_districtname").html("District name should contain minimum three characters")
+                  }
+                  else if (locality=="") {
+
+                    $("#error_localityname").html("Locality name can't be empty");
+                  }
+                  else if (!/^[a-zA-Z]+$/.test(locality)) {
+
+                    $("#error_localityname").html("Locality name can't have numbers");
+                  }
+                  else if (locality.length < 3) {
+                  
+                    $("#error_localityname").html("Locality name should contain minimum three characters")
+                  }
+                  else if (pincode=="") {
+
+                    $("#error_pincodename").html("Pincode name can't be empty");
+                  }
+                  else if (isNaN(pincode) || pincode.length !== 6) {
+                    $("#error_pincodename").html("Invalid Pincode")
+                  }
+                  else{
+                   
+                    $.ajax({
+                      url:"/addaddress/",
+                      type:"GET",
+                      data:{
+                        house:house,
+                        country:country,
+                        state:state,
+                        district:district,
+                        locality:locality,
+                        pincode:pincode
+                      },
+                      success:function(response){
+                        $("#addaddress_modal").modal('hide');
+                      
+                        $("#addressconfirmmodal").modal('show');
+                            setTimeout(function() {
+                              $("#addressconfirmmodal").modal('hide');
+                              window.location.href="/userprofile/";
+                            }, 1800);
+                          
+                        
+                        
+                      },
+                      error: function(xhr, errmsg, err) {
+                       
+                        console.log(xhr.status + ": " + xhr.responseText);
+                      }
+      
+
+                    })
+
+                  }
+                 
+                   
+                      
+  
+  
+                   
+
+
+
+
+             
+                  
+                })
+          
+
+
+
+              })
              </script>
 
 

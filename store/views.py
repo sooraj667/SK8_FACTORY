@@ -1966,3 +1966,16 @@ def wallet(request):
     no_of_wishlist_items=wishlistobjs.count()
     context={"walletobj":walletobj,"user":user,"no_of_wishlist_items":no_of_wishlist_items,"no_of_cart_items":no_of_cart_items,"totalsum":subtotal}
     return render (request,"store/userdashboard/wallet.html",context)
+
+def addaddress(request):
+    print("ViewEthi")
+    housename=request.GET["house"]
+    countryname= request.GET["country"]
+    statename=request.GET["state"]
+    districtname=request.GET["district"]
+    localityname=request.GET["locality"]
+    pincodename=request.GET["pincode"]
+    cust=Customers.objects.get(username=request.session["username"])
+    addressobj=Address(customer=cust,country=countryname,state=statename,district=districtname,locality=localityname,house=housename,pincode=pincodename)
+    addressobj.save()
+    return JsonResponse({"success":"success"})
