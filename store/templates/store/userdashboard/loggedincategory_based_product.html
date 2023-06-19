@@ -14,9 +14,15 @@
 						<!-- Block2 -->
 						<div class="block2">
 							<div class="block2-pic hov-img0">
+
+								<a href={% url 'preview' item.id %}>
+									<img  src="{{ item.image1.url }}" alt="{{ item.name }} image" class="image-zoom-container">
+
+
+								</a>
 								
 								
-									  <img src="{{ item.image1.url }}" alt="{{ item.name }} image" class="image-zoom-container">
+									 
 								
 	
 		
@@ -37,7 +43,7 @@
 										Buy it
 									</a> {% endcomment %}
 									
-									<a href={% url 'preview' item.id %}> <button class="btn btn-info">Preview</button> </a>
+									
 									{% comment %} <a href={% url 'addtocart' item.id %}> Add to Cart</a> {% endcomment %}
 									{% comment %} <button type="button" class="addit" data-toggle="modal" data-target="#myModal" data-category-id="{{ item.id }}">Add to Cart</button> {% endcomment %}
 	
@@ -70,14 +76,39 @@
 								</div>
 						
 								<div class="block2-txt-child2 flex-r p-t-3">
-									<a href="#" class="btn-addwish-b2 dis-block pos-relative js-addwish-b2">
-										<img class="icon-heart1 dis-block trans-04" src="{% static 'store/images/icons/icon-heart-01.png' %}" alt="ICON">
-										<img class="icon-heart2 dis-block trans-04 ab-t-l" src="images/icons/icon-heart-02.png" alt="ICON">
-									</a>
+								
+									<button class="wishlist btn btn-danger" data-product-id="{{item.id}}">
+										
+										<div class="row">
+											<div class="col-md-4">
+												<img class="icon-heart1 dis-block trans-04" src="{% static 'store/images/icons/icon-heart-01.png' %}" alt="">
+											</div>
+											{% comment %} <div class="col-md-8">
+												WishList
+											</div> {% endcomment %}
+										</div>
+									</button>
+	
+	
+	
+	
+									
+	
+									{% comment %} <a  href="" class="wishlist btn-addwish-b2 dis-block pos-relative "  data-product-id={{item.id}}>
+										<img class=" icon-heart1 dis-block trans-04" src="{% static 'store/images/icons/icon-heart-01.png' %}" alt=""  >
+										<img class=" icon-heart2 dis-block trans-04 ab-t-l" src="{% static 'store/images/icons/icon-heart-02.png' %}" alt=""  >
+									</a> {% endcomment %}
 								</div>
+								
+								
 							</div>
+						
+							
+
 						</div>
+						
 					</div>
+					
 					
 					
 		
@@ -88,6 +119,70 @@
 
 
         
+
+
+<script>
+	$(document).ready(function() {
+		$(".wishlist").click(function() {
+			var productid=$(this).data("product-id");
+			
+			// Get the selected offer value
+		  
+		   //$("#wishlistModal").modal("show");
+	
+		   //$("#confirm").click(function(){
+			 $.ajax({
+			   url: "/addtowishlist/", // Replace with the URL of your Django view
+			   type: "GET",
+			   data: { productid: productid,
+					   
+					   
+				   },
+			   success: function(response) {
+				if (response.alreadypresent){
+					$("#wishlistmsg"+productid).html(response.alreadypresent).addClass("text-danger");
+
+				}
+				else if(response.added){
+					$("#wishlistmsg"+productid).html(response.added +" &#x2713;").addClass("text-success");
+
+				}
+				
+				//$("#wishlistModal").modal("hide");
+				 //$("#offer" + orderid).remove();
+				 // Update the offer price on the page
+				 //var content = response.content;  // Assuming the response contains the updated offer price
+				 // Update the appropriate HTML element with the new offer price
+				 //$("#orderitem" + orderid).text("Cancelled").addClass("text-danger");;
+				 
+			   },
+			   error: function(xhr, errmsg, err) {
+				 // Handle any errors that occur during the AJAX request
+				 console.log(xhr.status + ": " + xhr.responseText);
+			   }
+			 });
+
+
+
+
+
+
+
+
+
+		   //})
+		  // Send an AJAX request to update the offer price
+	  
+		});
+
+		//$(".closeit").click(function(){
+		// $("#cancelModal").modal("hide");
+		//})
+
+
+
+	  });
+</script>
 
 
 

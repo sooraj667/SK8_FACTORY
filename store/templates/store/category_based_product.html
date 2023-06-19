@@ -14,9 +14,15 @@
 						<!-- Block2 -->
 						<div class="block2">
 							<div class="block2-pic hov-img0">
+
+								<a href={% url 'guestpreview' item.id %}>
+									<img  src="{{ item.image1.url }}" alt="{{ item.name }} image" class="image-zoom-container">
+
+
+								</a>
 								
 								
-									  <img src="{{ item.image1.url }}" alt="{{ item.name }} image" class="image-zoom-container">
+									 
 								
 	
 		
@@ -37,7 +43,7 @@
 										Buy it
 									</a> {% endcomment %}
 									
-									<a href={% url 'preview' item.id %}> <button class="btn btn-info">Preview</button> </a>
+									
 									{% comment %} <a href={% url 'addtocart' item.id %}> Add to Cart</a> {% endcomment %}
 									{% comment %} <button type="button" class="addit" data-toggle="modal" data-target="#myModal" data-category-id="{{ item.id }}">Add to Cart</button> {% endcomment %}
 	
@@ -70,12 +76,35 @@
 								</div>
 						
 								<div class="block2-txt-child2 flex-r p-t-3">
-									<a href="#" class="btn-addwish-b2 dis-block pos-relative js-addwish-b2">
-										<img class="icon-heart1 dis-block trans-04" src="{% static 'store/images/icons/icon-heart-01.png' %}" alt="ICON">
-										<img class="icon-heart2 dis-block trans-04 ab-t-l" src="images/icons/icon-heart-02.png" alt="ICON">
-									</a>
+								
+									<button class="wishlist btn btn-danger" data-product-id="{{item.id}}">
+										
+										<div class="row">
+											<div class="col-md-4">
+												<img class="icon-heart1 dis-block trans-04" src="{% static 'store/images/icons/icon-heart-01.png' %}" alt="">
+											</div>
+											{% comment %} <div class="col-md-8">
+												WishList
+											</div> {% endcomment %}
+										</div>
+									</button>
+	
+	
+	
+	
+									
+	
+									{% comment %} <a  href="" class="wishlist btn-addwish-b2 dis-block pos-relative "  data-product-id={{item.id}}>
+										<img class=" icon-heart1 dis-block trans-04" src="{% static 'store/images/icons/icon-heart-01.png' %}" alt=""  >
+										<img class=" icon-heart2 dis-block trans-04 ab-t-l" src="{% static 'store/images/icons/icon-heart-02.png' %}" alt=""  >
+									</a> {% endcomment %}
 								</div>
+								
+								
 							</div>
+						
+							
+
 						</div>
 					</div>
 					

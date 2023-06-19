@@ -9,73 +9,90 @@
 
 <div class="container-fluid">
     <div class="row">
-        <div class="col-md-6">
-            <div class="card">
-				<div style="background-color:#717fe0;" class="card-header flex-c-m p-lr-10 trans-04 signupdesign  text-light">
-					<h4>Add Address</h4>
-				</div>
-				<div class="card-body ">
-					<form method="POST"> {% csrf_token %}
-						<div class="form-group">
-							<label style="color:black;"  class=" " for="email">Country</label>
-							<input type="text" value="{{country}}" class="form-control border-dark" id="email" placeholder="Enter Country" name="country" Required>
-							{% if error and "country" in error %}
-							<span style="color: red">{{error.country}}</span>
-							{% endif %}
-						</div>
-						<div class="form-group">
-							<label style="color:black;" for="email">State</label>
-							<input type="text" value="{{state}}" class="form-control border-dark" id="email" placeholder="Enter State" name="state" Required>
-							{% if error and "state" in error %}
-							<span style="color: red">{{error.state}}</span>
-							{% endif %}
-							
-						<div class="form-group mt-3">
-							<label style="color:black;" for="email">District</label>
-							<input type="text" value="{{district}}" class="form-control border-dark" id="email" placeholder="Enter District" name="district" Required>
-							{% if error and "district" in error %}
-							<span style="color: red">{{error.district}}</span>
-							{% endif %}
-						</div>
-						<div class="form-group">
-							<label style="color:black;" for="email">Locality</label>
-							<input type="text" value="{{locality}}" class="form-control border-dark" id="email" placeholder="Enter Locality" name="locality" Required>
-							{% if error and "locality" in error %}
-							<span style="color: red">{{error.locality}}</span>
-							{% endif %}
-						</div>
-						<div class="form-group">
-							<label style="color:black;" for="password">House</label>
-							<input type="text" value="{{house}}" class="form-control border-dark" id="password" placeholder="Enter House" name="house" Required>
-							{% if error and "house" in error %}
-							<span style="color: red">{{error.house}}</span>
-							{% endif %}
-						</div>
-						<div class="form-group">
-							<label style="color:black;" for="password">Pincode</label>
-							<input type="number" value="{{pincode}}" class="form-control border-dark" id="password" placeholder="Enter Pincode" name="pincode" Required>
-							{% if error and "pincode" in error %}
-							<span style="color: red">{{error.pincode}}</span>
-							{% endif %}
-						</div>
-						<div class="justify-content-center ">
-							<button type="submit" name="addressform" class="flex-c-m stext-101 cl5 size-103 bg2 bor1 hov-btn1 p-lr-15 trans-04 ">Add Address</button>
-
-						</div>
-					
+        <div class="col-md-6 ">
+			<section class="section-slide">
+				<div class="wrap-slick1">
+					<div class="slick1">
 						
-						<div >
-							<h5 class=" text-success mt-3">
-								{{context}} 
-							</h5>
-						  
+		
+						<div class="item-slick1" style=		"background-image: url({% static 'store/images/checktrend.jpg'  %});">
+							<div class="container h-full">
+								<div class="flex-col-l-m h-full p-t-100 p-b-30 respon5">
+									<div class="layer-slick1 animated visible-false" data-appear="fadeInDown" data-delay="0">
+										<span style="color:#f9ffe3;" class="ltext-101 cl2 respon2">
+											Skate Boards
+										</span>
+									</div>
+										
+									<div class="layer-slick1 animated visible-false" data-appear="fadeInUp" data-delay="800">
+										<h5 style="font-size:40px;color:#f9ffe3 ;" class="ltext-201 cl2 p-t-19 p-b-43 respon1 ">
+											SLICK DESIGNS!
+										</h5>
+									</div>
+										
+									<div class="layer-slick1 animated visible-false" data-appear="zoomIn" data-delay="1600">
+										<a href={% url 'loggedinproduct' %} class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04">
+											Shop Now
+										</a>
+									</div>
+								</div>
+							</div>
+						</div>
 					</div>
-						
-
-					</form>
-				
 				</div>
-			</div>
+			</section>
+			{% comment %} <div class="row">
+				<img style="width:603px;height:300px" class="img-fluid ml-3 mt-3" src="{% static 'store/images/check.jpg'  %}" alt="">
+			</div> {% endcomment %}
+			{% comment %} <div class="row">
+				<img style="object-fit: cover; width: 603px; height: 300px;" class="img-fluid ml-3 mt-3" src="{% static 'store/images/sbpic1.jpg' %}" alt="">
+			  </div> {% endcomment %}
+			{% comment %} <div class="mt-3" style="object-fit: cover; width: 603px; height: 500px;background-image: url({% static 'store/images/check.jpg'  %});">
+				<div style="color:black;">
+					<h4 class="m-5">
+						HEY
+					</h4>
+					
+
+				</div>
+			
+
+			</div> {% endcomment %}
+
+			<section class="section-slide mt-2">
+				<div class="wrap-slick1">
+					<div class="slick1">
+						
+		
+						<div class="item-slick1" style=		"background-image: url({% static 'store/images/uns.avif'  %});">
+							<div class="container h-full">
+								<div class="flex-col-l-m h-full p-t-100 p-b-30 respon5">
+									<div class="layer-slick1 animated visible-false" data-appear="fadeInDown" data-delay="0">
+										<span style="color:#f9ffe3;" class="ltext-101 cl2 respon2">
+											UNIQUE
+										</span>
+									</div>
+										
+									<div class="layer-slick1 animated visible-false" data-appear="fadeInUp" data-delay="800">
+										<h5 style="font-size:40px;color:#f9ffe3 ;" class="ltext-201 cl2 p-t-19 p-b-43 respon1 ">
+											Urban Surfers!
+										</h5>
+									</div>
+										
+									<div class="layer-slick1 animated visible-false" data-appear="zoomIn" data-delay="1600">
+										<a href={% url 'loggedinproduct' %} class="flex-c-m stext-101 cl0 size-101 bg1 bor1 hov-btn1 p-lr-15 trans-04">
+											Shop Now
+										</a>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</section>
+			  
+		</div>
+            
 
 
 
@@ -104,15 +121,15 @@
 
 			</select> {% endcomment %}
 
-        </div>
+    
 
 
 		
 
 
 
-    </div>
-	<div class="col-md-6">
+ 
+	<div class="col-md-6 ">
 		<div class="ml-5">
 			<span class="block1-name ltext-102 trans-04 p-b-8">
 				Checkout
@@ -211,6 +228,7 @@
 	
 				</div>
 				
+				
 				<div class="col-md-8">
 	
 					<form class="card-body" method="POST" action="{% url 'cashondelivery' %}">
@@ -227,6 +245,9 @@
 
 			
 
+			</div>
+			<div class="row">
+				<p style="margin-left:390px;cursor:pointer;" id="addaddress" class="flex-c-m stext-101 cl0 btn bg1  hov-btn2 p-lr-15 trans-04  mt-5 text-center"  >&#43; Add New Address </p>
 			</div>
 			<hr>
 			<div class="row mt-5">
@@ -313,8 +334,92 @@
 		
 
 	</div>
+	<hr>
 </div>
 <br>
+
+
+
+
+{% comment %} Add address Modal {% endcomment %}
+<div class="modal mt-5" id="addaddress_modal" tabindex="-1" role="dialog">
+	<div class="modal-dialog" role="document">
+	  <div class="modal-content mt-5">
+		<div class="modal-header">
+		  <h5 class="modal-title">Add Address</h5>
+		  <button type="button" class="closeit close" data-dismiss="modal" aria-label="Close">
+			<span aria-hidden="true">&times;</span>
+		  </button>
+		</div>
+		<div class="modal-body">
+		  <!-- Address form -->
+		  
+		 
+			<div class="form-group">
+			  <label for="housename">House Name:</label>
+			  <input type="text" class="form-control" id="housename" name="housename" placeholder="Enter house name" Required>
+			  <span class="text-danger" id="error_housename"></span>
+			</div>
+			<div class="form-group">
+			  <label for="country">Country:</label>
+			  <input type="text" class="form-control" id="countryname" name="countryname" placeholder="Enter country" Required>
+			  <span class="text-danger" id="error_countryname"></span>
+			</div>
+			<div class="form-group">
+			  <label for="state">State:</label>
+			  <input type="text" class="form-control" id="statename" name="statename" placeholder="Enter state" Required>
+			  <span class="text-danger" id="error_statename"></span>
+			</div>
+			<div class="form-group">
+			  <label for="district">District:</label>
+			  <input type="text" class="form-control" id="districtname" name="districtname" placeholder="Enter district" Required>
+			  <span class="text-danger" id="error_districtname"></span>
+			</div>
+			<div class="form-group">
+			  <label for="locality">Locality:</label>
+			  <input type="text" class="form-control" id="localityname" name="localityname" placeholder="Enter locality" Required>
+			  <span class="text-danger" id="error_localityname"></span>
+			</div>
+			<div class="form-group">
+			  <label for="pincode">Pincode:</label>
+			  <input type="text" class="form-control" id="pincodename" name="pincodename" placeholder="Enter pincode" Required>
+			  <span class="text-danger" id="error_pincodename"></span>
+			</div>
+			<div class="modal-footer">
+			  <button  class="btn btn-danger closeit" id="">Close</button>
+			<button  class="flex-c-m stext-101 cl0 size-103 bg1 bor1 hov-btn2 p-lr-15 trans-04" id="submitaddress">Save Address</button>
+
+			</div>
+	
+			
+			
+		 
+		</div>
+	  </div>
+	</div>
+  </div>
+
+
+  <div style="margin-top:100px;" class="modal fade" id="addressconfirmmodal" tabindex="-1" role="dialog" aria-labelledby="cancelModalLabel" aria-hidden="true">
+ 
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="cancelModalLabel">Address Added</h5>
+          
+            {% comment %} <span aria-hidden="true">&times;</span> {% endcomment %}
+          </button>
+        </div>
+        <div class="modal-body p-5">
+          <p > <h5 style="color:green;"> New address is addded &#x2713; </h5></p>
+        </div>
+        {% comment %} <div class="modal-footer">
+          <button type="button" class="btn btn-secondary closeit" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-danger closeit" data-dismiss="modal" id="confirmcancel">Cancel Order</button>
+        </div> {% endcomment %}
+      </div>
+    </div>
+  </div>
 
 
 
@@ -372,6 +477,145 @@
 
 
 </script>
+
+<script>
+	$("#addaddress").click(function(){
+	  $("#addaddress_modal").modal('show');
+	  $(".closeit").click(function(){
+		$("#addaddress_modal").modal("hide");
+	  })
+	  $("#submitaddress").click(function(){
+		
+		$("#error_housename").html("")
+		$("#error_countryname").html("")
+		$("#error_statename").html("")
+		$("#error_districtname").html("")
+		$("#error_localityname").html("")
+		$("#error_pincodename").html("")
+		var house = $("#housename").val();
+		var country = $("#countryname").val();
+		var state = $("#statename").val();
+		var district = $("#districtname").val();
+		var locality = $("#localityname").val();
+		var pincode = $("#pincodename").val();
+		var error={}
+		if (house=="") {
+
+		  $("#error_housename").html("House name can't be empty");
+		}
+		else if (house.length < 3){
+
+		  $("#error_housename").html("House name should contain minimum three characters")
+		}
+		else if (country=="") {
+
+		  $("#error_countryname").html("Country name can't be empty");
+		}
+		else if (!/^[a-zA-Z]+$/.test(country)) {
+
+		  $("#error_countryname").html("Country name can't have numbers");
+		}
+		else if (country.length < 3) {
+	
+		  $("#error_countryname").html("Country name should contain minimum three characters")
+		}
+		else if (state=="") {
+
+		  $("#error_statename").html("State name can't be empty");
+		}
+		else if (!/^[a-zA-Z]+$/.test(state)) {
+
+		  $("#error_statename").html("State name can't have numbers");
+		}
+		else if (state.length < 3) {
+
+		  $("#error_statename").html("State name should contain minimum three characters")
+		}
+		else if (district=="") {
+
+		  $("#error_districtname").html("District name can't be empty");
+		}
+		else if (!/^[a-zA-Z]+$/.test(district)) {
+
+		  $("#error_districtname").html("District name can't have numbers");
+		}
+	 
+		else if (district.length < 3) {
+		
+		  $("#error_districtname").html("District name should contain minimum three characters")
+		}
+		else if (locality=="") {
+
+		  $("#error_localityname").html("Locality name can't be empty");
+		}
+		else if (!/^[a-zA-Z]+$/.test(locality)) {
+
+		  $("#error_localityname").html("Locality name can't have numbers");
+		}
+		else if (locality.length < 3) {
+		
+		  $("#error_localityname").html("Locality name should contain minimum three characters")
+		}
+		else if (pincode=="") {
+
+		  $("#error_pincodename").html("Pincode name can't be empty");
+		}
+		else if (isNaN(pincode) || pincode.length !== 6) {
+		  $("#error_pincodename").html("Invalid Pincode")
+		}
+		else{
+		 
+		  $.ajax({
+			url:"/addaddress/",
+			type:"GET",
+			data:{
+			  house:house,
+			  country:country,
+			  state:state,
+			  district:district,
+			  locality:locality,
+			  pincode:pincode
+			},
+			success:function(response){
+			  $("#addaddress_modal").modal('hide');
+			
+			  $("#addressconfirmmodal").modal('show');
+				  setTimeout(function() {
+					$("#addressconfirmmodal").modal('hide');
+					window.location.href="/checkout/";
+				  }, 1800);
+				
+			  
+			  
+			},
+			error: function(xhr, errmsg, err) {
+			 
+			  console.log(xhr.status + ": " + xhr.responseText);
+			}
+
+
+		  })
+
+		}
+	   
+		 
+			
+
+
+		 
+
+
+
+
+   
+		
+	  })
+
+
+
+
+	})
+   </script>
 
 
 {% comment %} <script>

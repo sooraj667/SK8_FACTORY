@@ -1355,13 +1355,19 @@ def cashondelivery(request):
             return redirect(orderplaced)
         
         elif "walletpayment" in request.POST:
+            
             username=request.session["username"]
             user=Customers.objects.get(username=username)
             cartobjs=Cart.objects.filter(user=user)
             totalsum=0
             for item in cartobjs:
                 totalsum+=item.total
-            walletobj=Wallet.objects.get(user=user)
+            try:
+                walletobj=Wallet.objects.get(user=user)
+            except:
+                messages.error(request,f"Can't Place Order! No amount in your wallet")
+                return redirect(checkout)
+
             if walletobj.amount<totalsum:
                 messages.error(request,f"Can't place order! Wallet balance is Rs. {walletobj.amount}")
                 return redirect(checkout)
