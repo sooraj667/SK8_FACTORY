@@ -24,6 +24,7 @@ urlpatterns = [
     path("edituseraddress/<int:someid>",views.edituseraddress,name="edituseraddress"),
     path("deliveredproducts/",views.deliveredproducts,name="deliveredproducts"),
 
+    path("orderdetails/<int:someid>",views.orderdetails,name="orderdetails"),
 
 
 

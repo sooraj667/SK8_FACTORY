@@ -60,6 +60,22 @@ class Cart(models.Model):
     quantity = models.PositiveIntegerField()
     total = models.DecimalField(max_digits=10, decimal_places=2)
 
+class Coupon(models.Model):
+    code=models.CharField(max_length=200,unique=True)
+    discount_percentage=models.PositiveIntegerField()
+    minprice=models.PositiveIntegerField()
+    maxprice=models.PositiveIntegerField()
+    isavailable=models.BooleanField(default=True)
+
+class Ordernumber(models.Model):
+    slno=models.PositiveIntegerField()
+    user=models.ForeignKey(Customers,on_delete=models.CASCADE)
+    totalamount=models.DecimalField(max_digits=10, decimal_places=2)
+    coupon=models.ForeignKey(Coupon,on_delete=models.CASCADE,blank=True,default=None,null=True)
+    
+
+    def __str__(self):
+        return str(self.slno)
 
 class Orders(models.Model):
     user=models.ForeignKey(Customers,on_delete=models.CASCADE)
@@ -70,15 +86,11 @@ class Orders(models.Model):
     ordertype=models.CharField(max_length=200)
     quantity=models.PositiveIntegerField()
     finalprice=models.DecimalField(max_digits=10, decimal_places=2)
+    ordernumber=models.ForeignKey(Ordernumber,on_delete=models.CASCADE)
     
 
 
-class Coupon(models.Model):
-    code=models.CharField(max_length=200,unique=True)
-    discount_percentage=models.PositiveIntegerField()
-    minprice=models.PositiveIntegerField()
-    maxprice=models.PositiveIntegerField()
-    isavailable=models.BooleanField(default=True)
+
 
 
 

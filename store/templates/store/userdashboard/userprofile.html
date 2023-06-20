@@ -322,68 +322,55 @@
         <div class="col-md-8 border border-1">
 
             <div class="container">
+                
                 <div class="row">
-                    <span class="block1-name ltext-102 trans-04 p-b-8 mt-3">
-                        Your Orders
-                    </span>
-                    <div class="row mt-5"></div>
-                    <div class="row mt-5"></div>
-                </div>
-                <div class="row">
-                    <table class="table table-hover">
-                        <thead>
-                          <tr>
-                            <th>Product</th>
-                            <th>Price</th>
-                            <th>Quantity</th>
-                            <th>Date</th>
-                            <th>Status Of Order</th>
-                            <th>Payment Type</th>
-                            <th>Image</th>
-                            <th>Cancel</th>
-                            
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {% for item in orderobjs %}
-                          {% if item.orderstatus != "ReturnRequested" %}
-                          <tr>
-                            <td>{{ item.product.name }}</td>
-                            <td>{{ item.finalprice }}</td>
-                            <td>{{ item.quantity }}</td>
-                            <td>{{ item.orderdate }}</td>
-                            <td>{{ item.orderstatus }}</td>
-                            <td>{{ item.ordertype }}</td>
-                            <td><img class="img-fluid img-thumbnail" src="{{ item.product.image1.url }}" alt="" width="50" height="50"></td>
+                  <span class="block1-name ltext-102 trans-04 p-b-8 mt-3">
+                      Your Orders
+                  </span>
+                  <div class="row mt-5"></div>
+                  <div class="row mt-5"></div>
+              </div>
 
-                            {% if item.orderstatus != 'Cancelled' %}
-                            <td id="orderitem{{item.id}}"><button  type="button" class="btn delete-btn btn-danger" data-category-id="{{ item.id }}">Cancel</button>    </td>
-                            
+              <hr>
+              <div class="row">
+                  <table class="table table-hover">
+                      <thead>
+                        <tr>
+                          <th>Sl NO</th>
+                          <th>Total Price</th>
+                          <th>Coupon</th>
+                          <th></th>
+
+                      
+                          
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {% for item in ordernumberobjs %}
+                 
+                       
+
+                          <tr onclick="window.location.href='{% url 'orderdetails' item.id %}'">
+                            <td>{{ item.slno }}</td>
+                            <td>{{ item.totalamount }}</td>
+                            {% if item.coupon.code %}
+                            <td>{{ item.coupon.code }} Applied &#x2713; </td>
                             {% else %}
-
-                            <td><span class="text-danger">Order <div>Cancelled</div> </span></td>
-
-                            
+                            <td>No Coupon Applied</td>  
                             {% endif %}
-
-                            {% comment %} <td>
-                              <a href="{% url 'admin_editproducts' item.id %}">
-                                <button class="btn edit-btn btn-warning">Edit</button>
-                              </a>
-                            </td>
-                            <td>
-                              <a href="{% url 'admin_deleteproducts' item.id %}">
-                                <button class="btn delete-btn btn-danger">Delete</button>
-                              </a>
-                            </td> {% endcomment %}
+                            <td><a class="btn btn-success" href={% url 'orderdetails'  item.id  %}>View details</a></td>
                           </tr>
-                          {% endif %}
-                          {% endfor %}
-                        </tbody>
-                      </table>
-                    
-            
-                </div>
+                       
+                       
+                        
+                          
+                          
+                        {% endfor %}
+                      </tbody>
+                    </table>
+                  
+          
+              </div>
                
                 
             </div>

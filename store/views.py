@@ -1272,6 +1272,7 @@ def applycouponajax(request):
         discounted_amount=total-((couponobj.discount_percentage/100)*total)
 
         message_success=f"{couponid} - Coupon applied"
+        request.session["coupon"]=couponobj.code
         return JsonResponse({"amount":discounted_amount,"message_success":message_success})
 
 def orderplaced(request):
@@ -1293,140 +1294,13 @@ def orderplaced(request):
 
 
     
+def orderdetails(request,someid):
+    orderobjs=Orders.objects.filter(ordernumber__id=someid)
+    context={"orderobjs":orderobjs}
+    return render(request,"store/userdashboard/orderdetails.html",context)
 
 
 
-def cashondelivery(request):
-    if request.method=="POST":
-        
-        if "cashondelivery" in request.POST:
-        
-
-            username=request.session["username"]
-            user=Customers.objects.get(username=username)
-            cartobjs=Cart.objects.filter(user=user)
-            
-            housename=request.POST.get("address")
-            for item in cartobjs:
-                userobj=item.user
-                pdtobj=item.product
-                quantityobj=item.quantity
-                try:
-                    addressobj=Address.objects.get(house=housename)
-                except:
-                    messages.error(request, "Address cannot be empty.")
-                    return redirect(checkout)
-                orderstatusobj="Ordered"
-                ordertypeobj="Cash On Delivery"   
-                orderdateobj=date.today() 
-                finalprice=item.total
-                orderdata=Orders(user=userobj,product=pdtobj,quantity=quantityobj,address=addressobj,orderstatus=orderstatusobj,orderdate=orderdateobj,ordertype=ordertypeobj,finalprice=finalprice)
-                orderdata.save()
-                finalprice=float(finalprice)
-                quantityobj=int(quantityobj)
-                orderdateobj=str(orderdateobj)
-                fulladdress=f"{addressobj.house}, {addressobj.locality},{addressobj.district},{addressobj.state},{addressobj.country},"
-                if "currentorder" not in request.session:
-                    request.session["currentorder"] = {}
-                    
-                request.session["currentorder"][item.product.name] = {
-                    "quantity": quantityobj,
-                    "address": fulladdress, 
-                    "orderdate": orderdateobj,
-                    "ordertype": ordertypeobj,
-                    "finalprice":finalprice,
-                }
-
-                
-
-
-                pdtobj.quantity=pdtobj.quantity-item.quantity
-                pdtobj.save()
-            cartobjs.delete()
-            totalsum=0
-            for item in cartobjs:
-                totalsum+=item.total
-            
-
-            no_of_cart_items=cartobjs.count()
-
-            
-
-            return redirect(orderplaced)
-        
-        elif "walletpayment" in request.POST:
-            
-            username=request.session["username"]
-            user=Customers.objects.get(username=username)
-            cartobjs=Cart.objects.filter(user=user)
-            totalsum=0
-            for item in cartobjs:
-                totalsum+=item.total
-            try:
-                walletobj=Wallet.objects.get(user=user)
-            except:
-                messages.error(request,f"Can't Place Order! No amount in your wallet")
-                return redirect(checkout)
-
-            if walletobj.amount<totalsum:
-                messages.error(request,f"Can't place order! Wallet balance is Rs. {walletobj.amount}")
-                return redirect(checkout)
-            else:
-                walletobj.amount-=totalsum
-                walletobj.save()
-            housename=request.POST.get("address")
-            for item in cartobjs:
-                userobj=item.user
-                pdtobj=item.product
-                quantityobj=item.quantity
-                try:
-                    addressobj=Address.objects.get(house=housename)
-                except:
-                    messages.error(request, "Address cannot be empty.")
-                    return redirect(checkout)
-                orderstatusobj="Ordered"
-                ordertypeobj="Wallet Payment"   
-                orderdateobj=date.today() 
-                finalprice=item.total
-                orderdata=Orders(user=userobj,product=pdtobj,quantity=quantityobj,address=addressobj,orderstatus=orderstatusobj,orderdate=orderdateobj,ordertype=ordertypeobj,finalprice=finalprice)
-                orderdata.save()
-                finalprice=float(finalprice)
-                quantityobj=int(quantityobj)
-                orderdateobj=str(orderdateobj)
-                fulladdress=f"{addressobj.house}, {addressobj.locality},{addressobj.district},{addressobj.state},{addressobj.country},"
-                if "currentorder" not in request.session:
-                    request.session["currentorder"] = {}
-                    
-                request.session["currentorder"][item.product.name] = {
-                    "quantity": quantityobj,
-                    "address": fulladdress, 
-                    "orderdate": orderdateobj,
-                    "ordertype": ordertypeobj,
-                    "finalprice":finalprice,
-                }
-
-                
-
-
-                pdtobj.quantity=pdtobj.quantity-item.quantity
-                pdtobj.save()
-            cartobjs.delete()
-            totalsum=0
-            for item in cartobjs:
-                totalsum+=item.total
-            
-
-            no_of_cart_items=cartobjs.count()
-
-            
-
-            return redirect(orderplaced)
-
-            
-        
-        
-        
-    return HttpResponse("Invalid request")
 
 
 # def addtocart(request,someid):
@@ -1592,8 +1466,8 @@ def userprofile(request):
 
     
 
-
-    context={"orderobjs":orderobjs,"username":username,"addressobjs":addressobjs,"username":username,"addressobjs":addressobjs,"customerobj":customerobj,"cartobjs":cartobjs,"totalsum":totalsum,"no_of_cart_items":no_of_cart_items,"no_of_wishlist_items":no_of_wishlist_items}
+    ordernumberobjs=Ordernumber.objects.filter(user=customerobj)
+    context={"ordernumberobjs":ordernumberobjs,"orderobjs":orderobjs,"username":username,"addressobjs":addressobjs,"username":username,"addressobjs":addressobjs,"customerobj":customerobj,"cartobjs":cartobjs,"totalsum":totalsum,"no_of_cart_items":no_of_cart_items,"no_of_wishlist_items":no_of_wishlist_items}
     return render(request,"store/userdashboard/userprofile.html",context)
 
 
@@ -1915,22 +1789,193 @@ def guestwishtocart(request):
     return JsonResponse({"messagge":"success"})
 
 
+
+
+def cashondelivery(request):
+    if request.method=="POST":
+        
+        if "cashondelivery" in request.POST:
+        
+            ordcount=Ordernumber.objects.all().count()
+            
+            
+            username=request.session["username"]
+            user=Customers.objects.get(username=username)
+            cartobjs=Cart.objects.filter(user=user)
+            totalsum=0
+            for item in cartobjs:
+                totalsum+=item.total
+            if "coupon" in request.session:
+                code=request.session["coupon"]
+                couponobj=Coupon.objects.get(code=code)
+                totalsum=totalsum-((Decimal(couponobj.discount_percentage/100))*totalsum)
+                del request.session["coupon"]
+                Ordernumber.objects.create(user=user,slno=ordcount+1,totalamount=totalsum,coupon=couponobj)
+            else:
+                Ordernumber.objects.create(user=user,slno=ordcount+1,totalamount=totalsum,coupon=None)
+            
+            housename=request.POST.get("address")
+            
+            for item in cartobjs:
+                userobj=item.user
+                pdtobj=item.product
+                quantityobj=item.quantity
+                try:
+                    addressobj=Address.objects.get(house=housename)
+                except:
+                    messages.error(request, "Address cannot be empty.")
+                    return redirect(checkout)
+                orderstatusobj="Ordered"
+                ordertypeobj="Cash On Delivery"   
+                orderdateobj=date.today() 
+                finalprice=item.total
+                ordernumberobj=Ordernumber.objects.get(slno=ordcount+1)
+                orderdata=Orders(user=userobj,product=pdtobj,quantity=quantityobj,address=addressobj,orderstatus=orderstatusobj,orderdate=orderdateobj,ordertype=ordertypeobj,finalprice=finalprice,ordernumber=ordernumberobj)
+                orderdata.save()
+                finalprice=float(finalprice)
+                quantityobj=int(quantityobj)
+                orderdateobj=str(orderdateobj)
+                fulladdress=f"{addressobj.house}, {addressobj.locality},{addressobj.district},{addressobj.state},{addressobj.country},"
+                if "currentorder" not in request.session:
+                    request.session["currentorder"] = {}
+                    
+                request.session["currentorder"][item.product.name] = {
+                    "quantity": quantityobj,
+                    "address": fulladdress, 
+                    "orderdate": orderdateobj,
+                    "ordertype": ordertypeobj,
+                    "finalprice":finalprice,
+                }
+
+                
+
+
+                pdtobj.quantity=pdtobj.quantity-item.quantity
+                pdtobj.save()
+            cartobjs.delete()
+            totalsum=0
+            for item in cartobjs:
+                totalsum+=item.total
+            
+
+            no_of_cart_items=cartobjs.count()
+
+            
+
+            return redirect(orderplaced)
+        
+        elif "walletpayment" in request.POST:
+            ordcount=Ordernumber.objects.all().count()
+            username=request.session["username"]
+            user=Customers.objects.get(username=username)
+            cartobjs=Cart.objects.filter(user=user)
+            totalsum=0
+            for item in cartobjs:
+                totalsum+=item.total
+            if "coupon" in request.session:
+                code=request.session["coupon"]
+                couponobj=Coupon.objects.get(code=code)
+                totalsum=totalsum-((Decimal(couponobj.discount_percentage/100))*totalsum)
+                del request.session["coupon"]
+            else:
+                couponobj=None
+            try:
+                walletobj=Wallet.objects.get(user=user)
+            except:
+                messages.error(request,f"Can't Place Order! No amount in your wallet")
+                return redirect(checkout)
+
+            if walletobj.amount<totalsum:
+                messages.error(request,f"Can't place order! Wallet balance is Rs. {walletobj.amount}")
+                return redirect(checkout)
+            else:
+                walletobj.amount-=totalsum
+                walletobj.save()
+                Ordernumber.objects.create(user=user,slno=ordcount+1,totalamount=totalsum,coupon=couponobj)
+            housename=request.POST.get("address")
+            for item in cartobjs:
+                userobj=item.user
+                pdtobj=item.product
+                quantityobj=item.quantity
+                try:
+                    addressobj=Address.objects.get(house=housename)
+                except:
+                    messages.error(request, "Address cannot be empty.")
+                    return redirect(checkout)
+                orderstatusobj="Ordered"
+                ordertypeobj="Wallet Payment"   
+                orderdateobj=date.today() 
+                finalprice=item.total
+                ordernumberobj=Ordernumber.objects.get(slno=ordcount+1)
+                orderdata=Orders(user=userobj,product=pdtobj,quantity=quantityobj,address=addressobj,orderstatus=orderstatusobj,orderdate=orderdateobj,ordertype=ordertypeobj,finalprice=finalprice,ordernumber=ordernumberobj)
+                orderdata.save()
+                finalprice=float(finalprice)
+                quantityobj=int(quantityobj)
+                orderdateobj=str(orderdateobj)
+                fulladdress=f"{addressobj.house}, {addressobj.locality},{addressobj.district},{addressobj.state},{addressobj.country},"
+                if "currentorder" not in request.session:
+                    request.session["currentorder"] = {}
+                    
+                request.session["currentorder"][item.product.name] = {
+                    "quantity": quantityobj,
+                    "address": fulladdress, 
+                    "orderdate": orderdateobj,
+                    "ordertype": ordertypeobj,
+                    "finalprice":finalprice,
+                }
+
+                
+
+
+                pdtobj.quantity=pdtobj.quantity-item.quantity
+                pdtobj.save()
+            cartobjs.delete()
+            totalsum=0
+            for item in cartobjs:
+                totalsum+=item.total
+            
+
+            no_of_cart_items=cartobjs.count()
+
+            
+
+            return redirect(orderplaced)
+
+            
+        
+        
+        
+    return HttpResponse("Invalid request")
+
+
 def razorupdateorder(request):
     
-    
+    ordcount=Ordernumber.objects.all().count()
     username=request.session["username"]
     user=Customers.objects.get(username=username)
     cartobjs=Cart.objects.filter(user=user)
     house=request.GET["addressval"]
     # finalprice=request.GET["finalprice"]
     # finalprice=Decimal(finalprice)
-    print("################",house)
-    
+
+
+    totalsum=0
+    for item in cartobjs:
+        totalsum+=item.total
+    if "coupon" in request.session:
+        code=request.session["coupon"]
+        couponobj=Coupon.objects.get(code=code)
+        totalsum=totalsum-((Decimal(couponobj.discount_percentage/100))*totalsum)
+        del request.session["coupon"]
+    else:
+        couponobj=None
+    Ordernumber.objects.create(user=user,slno=ordcount+1,totalamount=totalsum,coupon=couponobj)
     for item in cartobjs:
         product=item.product
         orderdateobj=date.today()
         addressobj=Address.objects.get(customer=user,house=house)
-        orderobj=Orders(user=user,product=product,orderdate=orderdateobj,orderstatus="Ordered",ordertype="Razor Pay",quantity=item.quantity,finalprice=item.total,address=addressobj)
+        ordernumberobj=Ordernumber.objects.get(slno=ordcount+1)
+        orderobj=Orders(user=user,product=product,orderdate=orderdateobj,orderstatus="Ordered",ordertype="Razor Pay",quantity=item.quantity,finalprice=item.total,address=addressobj,ordernumber=ordernumberobj)
         orderobj.save()
         finalprice=float(item.total)
         quantityobj=int(item.quantity)

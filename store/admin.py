@@ -43,6 +43,6 @@ admin.site.register(Productoffer,ProductofferAdmin)
 admin.site.register(Categoryoffer,CategoryofferAdmin)
 admin.site.register(Wishlist,WishlistAdmin)
 admin.site.register(Wallet,WalletAdmin)
-
+admin.site.register(Ordernumber)
 
 
