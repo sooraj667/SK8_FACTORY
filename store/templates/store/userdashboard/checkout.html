@@ -425,8 +425,12 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.4/jquery.min.js" integrity="sha512-pumBsjNRGGqkPzKHndZMaAG+bir374sORyzM3uulLV14lN5LyykqNk8eEeUlUkB3U0M4FApyaHraT65ihJhDpQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script>
-	$("#applycoupon").click(function(){
+	$("#applycoupon").one("click",function(){
+		if (firstclick==true) {
+			return; // Exit the function if a request is already in progress
+		}
 		
+		var firstclick=true;
 		
 		var couponid=$("#couponid").val();
 		var totalamount=$("#totalamount").html()
