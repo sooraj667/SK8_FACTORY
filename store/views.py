@@ -2019,6 +2019,7 @@ def razorupdateorder(request):
     else:
         couponobj=None
     Ordernumber.objects.create(user=user,slno=ordcount+1,totalamount=totalsum,coupon=couponobj)
+    request.session["ordertotal"]=float(totalsum)
     for item in cartobjs:
         product=item.product
         orderdateobj=date.today()
