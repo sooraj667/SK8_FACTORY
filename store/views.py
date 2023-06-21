@@ -553,6 +553,7 @@ def verifyotp(request):
         wishlistdict=request.session["wishlistdict"]
         wishcount=len(wishlistdict) 
     else:
+        wishlistdict=None
         wishcount=0 
 
 
