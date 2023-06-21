@@ -1151,6 +1151,8 @@ def increasequantity(request,itemid):
 # totalsum_withcoupon=request.GET.get("totalsum_withcoupon")
 
 def checkout(request):
+    # if "coupon" in request.session:
+    #     del request.session["coupon"]
     if Customers.objects.get(username=request.session["username"]).isblocked:
         return redirect(login)
     
@@ -1166,6 +1168,11 @@ def checkout(request):
         client = razorpay.Client(
         auth=(RAZORPAY_API_KEY, RAZORPAY_API_SECRET_KEY))
         amount=int(totalsum*100)
+        if "coupon" in request.session:
+            couponobj=Coupon.objects.get(code=request.session["coupon"])
+            
+            totalsum=totalsum-(Decimal(couponobj.discount_percentage/100)*totalsum)
+            amount=int(totalsum*100)
         currency='INR'
         data = dict(amount=amount,currency=currency,payment_capture=1)
                 
