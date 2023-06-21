@@ -13,36 +13,39 @@
 					<div class="col-sm-6 col-md-4 col-lg-3 p-b-35 isotope-item women">
 						<!-- Block2 -->
 						<div class="block2">
-							<div class="block2-pic hov-img0">
-
-								<a href={% url 'guestpreview' item.id %}>
-									<img  src="{{ item.image1.url }}" alt="{{ item.name }} image" class="image-zoom-container">
-
-
-								</a>
+							<div style="width:250px;height:320px;" class="block2-pic hov-img0">
 								
-								
-									 
+										<a href={% url 'guestpreview' item.id %}>
+											<img src="{{ item.image1.url }}" alt="{{ item.name }} image" class="image-zoom-container">
+
+										</a>
+									  
 								
 	
-		
+								{% comment %} <a href="#" id="{{item}}" class="block2-btn flex-c-m stext-103 cl2 size-102 bg0 bor2 hov-btn1 p-lr-15 trans-04 js-show-modal1">
+									Quick View {% endcomment %}
+	
+								
 							
 							</div>
 	
 							<div class="block2-txt flex-w flex-t p-t-14">
-								<div class="block2-txt-child1 flex-col-l ">
-									<a href="product-detail.html" class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
+								<div class="block2-txt-child1 flex-col-l pl-3">
+									<a class="stext-104 cl4 hov-cl1 trans-04 js-name-b2 p-b-6">
 										{{item.name}}
 									</a>
 	
 									<span class="stext-105 cl3">
 										Rs.{{item.price}}
 									</span>
-									<br>
+									
 									{% comment %} <a href={% url 'buynow' item.id %}>
 										Buy it
 									</a> {% endcomment %}
-									
+									{% comment %} <div style="margin-left:200px;">
+										<a href={% url 'guestpreview' item.id %}> <button class="btn btn-info">Preview</button> </a>
+
+									</div> {% endcomment %}
 									
 									{% comment %} <a href={% url 'addtocart' item.id %}> Add to Cart</a> {% endcomment %}
 									{% comment %} <button type="button" class="addit" data-toggle="modal" data-target="#myModal" data-category-id="{{ item.id }}">Add to Cart</button> {% endcomment %}
@@ -75,42 +78,42 @@
 									
 								</div>
 						
-								<div class="block2-txt-child2 flex-r p-t-3">
+								<br><br><br>
+							<div class="block2-txt-child2 flex-r p-t-3">
 								
-									<button class="wishlist btn btn-danger" data-product-id="{{item.id}}">
-										
-										<div class="row">
-											<div class="col-md-4">
-												<img class="icon-heart1 dis-block trans-04" src="{% static 'store/images/icons/icon-heart-01.png' %}" alt="">
-											</div>
-											{% comment %} <div class="col-md-8">
-												WishList
-											</div> {% endcomment %}
-										</div>
-									</button>
-	
-	
-	
-	
+								<button class="wishlist btn btn-danger" data-product-id="{{item.id}}">
 									
-	
-									{% comment %} <a  href="" class="wishlist btn-addwish-b2 dis-block pos-relative "  data-product-id={{item.id}}>
-										<img class=" icon-heart1 dis-block trans-04" src="{% static 'store/images/icons/icon-heart-01.png' %}" alt=""  >
-										<img class=" icon-heart2 dis-block trans-04 ab-t-l" src="{% static 'store/images/icons/icon-heart-02.png' %}" alt=""  >
-									</a> {% endcomment %}
-								</div>
-								
-								
-							</div>
-						
-							
+									<div class="row">
+										<div class="col-md-4">
+											<img class="icon-heart1 dis-block trans-04" src="{% static 'store/images/icons/icon-heart-01.png' %}" alt="">
+										</div>
+										{% comment %} <div class="col-md-8">
+											WishList
+										</div> {% endcomment %}
+									</div>
+								</button>
 
+
+
+
+
+
+								{% comment %} <a  href="" class="wishlist btn-addwish-b2 dis-block pos-relative "  data-product-id={{item.id}}>
+									<img class=" icon-heart1 dis-block trans-04" src="{% static 'store/images/icons/icon-heart-01.png' %}" alt=""  >
+									<img class=" icon-heart2 dis-block trans-04 ab-t-l" src="{% static 'store/images/icons/icon-heart-02.png' %}" alt=""  >
+								</a> {% endcomment %}
+							</div>
+							<div  class="row">
+								<i id="wishlistmsg{{item.id}}">	</i>
+
+							</div>
+							</div>
 						</div>
 					</div>
 					
 					
 		
-		{% endfor %}
+				{% endfor %}
 
     </div>
 </div>
@@ -118,6 +121,71 @@
 
         
 
+
+<script>
+	$(document).ready(function() {
+		$(".wishlist").click(function() {
+			
+			var productid=$(this).data("product-id");
+			
+			// Get the selected offer value
+		  
+		   //$("#wishlistModal").modal("show");
+	
+		   //$("#confirm").click(function(){
+			 $.ajax({
+			   url: "/guestaddtowishlist/", // Replace with the URL of your Django view
+			   type: "GET",
+			   data: { productid: productid,
+					   
+					   
+				   },
+			   success: function(response) {
+				
+				if (response.alreadypresent){
+					$("#wishlistmsg"+productid).html(response.alreadypresent).addClass("text-danger");
+
+				}
+				else if(response.added){
+					$("#wishlistmsg"+productid).html(response.added + " &#x2713;").addClass("text-success");
+
+				}
+				
+				//$("#wishlistModal").modal("hide");
+				 //$("#offer" + orderid).remove();
+				 // Update the offer price on the page
+				 //var content = response.content;  // Assuming the response contains the updated offer price
+				 // Update the appropriate HTML element with the new offer price
+				 //$("#orderitem" + orderid).text("Cancelled").addClass("text-danger");;
+				 
+			   },
+			   error: function(xhr, errmsg, err) {
+				 // Handle any errors that occur during the AJAX request
+				 console.log(xhr.status + ": " + xhr.responseText);
+			   }
+			 });
+
+
+
+
+
+
+
+
+
+		   //})
+		  // Send an AJAX request to update the offer price
+	  
+		});
+
+		//$(".closeit").click(function(){
+		// $("#cancelModal").modal("hide");
+		//})
+
+
+
+	  });
+</script>
 
 
 

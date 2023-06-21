@@ -380,12 +380,39 @@ def guestcart(request):
 def category_based_product(request,someid):
     categoryobj=Category.objects.get(id=someid)
     productobjs=Products.objects.filter(category=categoryobj)
-    return render(request,"store/category_based_product.html",{"productobjs":productobjs})
+
+    if "cartdict" in request.session:
+        cartdict=request.session["cartdict"]
+        subtotal=0
+        for k,v in cartdict.items():
+            subtotal+=v["total"]
+        cartcount=len(cartdict)
+    else:
+        cartdict={}
+        subtotal=0
+        cartcount=0
+    if "wishlistdict" in request.session:
+        wishlistdict=request.session["wishlistdict"]
+        wishcount=len(wishlistdict) 
+    else:
+        wishcount=0  
+    return render(request,"store/category_based_product.html",{"productobjs":productobjs,"cartcount":cartcount,"wishcount":wishcount,"totalsum":subtotal})
 
 def loggedincategory_based_product(request,someid):
     categoryobj=Category.objects.get(id=someid)
     productobjs=Products.objects.filter(category=categoryobj)
-    return render(request,"store/userdashboard/loggedincategory_based_product.html",{"productobjs":productobjs})
+    userobj=Customers.objects.get(username=request.session["username"])
+    cartobjsfiltered=Cart.objects.filter(user=userobj)
+    cartobjs=Cart.objects.filter(user=userobj)
+    no_of_cart_items=cartobjsfiltered.count()
+    
+    wishlistobjs=Wishlist.objects.filter(user=userobj)
+    no_of_wishlist_items=wishlistobjs.count()
+
+    totalsum=0
+    for item in cartobjs:
+        totalsum+=item.total
+    return render(request,"store/userdashboard/loggedincategory_based_product.html",{"productobjs":productobjs,"no_of_cart_items":no_of_cart_items,"no_of_wishlist_items":no_of_wishlist_items,"totalsum":totalsum})
 
 def signup(request): 
     
