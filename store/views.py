@@ -817,6 +817,8 @@ def loggedinproduct(request):
     if "username" in request.session and not Customers.objects.get(username=request.session["username"]).isblocked:
         if "currentorder" in request.session:
             del request.session["currentorder"]
+        if "ordertotal" in request.session:
+            del request.session["ordertotal"]
 
 
         products=Products.objects.all()
@@ -886,7 +888,9 @@ def preview(request,someid):
 
         user=Customers.objects.get(username=request.session.get("username"))
         cartobjs=Cart.objects.filter(user=user)
+        wishlistobjs=Wishlist.objects.filter(user=user)
         no_of_cart_items=cartobjs.count()
+        no_of_wishlist_items=wishlistobjs.count()
 
 
         totalsum=0
@@ -934,7 +938,7 @@ def preview(request,someid):
                     price_after_discount=pdtobj.price-(Decimal(discount/100)*pdtobj.price)
                     price_after_discount=float(price_after_discount)
                     print(price_after_discount,"ADDOFFERRRR")
-                    return render(request,"store/userdashboard/preview.html",{"pdtobj":pdtobj,"totalsum":totalsum,"price_after_discount":price_after_discount,"offer":offer,     "offers":offers,"categoryfound":categoryfound,"productfound":productfound,"categoryofferobjs":categoryofferobjs,"no_of_cart_items":no_of_cart_items})
+                    return render(request,"store/userdashboard/preview.html",{"pdtobj":pdtobj,"totalsum":totalsum,"price_after_discount":price_after_discount,"offer":offer,     "offers":offers,"categoryfound":categoryfound,"productfound":productfound,"categoryofferobjs":categoryofferobjs,"no_of_cart_items":no_of_cart_items,"no_of_wishlist_items":no_of_wishlist_items,})
                 except:
                     pass
                 
@@ -1321,16 +1325,28 @@ def orderplaced(request):
         totalsum+=item.total
     if  "currentorder" in request.session:
         currentorder=request.session["currentorder"]
+    if "ordertotal" in request.session:
+        ordertotal=str(request.session["ordertotal"])
 
         
-    context={"no_of_wishlist_items":no_of_wishlist_items,"no_of_cart_items":no_of_cart_items,"cartobjs":cartobjs ,"wishlistobjs":wishlistobjs,"totalsum":totalsum,"currentorder":currentorder}
+    context={"no_of_wishlist_items":no_of_wishlist_items,"no_of_cart_items":no_of_cart_items,"cartobjs":cartobjs ,"wishlistobjs":wishlistobjs,"totalsum":totalsum,"currentorder":currentorder,"ordertotal":ordertotal}
     return render(request,"store/userdashboard/orderplaced.html",context)
 
 
     
 def orderdetails(request,someid):
     orderobjs=Orders.objects.filter(ordernumber__id=someid)
-    context={"orderobjs":orderobjs}
+
+    userobj=Customers.objects.get(username=request.session["username"])
+
+    cartobjs=Cart.objects.filter(user=userobj)
+    wishlistobjs=Wishlist.objects.filter(user=userobj)
+    no_of_wishlist_items=wishlistobjs.count()
+    no_of_cart_items=cartobjs.count()
+    totalsum=0
+    for item in cartobjs:
+        totalsum+=item.total
+    context={"orderobjs":orderobjs,"no_of_cart_items":no_of_cart_items,"no_of_wishlist_items":no_of_wishlist_items,"totalsum":totalsum,}
     return render(request,"store/userdashboard/orderdetails.html",context)
 
 
@@ -1887,9 +1903,7 @@ def cashondelivery(request):
                 pdtobj.quantity=pdtobj.quantity-item.quantity
                 pdtobj.save()
             cartobjs.delete()
-            totalsum=0
-            for item in cartobjs:
-                totalsum+=item.total
+            request.session["ordertotal"]=float(totalsum)
             
 
             no_of_cart_items=cartobjs.count()

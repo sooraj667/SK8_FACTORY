@@ -1,5 +1,5 @@
 from django.db import models
-
+import datetime
 class Customers(models.Model):
     username=models.CharField(max_length=200,unique=True)
     name=models.CharField(max_length=200)
@@ -72,6 +72,7 @@ class Ordernumber(models.Model):
     user=models.ForeignKey(Customers,on_delete=models.CASCADE)
     totalamount=models.DecimalField(max_digits=10, decimal_places=2)
     coupon=models.ForeignKey(Coupon,on_delete=models.CASCADE,blank=True,default=None,null=True)
+    ordertime=models.DateField(auto_now_add=True)
     
 
     def __str__(self):

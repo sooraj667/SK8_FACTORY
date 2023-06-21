@@ -336,9 +336,10 @@
                   <table class="table table-hover">
                       <thead>
                         <tr>
-                          <th>Sl NO</th>
+                          <th>Sl No</th>
                           <th>Total Price</th>
                           <th>Coupon</th>
+                          <th>Order Date</th>
                           <th></th>
 
                       
@@ -358,6 +359,7 @@
                             {% else %}
                             <td>No Coupon Applied</td>  
                             {% endif %}
+                            <td>{{ item.ordertime }}</td>
                             <td><a class="btn btn-success" href={% url 'orderdetails'  item.id  %}>View details</a></td>
                           </tr>
                        
