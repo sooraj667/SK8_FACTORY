@@ -1,4 +1,5 @@
 {% extends 'store/userdashboard/loggedin.html' %}
+{% load static %}
 {% block content %}
 
 <div class="row mt-5"></div>
@@ -6,17 +7,18 @@
 <div class="row mt-5"></div>
 <div class="row mt-5"></div>
 
-<div class="container-fluid">
+<div class="container-fluid card">
     <div class="row">
       <div class="col-md-7 text-center">
         <span class="icon-check_circle display-3 text-success"></span>
-        <h2 class=" text-black display-3  ">Thank you!</h2><br>
-        <p class="lead mb-5 text-success">You order was successfuly completed &#x2713;</p>
-        <h4 class=" text-black  ">Total Amount : Rs.{{ordertotal}} /-</h4>
+        <h2 class=" text-black display-3 pt-4 ">Thank you!</h2><br>
+        <p class="lead  text-success">You order was successfully completed!</p> 
+        <img style="width:150px;height:150px;" class="img-fluid" src={% static 'store/images/greentick.jpg' %} alt="">
+        <h4 class=" text-black  "> <strong>Total Amount :</strong>  <i>Rs. {{ordertotal}}</i> /-</h4>
         <p><a href={% url 'loggedinproduct' %} class="btn  stext-101 cl0 size-103 bg1 bor1 hov-btn2 p-lr-15 trans-04  mt-5 pt-2">Back to shop</a></p>
       </div>
 
-      <div class="col-md-5">
+      <div class="col-md-5 mb-4">
         <div class="card mt-4">
           <div class="card-header">
               <h2> <strong> Order Details</strong></h2>
@@ -35,6 +37,7 @@
               {% endfor %}
           </div>
         </div>  
+      </div>
 
 
 
@@ -42,7 +45,7 @@
 
 
     </div>
-  </div>
+</div>
    
 
 

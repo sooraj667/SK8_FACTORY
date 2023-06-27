@@ -16,10 +16,19 @@
             {% if walletobj %}
             <div class="text-2xl text-success">
               Rs.{{walletobj.amount}}/-
+              <div>
+                <img style="width:200px;height:200px;" src={% static 'store/images/full.jpg' %} alt="">
+
+              </div>
+              
             </div>
             {% else %}
             <div class="text-2xl text-danger">
               Sorry no amount in your wallet!
+              <div class="mt-3">
+                <img style="width:200px;height:280px;"  src={% static 'store/images/emptywallet.png' %} alt="">
+
+              </div>
             </div>
             {% endif %}
           </div>
