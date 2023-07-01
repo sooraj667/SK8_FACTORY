@@ -66,9 +66,14 @@
 	{% block head %}	{% endblock head %}	
 
 	<style>
+		.no-hover-bg:hover {
+			background-color: transparent !important;
+		  }
+		  
 	
 
-		{% block style %}{% endblock style %}
+		{% block style %}
+		{% endblock style %}
 
 	</style>
 	
@@ -159,12 +164,31 @@
 							</a>
 						</div>
 						<div class="ml-4">
-							<a href={% url 'logout' %}>
+
+							<div class="dropdown ">
+								<button class="btn  dropdown-toggle  cl0  bg1  hov-btn2 p-lr-15 trans-04 " type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+									<i class="fas fa-sign-out-alt"></i>
+
+
+								  
+								</button>
+								<div class="dropdown-menu bg1" aria-labelledby="dropdownMenuButton">
+								  <a class="dropdown-item ml-4  no-hover-bg" href={% url 'logout' %}> 
+									
+										<span class="text-light	">Logout 
+										</span>
+									
+								  </a>
+								  
+								  
+								</div>
+							  </div>
+							{% comment %} <a href={% url 'logout' %}>
 								<button class="btn btn-danger">
 									Logout
 								</button>
 	
-							</a>
+							</a> {% endcomment %}
 
 						</div>
 						

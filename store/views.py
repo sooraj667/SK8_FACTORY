@@ -1905,6 +1905,7 @@ def cashondelivery(request):
                 pdtobj.save()
             cartobjs.delete()
             request.session["ordertotal"]=float(totalsum)
+    
             
 
             no_of_cart_items=cartobjs.count()
@@ -1975,10 +1976,12 @@ def cashondelivery(request):
 
                 
 
-
+                print(pdtobj.quantity,item.quantity,"NEWWWWWWWWWWWWWWWWWWWWWWWWW")
                 pdtobj.quantity=pdtobj.quantity-item.quantity
                 pdtobj.save()
             cartobjs.delete()
+            request.session["ordertotal"]=float(totalsum)
+      
             totalsum=0
             for item in cartobjs:
                 totalsum+=item.total
